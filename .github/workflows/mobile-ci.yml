@@ -29,3 +29,5 @@ jobs:
         run: npm run typecheck
       - name: Test domain rules
         run: npm test
+      - name: Bundle Android application
+        run: npx expo export --platform android --output-dir dist/android
