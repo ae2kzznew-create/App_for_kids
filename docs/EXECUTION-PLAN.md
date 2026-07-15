@@ -4,10 +4,10 @@ This is the live operating plan. Every agent must read it before working and upd
 
 ## Status
 
-- **Current stage:** P2 + P3 gate, with P4 skill-graph foundation started
-- **Current milestone:** Confirm SQLite persistence and expose the first cycle-safe skill graph in the application
+- **Current stage:** P2 + P3 gate, with P4 visualization in progress
+- **Current milestone:** Confirm SQLite persistence and expand progress views beyond the first interactive skill tree
 - **Last updated:** 2026-07-16
-- **Application status:** the persistent personal loop and history UI work; directed same-goal skill relationships are enforced in domain and storage layers with cycle tests
+- **Application status:** the persistent personal loop works; skills now render as a pressable layered graph with explicit dependencies, health states and reviewed mastery
 - **Primary user:** Pavel, acting as architect, performer and coach
 - **Active direction:** `docs/product/PERSONAL-FIRST-DIRECTION.md`
 
@@ -79,12 +79,13 @@ This is the live operating plan. Every agent must read it before working and upd
 ## P4 — Skill tree and progress visualization
 
 - [x] ~~Add directed skill relationships and cycle protection~~ — Evidence: `connectSkills`, memory/SQLite edge persistence and cycle/cross-goal tests.
-- [ ] Display interactive skill tree.
-  Progress: domain graph is ready; the current Skills screen still renders a flat list.
-- [ ] Show growing, stable, due, fading and paused states.
+- [x] ~~Display interactive skill tree~~ — Evidence: goal-grouped layered graph with pressable skill nodes and dependency labels.
+- [x] ~~Show growing, stable, due, fading and paused states~~ — Evidence: semantic status labels and colors on every graph node.
 - [ ] Show progress by day, week, month, goal and skill.
-- [ ] Keep activity separate from demonstrated skill.
+  Progress: seven-day activity and per-skill history exist; month and goal rollups remain.
+- [x] ~~Keep activity separate from demonstrated skill~~ — Evidence: Progress reports XP activity while graph nodes report reviewed mastery and health.
 - [ ] Verify interaction with at least 50 skills.
+  Progress: deterministic graph-level layout tests cover chains, branching, disconnected nodes and multiple parents; scale fixture remains.
 
 ---
 
@@ -136,10 +137,17 @@ Deferred, not completed:
 - One physical-device or simulator close/reopen remains to confirm the SQLite cross-launch indicator.
 - Dark theme is not implemented.
 - Automated device-level SQLite integration tests remain.
-- The first graph rendering can use the existing React Native primitives; a specialized graph library is not selected.
+- Month and goal progress aggregation remain.
 - Mobile file-access strategy is not selected.
 
 ## Changelog
+
+### 2026-07-16 — Interactive skill tree
+
+- Replaced the flat skill list with goal-grouped graph levels derived from persisted edges.
+- Added pressable skill nodes with dependency names, health state, support level and reviewed mastery.
+- Added deterministic layout tests for branching, disconnected nodes and multiple-parent depth.
+- Confirmed in the plan that skill health and activity/mastery separation are visible.
 
 ### 2026-07-16 — Directed skill graph foundation
 
