@@ -1,0 +1,195 @@
+name: Organize repository
+
+on:
+  push:
+    branches:
+      - organize-repository
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  organize:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Organize documents and remove duplicates
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          src="стартап"
+          mkdir -p product research/competitors research/audience research/market research/raw \
+            validation technical brand marketing business legal archive/superseded archive/low-quality
+
+          # Canonical product documents
+          git mv "$src/Levera-Product-Bible.html" product/Product-Bible.html
+          git mv "$src/Levera-Product-Roadmap.html" product/Product-Roadmap.html
+          git mv "$src/Levera-Onboarding-Script.html" product/Onboarding-Script.html
+          git mv "$src/Levera-UX-Flow-Screen-Map (1).html" product/UX-Flow-Screen-Map.html
+          git mv "$src/Idea-Summary (1).html" product/Idea-Summary.html
+
+          # Validation playbooks
+          git mv "$src/Levera-Mom-Test-Interview-Script.html" validation/Mom-Test-Interview-Script.html
+          git mv "$src/Levera-Wizard-of-Oz.html" validation/Wizard-of-Oz-Guide.html
+          git mv "$src/Levera-W4-Retention-Test-Protocol.html" validation/W4-Retention-Test-Protocol.html
+
+          # Technical specification
+          git mv "$src/Levera-Technical-Brief-MVP.html" technical/MVP-Technical-Brief.html
+
+          # Brand
+          git mv "$src/Brand-Identity-Document.html" brand/Brand-Identity.html
+
+          # Marketing and communications
+          git mv "$src/Levera-Growth-Strategy.html" marketing/Growth-Strategy.html
+          git mv "$src/Levera-Content-Strategy.html" marketing/Content-Strategy.html
+          git mv "$src/Levera-Social-Media-Strategy.html" marketing/Social-Media-Strategy.html
+          git mv "$src/Levera-Landing-Page-Copy.html" marketing/Landing-Page-Copy.html
+          git mv "$src/Levera-Telegram-Posts-5.html" marketing/Telegram-Posts.html
+          git mv "$src/Levera-PR-Kit.html" marketing/PR-Kit.html
+          git mv "$src/Levera-App-Store-Google-Play-Listing.html" marketing/App-Store-Listing.html
+
+          # Business, monetisation, partnerships and fundraising
+          git mv "$src/Validated-Biz-Plan.html" business/Business-Plan.html
+          git mv "$src/Levera-Monetisation-Strategy.html" business/Monetisation-Strategy.html
+          git mv "$src/Levera-Paywall-A-B-Test-Plan.html" business/Paywall-AB-Test-Plan.html
+          git mv "$src/Levera-B2B2C.html" business/B2B2C-Partnership-Template.html
+          git mv "$src/Levera (2).html" business/Investor-Pitch-Deck-Narrative.html
+
+          # Legal draft
+          git mv "$src/Levera (3).html" legal/Privacy-Policy-Draft.html
+
+          # Competitor research
+          git mv "$src/Greenlight (1).html" research/competitors/Greenlight.html
+          git mv "$src/BusyKid (1).html" research/competitors/BusyKid.html
+          git mv "$src/FamilyHero (1).html" archive/low-quality/FamilyHero-Incomplete.html
+
+          # Audience and creator research
+          git mv "$src/Accounts.html" research/audience/Accounts-RU.html
+          git mv "$src/Accounts-parenting-children-development-skills-education.html" research/audience/Accounts-EN.html
+          git mv "$src/Posts-parenting-children-development-app.html" research/audience/Parenting-Posts.html
+
+          # Focused market research
+          git mv "$src/Web-Research-Greenlight-BusyKid-subscription-parents-cancel-not-worth-price-complaints.html" research/market/Competitor-Pricing-Complaints.html
+          git mv "$src/Web-Research-Greenlight-app-kids-allowance-complaints-stopped-using.html" research/market/Greenlight-Churn-Reasons.html
+          git mv "$src/Web-Research-best-chore-app-for-kids-parents-review-2024.html" research/market/Best-Chore-Apps-2024.html
+          git mv "$src/Web-Research-best-chore-apps-for-kids-review-parents-experience.html" research/market/Parent-Experience-With-Chore-Apps.html
+          git mv "$src/Web-Research-children-habit-formation-apps-long-term-engagement-retention-kids.html" research/market/Child-Habit-Formation-Retention.html
+          git mv "$src/Web-Research-chore-app-kids-stopped-using-gave-up-why.html" research/market/Why-Kids-Quit-Chore-Apps.html
+          git mv "$src/Web-Research-chore-apps-for-kids-problems-parents-frustrated.html" research/market/Parent-Frustration-With-Chore-Apps.html
+          git mv "$src/Web-Research-kids-stopped-using-chore-app-after-few-weeks-why-boring.html" research/market/Chore-App-Boredom.html
+          git mv "$src/Web-Research-parents-paying-for-kids-educational-apps-subscription-worth-it.html" research/market/Parent-Willingness-To-Pay.html
+          git mv "$src/Web-Research-parents-struggling-to-build-life-skills-independence-in-children.html" research/market/Parent-Life-Skills-Pain.html
+          git mv "$src/Web-Research-why-kids-stay-engaged-with-games-Roblox-Duolingo-streak-daily-rewards.html" research/market/Game-Retention-Mechanics.html
+
+          # Channel research
+          git mv "$src/Web-Research-Telegram.html" research/audience/Telegram-Research.html
+          git mv "$src/Web-Research-parenting-Telegram-channel-Russia-children-education-popular.html" research/audience/Parenting-Telegram-Channels-RU.html
+          git mv "$src/Web-Research-parents-children-education-TikTok-Instagram-reels-viral-content-creator.html" research/audience/Social-Creators-And-Viral-Content.html
+
+          # Generic raw research retained for traceability
+          git mv "$src/Web-Research (1).html" research/raw/Web-Research-01.html
+          git mv "$src/Web-Research (2).html" research/raw/Web-Research-02.html
+          git mv "$src/Web-Research (3).html" research/raw/Web-Research-03.html
+
+          # Superseded versions retained, but removed from the active document set
+          git mv "$src/Idea-Summary (2).html" archive/superseded/Idea-Summary-Older.html
+          git mv "$src/Levera-UX-Flow-Screen-Map.html" archive/superseded/UX-Flow-Screen-Map-Older.html
+
+          # Remove exact duplicates and test junk
+          rm -f "$src/Accounts (1).html"
+          rm -f "$src/Posts-parenting-children-development-app (1).html"
+          rm -f "$src/Web-Research-Telegram (1).html"
+          rm -f "$src/Web-Research-chore-apps-for-kids-problems-parents-frustrated (1).html"
+          rm -f "$src/fffftry"
+          rm -rf "$src/my-folder"
+
+          rmdir "$src" 2>/dev/null || true
+
+          cat > README.md <<'EOF'
+          # Levera
+
+          Levera is a family product concept for helping children aged 8–12 build practical skills through calibrated quests, visible progress, and parent participation.
+
+          ## Repository status
+
+          This repository currently contains product, research, validation, business, marketing, technical, and legal documents. It does **not yet contain application source code**.
+
+          ## Start here
+
+          1. [`product/Product-Bible.html`](product/Product-Bible.html) — canonical product vision and principles.
+          2. [`research/README.md`](research/README.md) — research index and evidence map.
+          3. [`validation/Mom-Test-Interview-Script.html`](validation/Mom-Test-Interview-Script.html) — problem interviews.
+          4. [`validation/Wizard-of-Oz-Guide.html`](validation/Wizard-of-Oz-Guide.html) — manual MVP test.
+          5. [`validation/W4-Retention-Test-Protocol.html`](validation/W4-Retention-Test-Protocol.html) — go/no-go metrics.
+          6. [`technical/MVP-Technical-Brief.html`](technical/MVP-Technical-Brief.html) — initial implementation brief.
+
+          ## Structure
+
+          - `product/` — canonical product definition, roadmap, UX, onboarding.
+          - `research/` — competitors, market evidence, audience and raw research.
+          - `validation/` — interview and experiment protocols.
+          - `technical/` — technical specifications.
+          - `brand/` — brand identity.
+          - `marketing/` — acquisition, content, store and PR materials.
+          - `business/` — business model, pricing, partnerships and fundraising.
+          - `legal/` — legal drafts requiring professional review.
+          - `archive/` — superseded or incomplete material.
+
+          ## Current priority
+
+          Validate the core loop with real families before building the full application:
+
+          `quest → completion → parent confirmation → key → wish wheel → fulfilled reward → weekly report`
+
+          Target audience for the first pilot: Russian-speaking families with children aged 8–12.
+          EOF
+
+          cat > research/README.md <<'EOF'
+          # Research index
+
+          This directory contains the evidence behind Levera's product and go-to-market hypotheses.
+
+          ## Main research questions
+
+          1. Do parents experience a strong problem around building independence and life skills?
+          2. Why do families stop using chore and reward applications?
+          3. Which mechanics improve or damage child retention?
+          4. Are parents willing to pay for progress visibility and structured guidance?
+          5. Which competitors and distribution channels matter most?
+
+          ## Directories
+
+          - `competitors/` — Greenlight and BusyKid source reports.
+          - `market/` — focused research on pain, churn, retention and willingness to pay.
+          - `audience/` — parenting accounts, channels, creators and content examples.
+          - `raw/` — unprocessed source exports retained for traceability.
+
+          ## Research quality notes
+
+          - The FamilyHero export was incomplete and moved to `archive/low-quality/`.
+          - Exact duplicate exports were removed.
+          - Market claims and statistics must be verified against primary sources before public, legal, press, store or investor use.
+          - Secondary research does not replace Mom Test interviews or the W4 pilot.
+
+          ## Recommended next output
+
+          Convert the research into an evidence table with columns:
+
+          `Hypothesis | Evidence | Source quality | Confidence | Open question | Validation experiment`
+          EOF
+
+          # Remove the one-time workflow and any empty workflow directories.
+          rm -f .github/workflows/organize-repository.yml
+          find .github -type d -empty -delete 2>/dev/null || true
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Organize repository documentation"
+          git push
