@@ -1,0 +1,51 @@
+name: Move files to startup folder
+
+on:
+  push:
+    branches:
+      - move-files-to-startup
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  move-files:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Move everything into startup folder
+        shell: bash
+        run: |
+          set -euo pipefail
+          folder="стартап"
+          mkdir -p "$folder"
+
+          # Remove temporary files used only for this migration.
+          rm -f .github/test.txt
+          rm -f .github/workflows/move-files-to-startup.yml
+          find .github -type d -empty -delete 2>/dev/null || true
+
+          shopt -s dotglob nullglob
+          for item in *; do
+            if [[ "$item" == ".git" || "$item" == "$folder" ]]; then
+              continue
+            fi
+            git mv "$item" "$folder/"
+          done
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Move all files into startup folder"
+          git push
