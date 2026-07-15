@@ -1,0 +1,11 @@
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { theme } from "../../src/theme";
+export default function ReviewScreen() {
+  return <SafeAreaView style={styles.safe} edges={["top"]}><ScrollView contentContainerStyle={styles.content}>
+    <Text style={styles.eyebrow}>10 МИНУТ ДЛЯ СЕБЯ</Text><Text style={styles.title}>Обзор недели</Text><Text style={styles.subtitle}>Сначала факты. Потом вывод. В конце — одно решение на следующую неделю.</Text>
+    {[["01","Что получилось?","Зафиксируй конкретные результаты и доказательства."],["02","Что остановилось?","Не обвиняй себя. Найди неверную сложность или потерянный контекст."],["03","Что требует повторения?","Верни навык в работу до того, как он начнёт угасать."],["04","Какой следующий шаг?","Выбери одну задачу чуть выше текущего уровня."]].map(([n,title,text]) => <View key={n} style={styles.step}><Text style={styles.number}>{n}</Text><View style={styles.stepBody}><Text style={styles.stepTitle}>{title}</Text><Text style={styles.stepText}>{text}</Text></View></View>)}
+    <Pressable style={styles.button}><Text style={styles.buttonText}>Начать обзор</Text></Pressable>
+  </ScrollView></SafeAreaView>;
+}
+const styles = StyleSheet.create({ safe: { flex: 1, backgroundColor: theme.colors.canvas }, content: { padding: 20, paddingBottom: 40 }, eyebrow: { color: theme.colors.blue, fontSize: 12, fontWeight: "800", letterSpacing: 1 }, title: { color: theme.colors.text, fontSize: 34, fontWeight: "700", marginTop: 6 }, subtitle: { color: theme.colors.muted, fontSize: 16, lineHeight: 23, marginTop: 8, marginBottom: 24 }, step: { flexDirection: "row", gap: 14, paddingVertical: 18, borderTopWidth: 1, borderTopColor: theme.colors.border }, number: { color: theme.colors.blue, fontWeight: "800", width: 28 }, stepBody: { flex: 1 }, stepTitle: { color: theme.colors.text, fontSize: 17, fontWeight: "700" }, stepText: { color: theme.colors.muted, lineHeight: 21, marginTop: 5 }, button: { minHeight: 52, backgroundColor: theme.colors.blue, borderRadius: 12, justifyContent: "center", alignItems: "center", marginTop: 24 }, buttonText: { color: "#FFFFFF", fontSize: 16, fontWeight: "800" } });

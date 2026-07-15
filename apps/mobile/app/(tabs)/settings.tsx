@@ -1,0 +1,13 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { theme } from "../../src/theme";
+export default function SettingsScreen() {
+  return <SafeAreaView style={styles.safe} edges={["top"]}><ScrollView contentContainerStyle={styles.content}>
+    <Text style={styles.eyebrow}>ВТОРОЙ МОЗГ</Text><Text style={styles.title}>Связи</Text>
+    <View style={styles.card}><View style={styles.icon}><MaterialCommunityIcons name="language-markdown-outline" size={26} color={theme.colors.blue} /></View><View style={styles.body}><Text style={styles.cardTitle}>Markdown</Text><Text style={styles.cardText}>Универсальный формат импорта, экспорта и резервной копии.</Text></View><Text style={styles.status}>MVP</Text></View>
+    <View style={styles.card}><View style={styles.icon}><MaterialCommunityIcons name="cube-outline" size={26} color={theme.colors.muted} /></View><View style={styles.body}><Text style={styles.cardTitle}>Obsidian</Text><Text style={styles.cardText}>Ссылки на заметки и открытие через URI. Двусторонняя синхронизация позже.</Text></View><Text style={styles.later}>Позже</Text></View>
+    <View style={styles.note}><Text style={styles.noteTitle}>Локально по умолчанию</Text><Text style={styles.noteText}>Данные остаются на устройстве. Облако появится только после надёжного локального опыта.</Text></View>
+  </ScrollView></SafeAreaView>;
+}
+const styles = StyleSheet.create({ safe: { flex: 1, backgroundColor: theme.colors.canvas }, content: { padding: 20, paddingBottom: 40, gap: 14 }, eyebrow: { color: theme.colors.blue, fontSize: 12, fontWeight: "800", letterSpacing: 1 }, title: { color: theme.colors.text, fontSize: 34, fontWeight: "700", marginTop: -8, marginBottom: 8 }, card: { backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.border, borderRadius: 16, padding: 16, flexDirection: "row", alignItems: "center", gap: 12 }, icon: { width: 48, height: 48, borderRadius: 14, backgroundColor: theme.colors.blueSoft, justifyContent: "center", alignItems: "center" }, body: { flex: 1 }, cardTitle: { color: theme.colors.text, fontSize: 17, fontWeight: "700" }, cardText: { color: theme.colors.muted, lineHeight: 20, marginTop: 4 }, status: { color: theme.colors.blue, fontWeight: "800", fontSize: 12 }, later: { color: theme.colors.muted, fontWeight: "700", fontSize: 12 }, note: { marginTop: 8, backgroundColor: theme.colors.soft, borderRadius: 16, padding: 18 }, noteTitle: { color: theme.colors.text, fontSize: 17, fontWeight: "700" }, noteText: { color: theme.colors.muted, lineHeight: 22, marginTop: 6 } });
