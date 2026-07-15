@@ -5,9 +5,9 @@ This is the live operating plan. Every agent must read it before working and upd
 ## Status
 
 - **Current stage:** P2 + P3 — Runtime shell and persistent personal loop
-- **Current milestone:** Add completed-work history and verify SQLite persistence across device restart
-- **Last updated:** 2026-07-15
-- **Application status:** real SQLite-backed creation and completion UI compiles, tests and Android bundle pass; skill history and device restart test remain
+- **Current milestone:** Confirm SQLite persistence on a physical device, then close the P2/P3 decision gate
+- **Last updated:** 2026-07-16
+- **Application status:** real SQLite-backed creation, completion and history UI compile, tests and Android bundle pass; a visible cross-launch persistence check is ready for device confirmation
 - **Primary user:** Pavel, acting as architect, performer and coach
 - **Active direction:** `docs/product/PERSONAL-FIRST-DIRECTION.md`
 
@@ -48,7 +48,7 @@ This is the live operating plan. Every agent must read it before working and upd
   Progress: light design and persistent forms exist; dark theme remains.
 - [x] ~~Pass clean install, TypeScript, all automated tests and Android Expo bundle~~ — Evidence: Mobile CI on persistent UI PR.
 - [ ] Verify SQLite persistence across restart on simulator or physical device.
-  Progress: real setup and completion flows use SQLite and bundle successfully; device restart remains.
+  Progress: startup now preserves the previous successful-launch marker and Settings reports whether it survived a later launch. One full close/reopen on a simulator or device remains.
 
 **Decision gate:** application runs on device and persists a record across restart.
 
@@ -68,10 +68,9 @@ This is the live operating plan. Every agent must read it before working and upd
 - [x] ~~Add UI for creating a goal, skill and first quest~~ — Evidence: `/setup` route.
 - [x] ~~Replace Today demo quests with live SQLite active quests~~ — Evidence: Today focus reload and repository query.
 - [x] ~~Add UI for opening and completing a real quest~~ — Evidence: `/quest/[id]` route.
-- [ ] Show completed work in Today and skill history.
-  Progress: completed quests disappear from active Today after refresh; dedicated history remains.
+- [x] ~~Show completed work in Today and skill history~~ — Evidence: SQLite-backed Progress history and `/skill/[id]` detail.
 - [ ] Add SQLite-backed lifecycle and persistence tests.
-  Progress: service tests pass against memory repository; device SQLite integration remains.
+  Progress: service tests pass against memory repository; startup cross-launch evidence is visible in Settings, while automated device SQLite integration remains.
 
 **Decision gate:** Pavel performs the complete loop through UI with persistent data and visible history.
 
@@ -133,12 +132,24 @@ Deferred, not completed:
 
 ## Blockers and decisions needed
 
-- Device restart test remains for SQLite persistence.
+- One physical-device or simulator close/reopen remains to confirm the new SQLite cross-launch indicator.
 - Dark theme is not implemented.
-- Dedicated completed-work and skill-history UI remains.
+- Automated device-level SQLite integration tests remain.
 - Skill-graph library and mobile file-access strategy are not selected.
 
 ## Changelog
+
+### 2026-07-16 — Cross-launch SQLite verification
+
+- Preserved the previous successful startup marker before writing the current marker.
+- Added a Settings status that makes cross-launch SQLite evidence visible and gives the exact final device step.
+- Reconciled the plan and README with the already-delivered completed-work and skill-history UI.
+
+### 2026-07-15 — Completed-work and skill history
+
+- Added live completed quest history to Progress.
+- Added SQLite-backed skill list and skill detail history.
+- Kept activity XP separate from reviewed mastery.
 
 ### 2026-07-15 — Persistent Personal UI
 
