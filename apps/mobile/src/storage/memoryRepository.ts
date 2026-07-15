@@ -1,4 +1,4 @@
-import type { PersonalRepository } from "../domain/repository";
+import type { CompletedQuestSummary, PersonalRepository } from "../domain/repository";
 import type { Goal, Profile, ProgressEvent, Quest, QuestCompletion, QuestSkill, Skill } from "../domain/types";
 
 export class MemoryPersonalRepository implements PersonalRepository {
@@ -17,6 +17,10 @@ export class MemoryPersonalRepository implements PersonalRepository {
   async getSkill(id: string) { return this.skills.get(id) ?? null; }
   async saveSkill(skill: Skill) { this.skills.set(skill.id, skill); }
   async listSkills(goalId: string) { return [...this.skills.values()].filter((skill) => skill.goalId === goalId); }
+  async listSkillsForProfile(profileId: string) {
+    const goalIds = new Set([...this.goals.values()].filter((goal) => goal.profileId === profileId && goal.status !== "archived").map((goal) => goal.id));
+    return [...this.skills.values()].filter((skill) => goalIds.has(skill.goalId));
+  }
   async getQuest(id: string) { return this.quests.get(id) ?? null; }
   async saveQuest(quest: Quest, links: QuestSkill[]) {
     this.quests.set(quest.id, quest);
@@ -30,5 +34,25 @@ export class MemoryPersonalRepository implements PersonalRepository {
     this.quests.set(completedQuest.id, completedQuest);
   }
   async listCompletions(questId: string) { return this.completions.filter((completion) => completion.questId === questId); }
+  async listCompletedQuests(limit = 50) { return this.buildHistory().slice(0, limit); }
+  async listSkillHistory(skillId: string, limit = 50) { return this.buildHistory().filter((item) => item.skillIds.includes(skillId)).slice(0, limit); }
   async listProgressEvents(entityId: string) { return this.events.filter((event) => event.entityId === entityId); }
+
+  private buildHistory(): CompletedQuestSummary[] {
+    return [...this.completions]
+      .sort((a, b) => b.completedAt.localeCompare(a.completedAt))
+      .map((completion) => {
+        const quest = this.quests.get(completion.questId);
+        if (!quest) throw new Error(`Quest not found for completion: ${completion.questId}`);
+        return {
+          questId: quest.id,
+          title: quest.title,
+          completedAt: completion.completedAt,
+          xpGranted: completion.xpGranted,
+          evidenceNote: completion.evidenceNote,
+          reflection: completion.reflection,
+          skillIds: this.questLinks.filter((link) => link.questId === quest.id).map((link) => link.skillId),
+        };
+      });
+  }
 }

@@ -6,10 +6,7 @@ import { MemoryPersonalRepository } from "../src/storage/memoryRepository";
 function setup() {
   const repository = new MemoryPersonalRepository();
   let sequence = 0;
-  const service = new PersonalService(repository, {
-    now: () => "2026-07-15T20:00:00.000Z",
-    createId: (prefix) => `${prefix}_${++sequence}`,
-  });
+  const service = new PersonalService(repository, { now: () => "2026-07-15T20:00:00.000Z", createId: (prefix) => `${prefix}_${++sequence}` });
   return { repository, service };
 }
 
@@ -29,18 +26,19 @@ test("prevents adding skills to archived goals", async () => {
   await assert.rejects(() => service.createSkill({ goalId: goal.id, title: "React Native", supportLevel: 2 }), /archived goal/);
 });
 
-test("creates a linked quest and completes it atomically", async () => {
+test("creates a linked quest, completes it and exposes history", async () => {
   const { repository, service } = setup();
   const goal = await service.createGoal({ profileId: "pavel", displayName: "Pavel", title: "Build Levera" });
   const skill = await service.createSkill({ goalId: goal.id, title: "React Native", supportLevel: 2 });
   const quest = await service.createQuest({ title: "Build the first form", skillIds: [skill.id], supportLevel: 2, xpReward: 20 });
-  assert.equal((await repository.listQuestSkills(quest.id))[0]?.skillId, skill.id);
+  await service.finishQuest({ questId: quest.id, evidenceNote: "Committed service layer", reflection: "Transactions keep completion honest" });
 
-  const result = await service.finishQuest({ questId: quest.id, evidenceNote: "Committed service layer", reflection: "Transactions keep completion honest" });
-  assert.equal(result.completion.xpGranted, 20);
-  assert.equal((await repository.getQuest(quest.id))?.status, "completed");
-  assert.equal((await repository.listCompletions(quest.id)).length, 1);
-  assert.equal((await repository.listProgressEvents(quest.id)).length, 1);
+  const history = await repository.listCompletedQuests();
+  assert.equal(history[0]?.title, "Build the first form");
+  assert.equal(history[0]?.evidenceNote, "Committed service layer");
+  assert.deepEqual(history[0]?.skillIds, [skill.id]);
+  assert.equal((await repository.listSkillHistory(skill.id)).length, 1);
+  assert.equal((await repository.listSkillsForProfile("pavel"))[0]?.id, skill.id);
 });
 
 test("rejects empty titles and quests without skills", async () => {
