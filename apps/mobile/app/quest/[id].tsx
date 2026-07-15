@@ -1,0 +1,71 @@
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { usePersonalApp } from "../../src/application/PersonalAppProvider";
+import type { Quest } from "../../src/domain/types";
+import { theme } from "../../src/theme";
+
+export default function QuestScreen() {
+  const router = useRouter();
+  const params = useLocalSearchParams<{ id: string | string[] }>();
+  const questId = Array.isArray(params.id) ? params.id[0] : params.id;
+  const { repository, service, refresh } = usePersonalApp();
+  const [quest, setQuest] = useState<Quest | null>(null);
+  const [evidenceNote, setEvidenceNote] = useState("");
+  const [reflection, setReflection] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!questId) return;
+    repository.getQuest(questId).then(setQuest).catch((caught) => setError(caught instanceof Error ? caught.message : "Не удалось открыть квест")).finally(() => setLoading(false));
+  }, [questId, repository]);
+
+  const complete = async () => {
+    if (!questId) return;
+    setSaving(true);
+    setError(null);
+    try {
+      await service.finishQuest({ questId, evidenceNote, reflection });
+      refresh();
+      router.replace("/(tabs)");
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Не удалось завершить квест");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) return <SafeAreaView style={styles.center}><ActivityIndicator color={theme.colors.blue} /></SafeAreaView>;
+  if (!quest) return <SafeAreaView style={styles.center}><Text style={styles.errorTitle}>Квест не найден</Text><Pressable onPress={() => router.back()}><Text style={styles.back}>Вернуться</Text></Pressable></SafeAreaView>;
+
+  return (
+    <SafeAreaView style={styles.safe} edges={["top", "bottom"]}>
+      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+          <Pressable onPress={() => router.back()}><Text style={styles.back}>← Сегодня</Text></Pressable>
+          <View style={styles.badge}><Text style={styles.badgeText}>L{quest.supportLevel} · +{quest.xpReward} XP</Text></View>
+          <Text style={styles.title}>{quest.title}</Text>
+          {quest.description ? <Text style={styles.description}>{quest.description}</Text> : null}
+
+          <View style={styles.divider} />
+          <Text style={styles.label}>Доказательство</Text>
+          <TextInput value={evidenceNote} onChangeText={setEvidenceNote} placeholder="Что конкретно сделано?" placeholderTextColor={theme.colors.muted} style={styles.multiline} multiline textAlignVertical="top" />
+          <Text style={styles.label}>Рефлексия</Text>
+          <TextInput value={reflection} onChangeText={setReflection} placeholder="Что сработало и что изменить в следующий раз?" placeholderTextColor={theme.colors.muted} style={styles.multiline} multiline textAlignVertical="top" />
+          {error ? <Text style={styles.error}>{error}</Text> : null}
+          <Pressable onPress={complete} disabled={saving} style={({ pressed }) => [styles.button, saving && styles.disabled, pressed && styles.pressed]}><Text style={styles.buttonText}>{saving ? "Сохраняю…" : "Завершить квест"}</Text></Pressable>
+          <Text style={styles.note}>XP зафиксирует действие. Мастерство изменится только после честного обзора.</Text>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  flex: { flex: 1 }, safe: { flex: 1, backgroundColor: theme.colors.canvas }, center: { flex: 1, backgroundColor: theme.colors.canvas, alignItems: "center", justifyContent: "center", gap: 16, padding: 24 }, content: { padding: 20, paddingBottom: 42 }, back: { color: theme.colors.blue, fontSize: 16, fontWeight: "700", paddingVertical: 10, marginBottom: 22 },
+  badge: { alignSelf: "flex-start", backgroundColor: theme.colors.blueSoft, borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6 }, badgeText: { color: theme.colors.blue, fontWeight: "800", fontSize: 13 }, title: { color: theme.colors.text, fontSize: 34, lineHeight: 40, fontWeight: "700", marginTop: 14 }, description: { color: theme.colors.muted, fontSize: 16, lineHeight: 23, marginTop: 10 }, divider: { height: 1, backgroundColor: theme.colors.border, marginVertical: 26 }, label: { color: theme.colors.text, fontSize: 15, fontWeight: "700", marginBottom: 8 }, multiline: { minHeight: 112, backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.border, borderRadius: 12, padding: 14, color: theme.colors.text, fontSize: 16, lineHeight: 22, marginBottom: 18 },
+  button: { minHeight: 54, borderRadius: 12, backgroundColor: theme.colors.blue, alignItems: "center", justifyContent: "center", marginTop: 4 }, buttonText: { color: "#FFFFFF", fontSize: 16, fontWeight: "800" }, disabled: { opacity: 0.5 }, pressed: { opacity: 0.78 }, note: { color: theme.colors.muted, fontSize: 13, lineHeight: 19, textAlign: "center", marginTop: 12 }, error: { color: theme.colors.red, backgroundColor: "#FCE9E7", borderRadius: 10, padding: 12, marginBottom: 14 }, errorTitle: { color: theme.colors.red, fontSize: 20, fontWeight: "700" },
+});
