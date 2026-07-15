@@ -26,6 +26,33 @@ test("prevents adding skills to archived goals", async () => {
   await assert.rejects(() => service.createSkill({ goalId: goal.id, title: "React Native", supportLevel: 2 }), /archived goal/);
 });
 
+test("creates directed skill relationships and rejects cycles", async () => {
+  const { repository, service } = setup();
+  const goal = await service.createGoal({ profileId: "pavel", displayName: "Pavel", title: "Build Levera" });
+  const foundation = await service.createSkill({ goalId: goal.id, title: "TypeScript", supportLevel: 2 });
+  const mobile = await service.createSkill({ goalId: goal.id, title: "React Native", supportLevel: 2 });
+  const delivery = await service.createSkill({ goalId: goal.id, title: "Mobile delivery", supportLevel: 1 });
+
+  const first = await service.connectSkills({ parentSkillId: foundation.id, childSkillId: mobile.id });
+  await service.connectSkills({ parentSkillId: mobile.id, childSkillId: delivery.id });
+  const duplicate = await service.connectSkills({ parentSkillId: foundation.id, childSkillId: mobile.id });
+
+  assert.equal(duplicate.id, first.id);
+  assert.equal((await repository.listSkillEdges()).length, 2);
+  await assert.rejects(() => service.connectSkills({ parentSkillId: delivery.id, childSkillId: foundation.id }), /cycle/);
+  await assert.rejects(() => service.connectSkills({ parentSkillId: mobile.id, childSkillId: mobile.id }), /itself/);
+});
+
+test("keeps skill relationships inside one goal", async () => {
+  const { service } = setup();
+  const firstGoal = await service.createGoal({ profileId: "pavel", displayName: "Pavel", title: "Build Levera" });
+  const secondGoal = await service.createGoal({ profileId: "pavel", displayName: "Pavel", title: "Learn German" });
+  const mobile = await service.createSkill({ goalId: firstGoal.id, title: "React Native", supportLevel: 2 });
+  const language = await service.createSkill({ goalId: secondGoal.id, title: "Vocabulary", supportLevel: 2 });
+
+  await assert.rejects(() => service.connectSkills({ parentSkillId: mobile.id, childSkillId: language.id }), /same goal/);
+});
+
 test("creates a linked quest, completes it and exposes history", async () => {
   const { repository, service } = setup();
   const goal = await service.createGoal({ profileId: "pavel", displayName: "Pavel", title: "Build Levera" });

@@ -1,4 +1,4 @@
-import type { Goal, Profile, ProgressEvent, Quest, QuestCompletion, QuestSkill, Skill } from "./types";
+import type { Goal, Profile, ProgressEvent, Quest, QuestCompletion, QuestSkill, Skill, SkillEdge } from "./types";
 
 export interface CompletedQuestSummary {
   questId: string;
@@ -19,6 +19,9 @@ export interface PersonalRepository {
   saveSkill(skill: Skill): Promise<void>;
   listSkills(goalId: string): Promise<Skill[]>;
   listSkillsForProfile(profileId: string): Promise<Skill[]>;
+  saveSkillEdge(edge: SkillEdge): Promise<void>;
+  deleteSkillEdge(id: string): Promise<void>;
+  listSkillEdges(): Promise<SkillEdge[]>;
   getQuest(id: string): Promise<Quest | null>;
   saveQuest(quest: Quest, links: QuestSkill[]): Promise<void>;
   listQuestSkills(questId: string): Promise<QuestSkill[]>;
