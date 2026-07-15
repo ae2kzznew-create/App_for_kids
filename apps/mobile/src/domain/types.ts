@@ -4,8 +4,16 @@ export type SkillStatus = "growing" | "stable" | "due" | "fading" | "paused";
 export type GoalStatus = "active" | "completed" | "archived";
 export type QuestStatus = "planned" | "active" | "completed" | "archived";
 
+export interface Profile {
+  id: EntityId;
+  displayName: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Goal {
   id: EntityId;
+  profileId: EntityId;
   title: string;
   description?: string;
   status: GoalStatus;
