@@ -4,10 +4,10 @@ This is the live operating plan. Every agent must read it before working and upd
 
 ## Status
 
-- **Current stage:** P2 + P3 — Runtime shell and first vertical slice
-- **Current milestone:** Connect `SQLitePersonalRepository` to real UI forms and replace demo quests
+- **Current stage:** P2 + P3 — Runtime shell and persistent personal loop
+- **Current milestone:** Add completed-work history and verify SQLite persistence across device restart
 - **Last updated:** 2026-07-15
-- **Application status:** Expo bundle passes; goal/skill/quest lifecycle exists in tested service and repository layers; UI still uses demo data
+- **Application status:** real SQLite-backed creation and completion UI compiles, tests and Android bundle pass; skill history and device restart test remain
 - **Primary user:** Pavel, acting as architect, performer and coach
 - **Active direction:** `docs/product/PERSONAL-FIRST-DIRECTION.md`
 
@@ -45,10 +45,10 @@ This is the live operating plan. Every agent must read it before working and upd
 - [x] ~~Add startup SQLite write/read health check and error UI~~ — Evidence: database startup code.
 - [x] ~~Separate domain/storage logic from UI~~ — Evidence: source structure.
 - [ ] Add complete light/dark brand tokens.
-  Progress: light design exists; dark theme remains.
-- [x] ~~Pass clean install, TypeScript, automated tests and Android Expo bundle~~ — Evidence: Mobile CI.
+  Progress: light design and persistent forms exist; dark theme remains.
+- [x] ~~Pass clean install, TypeScript, all automated tests and Android Expo bundle~~ — Evidence: Mobile CI on persistent UI PR.
 - [ ] Verify SQLite persistence across restart on simulator or physical device.
-  Progress: initialization compiles and bundles; device restart remains.
+  Progress: real setup and completion flows use SQLite and bundle successfully; device restart remains.
 
 **Decision gate:** application runs on device and persists a record across restart.
 
@@ -58,19 +58,22 @@ This is the live operating plan. Every agent must read it before working and upd
 
 **Goal:** `goal → skill → quest → completion → reflection → visible progress` without raw database edits.
 
-- [x] ~~Implement create, archive and restore goal lifecycle in the service layer~~ — Evidence: `PersonalService` and tests.
-- [x] ~~Implement skill creation linked to a non-archived goal~~ — Evidence: service validation and repository contract.
-- [x] ~~Implement quest creation linked to one or more skills~~ — Evidence: quest-skill persistence and tests.
-- [x] ~~Support quest levels L3–L0 and validated XP~~ — Evidence: typed service inputs and validation.
-- [x] ~~Implement completion with optional evidence and reflection~~ — Evidence: `finishQuest`.
-- [x] ~~Persist completion, quest status and immutable progress event atomically~~ — Evidence: SQLite transaction and memory test.
-- [ ] Connect the service and SQLite repository to UI forms.
-- [ ] Replace Today demo quests with live active quests.
+- [x] ~~Implement goal create/archive/restore lifecycle in service and repository layers~~ — Evidence: `PersonalService`, repositories and tests.
+- [x] ~~Implement skills linked to non-archived goals~~ — Evidence: service validation.
+- [x] ~~Implement quests linked to one or more skills~~ — Evidence: quest-skill persistence.
+- [x] ~~Support L3–L0 and validated XP~~ — Evidence: typed service and UI selector.
+- [x] ~~Implement completion with evidence and reflection~~ — Evidence: quest completion screen.
+- [x] ~~Persist completion, status and progress event atomically~~ — Evidence: SQLite transaction.
+- [x] ~~Connect PersonalService and SQLite repository to application context~~ — Evidence: `PersonalAppProvider`.
+- [x] ~~Add UI for creating a goal, skill and first quest~~ — Evidence: `/setup` route.
+- [x] ~~Replace Today demo quests with live SQLite active quests~~ — Evidence: Today focus reload and repository query.
+- [x] ~~Add UI for opening and completing a real quest~~ — Evidence: `/quest/[id]` route.
 - [ ] Show completed work in Today and skill history.
+  Progress: completed quests disappear from active Today after refresh; dedicated history remains.
 - [ ] Add SQLite-backed lifecycle and persistence tests.
-  Progress: 4 new service lifecycle tests pass against the in-memory repository; device SQLite integration remains.
+  Progress: service tests pass against memory repository; device SQLite integration remains.
 
-**Decision gate:** Pavel performs the complete loop through UI with persistent data.
+**Decision gate:** Pavel performs the complete loop through UI with persistent data and visible history.
 
 ---
 
@@ -132,26 +135,29 @@ Deferred, not completed:
 
 - Device restart test remains for SQLite persistence.
 - Dark theme is not implemented.
-- UI still reads demo data.
+- Dedicated completed-work and skill-history UI remains.
 - Skill-graph library and mobile file-access strategy are not selected.
 
 ## Changelog
 
+### 2026-07-15 — Persistent Personal UI
+
+- Added application context for SQLite repository and PersonalService.
+- Replaced demo Today data with live active quests.
+- Added first-path setup form for goal, skill, quest and L3–L0.
+- Added evidence/reflection completion screen.
+- Added focus/revision refresh after writes.
+- Completed visual QA of the setup form with no overflow or overlap.
+- Full Mobile CI and Android Expo bundle pass.
+
 ### 2026-07-15 — Personal service vertical slice
 
-- Added repository contract plus in-memory and SQLite implementations.
-- Added PersonalService for goal lifecycle, skills, linked quests and completion.
-- Added atomic completion + progress-event persistence.
-- Added 4 lifecycle/validation tests; full Mobile CI succeeds.
-- Advanced P3 to the UI integration boundary.
+- Added repository implementations, PersonalService and atomic completion events.
+- Added 4 lifecycle/validation tests.
 
-### 2026-07-15 — Runtime and bundle verification
+### 2026-07-15 — Runtime and foundation
 
-- Wired SQLite into root startup, fixed runtime dependencies and passed Android Expo bundle.
-
-### 2026-07-15 — Personal MVP foundation
-
-- Completed P1 architecture, shell, schema, tests and visual QA.
+- Added SQLite startup health checks, Expo bundle validation and Personal MVP shell.
 
 ### 2026-07-15 — Personal-first pivot
 
