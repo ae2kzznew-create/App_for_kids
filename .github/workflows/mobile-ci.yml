@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write
 
 jobs:
   validate:
@@ -30,4 +31,18 @@ jobs:
       - name: Test domain rules
         run: npm test
       - name: Bundle Android application
-        run: npx expo export --platform android --output-dir dist/android
+        id: bundle
+        run: npx expo export --platform android --output-dir dist/android > bundle.log 2>&1
+      - name: Report bundle failure
+        if: failure() && steps.bundle.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "### Expo bundle failure"
+            echo
+            echo '```text'
+            tail -n 120 bundle.log
+            echo '```'
+          } > bundle-comment.md
+          gh pr comment "${{ github.event.pull_request.number }}" --body-file bundle-comment.md
