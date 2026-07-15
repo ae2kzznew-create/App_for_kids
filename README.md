@@ -2,6 +2,13 @@
 
 Levera is a family product concept for helping children aged 8–12 build practical skills through calibrated quests, visible progress, and parent participation.
 
+## Agent and contributor entry point
+
+Before making repository changes, read:
+
+1. [`AGENTS.md`](AGENTS.md) — operating rules for agents and contributors.
+2. [`docs/EXECUTION-PLAN.md`](docs/EXECUTION-PLAN.md) — current stage, progress, blockers and next actions.
+
 ## Repository layout
 
 - [`apps/`](apps/) — application source code will live here.
@@ -19,5 +26,7 @@ Levera is a family product concept for helping children aged 8–12 build practi
 ## Current status
 
 The repository currently contains project documentation. Application source code has not yet been added.
+
+Current execution stage: **Problem validation**. See [`docs/EXECUTION-PLAN.md`](docs/EXECUTION-PLAN.md) for live status.
 
 The first product to build is a mobile application with one shared family account and separate parent and child experiences.
