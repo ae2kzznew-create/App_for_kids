@@ -8,15 +8,9 @@ Before making changes, read:
 
 1. `AGENTS.md` — operating rules and status protocol.
 2. `docs/EXECUTION-PLAN.md` — current stage, completed work, next actions and decision gates.
-3. `docs/product/Product-Bible.html` — canonical product vision and principles.
-4. The documents relevant to the task:
-   - research: `docs/research/README.md`
-   - validation: `docs/validation/`
-   - technical work: `docs/technical/`
-   - UX/product work: `docs/product/`
-   - marketing: `docs/marketing/`
-   - business: `docs/business/`
-   - legal/privacy: `docs/legal/`
+3. `docs/product/PERSONAL-FIRST-DIRECTION.md` — active product direction for the first implementation.
+4. `docs/product/Product-Bible.html` — original product principles and family vision.
+5. Documents relevant to the task under `docs/`.
 
 Material in `docs/archive/` is historical and is not authoritative.
 
@@ -26,61 +20,76 @@ When documents conflict, use this priority:
 
 1. Explicit user instruction in the current task.
 2. `docs/EXECUTION-PLAN.md` for stage and sequencing.
-3. `docs/product/Product-Bible.html` for product principles.
-4. Current canonical documents outside `docs/archive/`.
-5. Archived and raw research only as supporting context.
+3. `docs/product/PERSONAL-FIRST-DIRECTION.md` for the current personal MVP.
+4. `docs/product/Product-Bible.html` for reusable product principles and the future family vision.
+5. Other canonical documents outside `docs/archive/`.
+6. Archived and raw research only as supporting context.
 
-Do not silently resolve a material product, legal, privacy or safety conflict. Record it under **Blockers and decisions needed** in the execution plan.
+The personal-first direction intentionally overrides family-specific assumptions for the current MVP.
 
 ## Progress-update protocol
 
 Every agent that completes repository work must update `docs/EXECUTION-PLAN.md` in the same pull request or commit.
 
-Rules:
-
-- A pending task uses `- [ ] Task`.
-- A completed task uses `- [x] ~~Task~~ — Evidence: ...`.
-- Mark a task complete only when its acceptance criteria are satisfied.
-- Do not mark an entire stage complete until every required task and its decision gate are complete.
-- For partial work, leave the item unchecked and add an indented `Progress:` note.
-- Add blockers to the dedicated blockers section.
-- Update `Last updated`, `Current stage`, `Current milestone` and the changelog.
-- Link evidence when possible: pull request, commit, report, dataset or test result.
-- Never rewrite historical metrics to make results look better.
-
-## Product sequencing rules
-
-- Validate the problem before building the full application.
-- Validate the core family loop before adding AI.
-- Do not scale paid acquisition before retention and willingness to pay are demonstrated.
-- Do not add marketplace, public child rankings, paid key acceleration or other post-PMF mechanics to the MVP.
-- Parent approval is required for AI-generated child quests.
-- Do not make public legal, privacy, scientific or market claims without verified evidence.
+- Pending: `- [ ] Task`
+- Complete: `- [x] ~~Task~~ — Evidence: ...`
+- Mark complete only when acceptance criteria are satisfied.
+- For partial work, keep the item unchecked and add a `Progress:` note.
+- Update current stage, milestone, blockers, date and changelog.
+- Link evidence when possible.
+- Deferred work is not completed work and must not be checked off.
 
 ## Current product scope
 
-Initial audience: Russian-speaking families with children aged 8–12.
+The first application is **Levera Personal**, built for Pavel's own use.
+
+Pavel acts as:
+
+- architect — goals, skills, quests and difficulty;
+- performer — execution, evidence and reflection;
+- coach — weekly review, repetition and next challenge.
 
 Core loop:
 
-`quest → child claims completion → parent confirmation → XP/key → wish wheel → reward fulfillment → weekly report`
+`goal → skill → quest → evidence/reflection → progress update → next challenge → weekly review`
+
+Core capabilities:
+
+- visible personal progress;
+- skill tree or graph;
+- quests with L3–L0 support levels;
+- spaced repetition and maintenance;
+- weekly review;
+- Markdown-based second-brain integration;
+- optional Obsidian adapter later.
 
 Initial application layout:
 
 ```text
 apps/
-  mobile/   React Native / Expo family application
-  admin/    Internal operations panel
+  mobile/   React Native / Expo personal application
 
 docs/      Product and company documentation
 ```
+
+Family accounts, monetisation, AI quest generation and two-way Obsidian sync are deferred.
+
+## Product sequencing rules
+
+- Build the local personal loop before adding cloud services.
+- Build Markdown import/export before tool-specific two-way sync.
+- Separate activity metrics from demonstrated skill.
+- Do not use guilt, lost-streak anxiety or unsupported social comparison.
+- Keep domain logic separate from UI.
+- Do not add AI until the manual personal workflow is useful.
+- Preserve the original family vision as future material, not current MVP requirements.
 
 ## Definition of done
 
 A task is done only when:
 
 1. The requested artifact or behavior exists.
-2. It has been reviewed or tested at the level appropriate to the task.
+2. It has been reviewed or tested at the appropriate level.
 3. No known destructive regression remains.
 4. Documentation and links are updated.
 5. `docs/EXECUTION-PLAN.md` reflects the real status.

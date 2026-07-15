@@ -1,6 +1,8 @@
 # Levera
 
-Levera is a family product concept for helping children aged 8–12 build practical skills through calibrated quests, visible progress, and parent participation.
+Levera is being built first as a personal development system for Pavel: visible progress, skill trees, calibrated quests, weekly review and Markdown-based second-brain integration.
+
+The original family and child product remains documented as a future direction.
 
 ## Agent and contributor entry point
 
@@ -8,25 +10,22 @@ Before making repository changes, read:
 
 1. [`AGENTS.md`](AGENTS.md) — operating rules for agents and contributors.
 2. [`docs/EXECUTION-PLAN.md`](docs/EXECUTION-PLAN.md) — current stage, progress, blockers and next actions.
+3. [`docs/product/PERSONAL-FIRST-DIRECTION.md`](docs/product/PERSONAL-FIRST-DIRECTION.md) — active product direction.
 
 ## Repository layout
 
 - [`apps/`](apps/) — application source code will live here.
 - [`docs/`](docs/) — product, research, validation, technical, brand, marketing, business and legal documents.
 
-## Documentation: start here
-
-1. [`docs/product/Product-Bible.html`](docs/product/Product-Bible.html) — canonical product vision and principles.
-2. [`docs/research/README.md`](docs/research/README.md) — research index and evidence map.
-3. [`docs/validation/Mom-Test-Interview-Script.html`](docs/validation/Mom-Test-Interview-Script.html) — problem interviews.
-4. [`docs/validation/Wizard-of-Oz-Guide.html`](docs/validation/Wizard-of-Oz-Guide.html) — manual MVP test.
-5. [`docs/validation/W4-Retention-Test-Protocol.html`](docs/validation/W4-Retention-Test-Protocol.html) — go/no-go metrics.
-6. [`docs/technical/MVP-Technical-Brief.html`](docs/technical/MVP-Technical-Brief.html) — initial implementation brief.
-
 ## Current status
 
-The repository currently contains project documentation. Application source code has not yet been added.
+- Active direction: **Levera Personal**.
+- Current stage: **Personal MVP specification and foundation**.
+- Application source code: not started.
+- Family interviews and Wizard-of-Oz validation: deferred.
 
-Current execution stage: **Problem validation**. See [`docs/EXECUTION-PLAN.md`](docs/EXECUTION-PLAN.md) for live status.
+## Original product documentation
 
-The first product to build is a mobile application with one shared family account and separate parent and child experiences.
+- [`docs/product/Product-Bible.html`](docs/product/Product-Bible.html) — original family product vision and reusable principles.
+- [`docs/research/README.md`](docs/research/README.md) — research index.
+- [`docs/technical/MVP-Technical-Brief.html`](docs/technical/MVP-Technical-Brief.html) — original technical brief; family-specific sections are not binding for the personal MVP.
