@@ -4,10 +4,10 @@ This is the live operating plan. Every agent must read it before working and upd
 
 ## Status
 
-- **Current stage:** P2 + P3 — Runtime shell and persistent personal loop
-- **Current milestone:** Confirm SQLite persistence on a physical device, then close the P2/P3 decision gate
+- **Current stage:** P2 + P3 gate, with P4 skill-graph foundation started
+- **Current milestone:** Confirm SQLite persistence and expose the first cycle-safe skill graph in the application
 - **Last updated:** 2026-07-16
-- **Application status:** real SQLite-backed creation, completion and history UI compile, tests and Android bundle pass; a visible cross-launch persistence check is ready for device confirmation
+- **Application status:** the persistent personal loop and history UI work; directed same-goal skill relationships are enforced in domain and storage layers with cycle tests
 - **Primary user:** Pavel, acting as architect, performer and coach
 - **Active direction:** `docs/product/PERSONAL-FIRST-DIRECTION.md`
 
@@ -48,7 +48,7 @@ This is the live operating plan. Every agent must read it before working and upd
   Progress: light design and persistent forms exist; dark theme remains.
 - [x] ~~Pass clean install, TypeScript, all automated tests and Android Expo bundle~~ — Evidence: Mobile CI on persistent UI PR.
 - [ ] Verify SQLite persistence across restart on simulator or physical device.
-  Progress: startup now preserves the previous successful-launch marker and Settings reports whether it survived a later launch. One full close/reopen on a simulator or device remains.
+  Progress: startup preserves the previous successful-launch marker and Settings reports whether it survived a later launch. One full close/reopen on a simulator or device remains.
 
 **Decision gate:** application runs on device and persists a record across restart.
 
@@ -78,8 +78,9 @@ This is the live operating plan. Every agent must read it before working and upd
 
 ## P4 — Skill tree and progress visualization
 
-- [ ] Add directed skill relationships and cycle protection.
+- [x] ~~Add directed skill relationships and cycle protection~~ — Evidence: `connectSkills`, memory/SQLite edge persistence and cycle/cross-goal tests.
 - [ ] Display interactive skill tree.
+  Progress: domain graph is ready; the current Skills screen still renders a flat list.
 - [ ] Show growing, stable, due, fading and paused states.
 - [ ] Show progress by day, week, month, goal and skill.
 - [ ] Keep activity separate from demonstrated skill.
@@ -132,12 +133,20 @@ Deferred, not completed:
 
 ## Blockers and decisions needed
 
-- One physical-device or simulator close/reopen remains to confirm the new SQLite cross-launch indicator.
+- One physical-device or simulator close/reopen remains to confirm the SQLite cross-launch indicator.
 - Dark theme is not implemented.
 - Automated device-level SQLite integration tests remain.
-- Skill-graph library and mobile file-access strategy are not selected.
+- The first graph rendering can use the existing React Native primitives; a specialized graph library is not selected.
+- Mobile file-access strategy is not selected.
 
 ## Changelog
+
+### 2026-07-16 — Directed skill graph foundation
+
+- Added repository operations for persistent directed skill edges.
+- Added idempotent same-goal skill connection and removal service operations.
+- Prevented self-links, cross-goal links and direct or transitive cycles.
+- Added automated graph behavior tests against the memory repository.
 
 ### 2026-07-16 — Cross-launch SQLite verification
 

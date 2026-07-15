@@ -1,6 +1,6 @@
 import type { SQLiteDatabase } from "expo-sqlite";
 import type { CompletedQuestSummary, PersonalRepository } from "../domain/repository";
-import type { Goal, Profile, ProgressEvent, Quest, QuestCompletion, QuestSkill, Skill } from "../domain/types";
+import type { Goal, Profile, ProgressEvent, Quest, QuestCompletion, QuestSkill, Skill, SkillEdge } from "../domain/types";
 
 export class SQLitePersonalRepository implements PersonalRepository {
   constructor(private readonly db: SQLiteDatabase) {}
@@ -16,6 +16,9 @@ export class SQLitePersonalRepository implements PersonalRepository {
     const rows = await this.db.getAllAsync<SkillRow>("SELECT s.* FROM skills s JOIN goals g ON g.id = s.goal_id WHERE g.profile_id = ? AND g.status != 'archived' ORDER BY s.updated_at DESC", profileId);
     return rows.map(mapSkill);
   }
+  async saveSkillEdge(edge: SkillEdge) { await this.db.runAsync("INSERT INTO skill_edges (id, parent_skill_id, child_skill_id) VALUES (?, ?, ?)", edge.id, edge.parentSkillId, edge.childSkillId); }
+  async deleteSkillEdge(id: string) { await this.db.runAsync("DELETE FROM skill_edges WHERE id = ?", id); }
+  async listSkillEdges() { return this.db.getAllAsync<SkillEdge>("SELECT id, parent_skill_id AS parentSkillId, child_skill_id AS childSkillId FROM skill_edges ORDER BY id"); }
   async getQuest(id: string) { const row = await this.db.getFirstAsync<QuestRow>("SELECT * FROM quests WHERE id = ?", id); return row ? mapQuest(row) : null; }
   async saveQuest(quest: Quest, links: QuestSkill[]) {
     await this.db.withTransactionAsync(async () => {

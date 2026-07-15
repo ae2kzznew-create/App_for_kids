@@ -1,6 +1,7 @@
 import { completeQuest } from "./progress";
 import type { PersonalRepository } from "./repository";
-import type { Goal, GoalStatus, Profile, Quest, Skill, SupportLevel } from "./types";
+import { wouldCreateSkillCycle } from "./skillGraph";
+import type { Goal, GoalStatus, Profile, Quest, Skill, SkillEdge, SupportLevel } from "./types";
 
 export interface PersonalServiceOptions {
   now?: () => string;
@@ -61,6 +62,37 @@ export class PersonalService {
     return skill;
   }
 
+  async connectSkills(input: { parentSkillId: string; childSkillId: string }): Promise<SkillEdge> {
+    if (input.parentSkillId === input.childSkillId) throw new Error("A skill cannot depend on itself");
+    const [parent, child] = await Promise.all([
+      this.requireSkill(input.parentSkillId),
+      this.requireSkill(input.childSkillId),
+    ]);
+    if (parent.goalId !== child.goalId) throw new Error("Connected skills must belong to the same goal");
+
+    const edges = await this.repository.listSkillEdges();
+    const existing = edges.find((edge) => edge.parentSkillId === parent.id && edge.childSkillId === child.id);
+    if (existing) return existing;
+    if (wouldCreateSkillCycle(edges, parent.id, child.id)) throw new Error("Skill relationship would create a cycle");
+
+    const edge: SkillEdge = {
+      id: this.createId("skill_edge"),
+      parentSkillId: parent.id,
+      childSkillId: child.id,
+    };
+    await this.repository.saveSkillEdge(edge);
+    return edge;
+  }
+
+  async disconnectSkills(input: { parentSkillId: string; childSkillId: string }) {
+    const edge = (await this.repository.listSkillEdges()).find(
+      (candidate) => candidate.parentSkillId === input.parentSkillId && candidate.childSkillId === input.childSkillId,
+    );
+    if (!edge) return false;
+    await this.repository.deleteSkillEdge(edge.id);
+    return true;
+  }
+
   async createQuest(input: { title: string; description?: string; skillIds: string[]; supportLevel: SupportLevel; xpReward?: number; scheduledFor?: string }): Promise<Quest> {
     const skillIds = [...new Set(input.skillIds)];
     if (skillIds.length === 0) throw new Error("A quest must be connected to at least one skill");
@@ -106,6 +138,12 @@ export class PersonalService {
     const goal = await this.repository.getGoal(goalId);
     if (!goal) throw new Error(`Goal not found: ${goalId}`);
     return goal;
+  }
+
+  private async requireSkill(skillId: string) {
+    const skill = await this.repository.getSkill(skillId);
+    if (!skill) throw new Error(`Skill not found: ${skillId}`);
+    return skill;
   }
 }
 

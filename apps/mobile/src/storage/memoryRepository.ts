@@ -1,10 +1,11 @@
 import type { CompletedQuestSummary, PersonalRepository } from "../domain/repository";
-import type { Goal, Profile, ProgressEvent, Quest, QuestCompletion, QuestSkill, Skill } from "../domain/types";
+import type { Goal, Profile, ProgressEvent, Quest, QuestCompletion, QuestSkill, Skill, SkillEdge } from "../domain/types";
 
 export class MemoryPersonalRepository implements PersonalRepository {
   readonly profiles = new Map<string, Profile>();
   readonly goals = new Map<string, Goal>();
   readonly skills = new Map<string, Skill>();
+  readonly skillEdges = new Map<string, SkillEdge>();
   readonly quests = new Map<string, Quest>();
   readonly questLinks: QuestSkill[] = [];
   readonly completions: QuestCompletion[] = [];
@@ -21,6 +22,9 @@ export class MemoryPersonalRepository implements PersonalRepository {
     const goalIds = new Set([...this.goals.values()].filter((goal) => goal.profileId === profileId && goal.status !== "archived").map((goal) => goal.id));
     return [...this.skills.values()].filter((skill) => goalIds.has(skill.goalId));
   }
+  async saveSkillEdge(edge: SkillEdge) { this.skillEdges.set(edge.id, edge); }
+  async deleteSkillEdge(id: string) { this.skillEdges.delete(id); }
+  async listSkillEdges() { return [...this.skillEdges.values()]; }
   async getQuest(id: string) { return this.quests.get(id) ?? null; }
   async saveQuest(quest: Quest, links: QuestSkill[]) {
     this.quests.set(quest.id, quest);
