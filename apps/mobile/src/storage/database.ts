@@ -2,6 +2,14 @@ import * as SQLite from "expo-sqlite";
 import { migrations } from "./migrations";
 
 const databaseName = "levera.db";
+const currentStartKey = "last_successful_start";
+const previousStartKey = "previous_successful_start";
+
+export interface DatabaseHealth {
+  lastSuccessfulStart: string;
+  previousSuccessfulStart: string | null;
+  persistenceVerified: boolean;
+}
 
 export async function openDatabase() {
   const db = await SQLite.openDatabaseAsync(databaseName);
@@ -28,20 +36,48 @@ export async function openDatabase() {
   return db;
 }
 
-export async function verifyDatabase(db: SQLite.SQLiteDatabase) {
+export async function verifyDatabase(db: SQLite.SQLiteDatabase): Promise<DatabaseHealth> {
+  const previous = await db.getFirstAsync<{ value: string }>(
+    "SELECT value FROM app_meta WHERE key = ?",
+    currentStartKey,
+  );
   const now = new Date().toISOString();
-  await db.runAsync(
-    "INSERT INTO app_meta (key, value) VALUES ('last_successful_start', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
-    now,
-  );
 
-  const health = await db.getFirstAsync<{ value: string }>(
-    "SELECT value FROM app_meta WHERE key = 'last_successful_start'",
-  );
+  await db.withTransactionAsync(async () => {
+    if (previous?.value) {
+      await db.runAsync(
+        "INSERT INTO app_meta (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+        previousStartKey,
+        previous.value,
+      );
+    }
+    await db.runAsync(
+      "INSERT INTO app_meta (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+      currentStartKey,
+      now,
+    );
+  });
 
-  if (!health?.value) {
+  const health = await readDatabaseHealth(db);
+  if (!health.lastSuccessfulStart) {
     throw new Error("SQLite health check did not persist the startup marker");
   }
+  return health;
+}
 
-  return { lastSuccessfulStart: health.value };
+export async function readDatabaseHealth(db: SQLite.SQLiteDatabase): Promise<DatabaseHealth> {
+  const rows = await db.getAllAsync<{ key: string; value: string }>(
+    "SELECT key, value FROM app_meta WHERE key IN (?, ?)",
+    currentStartKey,
+    previousStartKey,
+  );
+  const values = new Map(rows.map((row) => [row.key, row.value]));
+  const lastSuccessfulStart = values.get(currentStartKey) ?? "";
+  const previousSuccessfulStart = values.get(previousStartKey) ?? null;
+
+  return {
+    lastSuccessfulStart,
+    previousSuccessfulStart,
+    persistenceVerified: Boolean(lastSuccessfulStart && previousSuccessfulStart),
+  };
 }

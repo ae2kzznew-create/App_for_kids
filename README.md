@@ -14,14 +14,16 @@ Before making repository changes, read:
 
 ## Repository layout
 
-- [`apps/`](apps/) — application source code will live here.
+- [`apps/mobile/`](apps/mobile/) — Expo/React Native personal application.
 - [`docs/`](docs/) — product, research, validation, technical, brand, marketing, business and legal documents.
 
 ## Current status
 
 - Active direction: **Levera Personal**.
-- Current stage: **Personal MVP specification and foundation**.
-- Application source code: not started.
+- Current stage: **persistent personal loop**.
+- Application source: Expo/React Native/TypeScript with Expo Router and local SQLite.
+- Working flow: create goal, skill and quest; complete with evidence/reflection; inspect completed-work and skill history.
+- Current verification: TypeScript, automated domain tests and Android bundle pass; physical-device restart confirmation remains.
 - Family interviews and Wizard-of-Oz validation: deferred.
 
 ## Original product documentation
