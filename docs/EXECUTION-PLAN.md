@@ -7,7 +7,7 @@ This is the live operating plan. Every agent must read it before working and upd
 - **Current stage:** P2 + P3 gate, with P4 visualization in progress
 - **Current milestone:** Confirm SQLite persistence and expand progress views beyond the first interactive skill tree
 - **Last updated:** 2026-07-16
-- **Application status:** the persistent personal loop works; skills now render as a pressable layered graph with explicit dependencies, health states and reviewed mastery
+- **Application status:** the persistent personal loop works; skills render as a pressable layered graph, and strict typechecking is restored after the graph rollout
 - **Primary user:** Pavel, acting as architect, performer and coach
 - **Active direction:** `docs/product/PERSONAL-FIRST-DIRECTION.md`
 
@@ -141,6 +141,12 @@ Deferred, not completed:
 - Mobile file-access strategy is not selected.
 
 ## Changelog
+
+### 2026-07-16 — Skill graph CI stabilization
+
+- Fixed strict indexed-access typing in the graph-level traversal.
+- Expanded Mobile CI failure comments to include typecheck, test and bundle logs.
+- Kept the interactive-tree plan evidence intact while restoring the required validation gate.
 
 ### 2026-07-16 — Interactive skill tree
 
