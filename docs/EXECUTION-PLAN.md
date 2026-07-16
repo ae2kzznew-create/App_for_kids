@@ -4,10 +4,10 @@ This is the live operating plan. Every agent must read it before working and upd
 
 ## Status
 
-- **Current stage:** P2 + P3 gate, with P4 automated verification complete
-- **Current milestone:** Confirm SQLite persistence and complete device interaction checks before closing P2–P4
+- **Current stage:** P2–P4 device gates, with P5 weekly review started
+- **Current milestone:** Dogfood the persistent weekly review, then add reviewed mastery/support adjustments
 - **Last updated:** 2026-07-16
-- **Application status:** the persistent personal loop works; progress is visible by period, goal and skill, and the graph layout is automatically verified with 50 skills across ten levels
+- **Application status:** the personal loop, graph and progress views work; weekly reviews now persist facts, blockers and one concrete next-week decision
 - **Primary user:** Pavel, acting as architect, performer and coach
 - **Active direction:** `docs/product/PERSONAL-FIRST-DIRECTION.md`
 
@@ -46,9 +46,9 @@ This is the live operating plan. Every agent must read it before working and upd
 - [x] ~~Separate domain/storage logic from UI~~ — Evidence: source structure.
 - [ ] Add complete light/dark brand tokens.
   Progress: light design and persistent forms exist; dark theme remains.
-- [x] ~~Pass clean install, TypeScript, all automated tests and Android Expo bundle~~ — Evidence: Mobile CI on persistent UI PR.
+- [x] ~~Pass clean install, TypeScript, all automated tests and Android Expo bundle~~ — Evidence: Mobile CI.
 - [ ] Verify SQLite persistence across restart on simulator or physical device.
-  Progress: startup preserves the previous successful-launch marker and Settings reports whether it survived a later launch. One full close/reopen on a simulator or device remains.
+  Progress: Settings exposes cross-launch evidence; one full device close/reopen remains.
 
 **Decision gate:** application runs on device and persists a record across restart.
 
@@ -58,40 +58,40 @@ This is the live operating plan. Every agent must read it before working and upd
 
 **Goal:** `goal → skill → quest → completion → reflection → visible progress` without raw database edits.
 
-- [x] ~~Implement goal create/archive/restore lifecycle in service and repository layers~~ — Evidence: `PersonalService`, repositories and tests.
+- [x] ~~Implement goal create/archive/restore lifecycle~~ — Evidence: service, repositories and tests.
 - [x] ~~Implement skills linked to non-archived goals~~ — Evidence: service validation.
 - [x] ~~Implement quests linked to one or more skills~~ — Evidence: quest-skill persistence.
 - [x] ~~Support L3–L0 and validated XP~~ — Evidence: typed service and UI selector.
 - [x] ~~Implement completion with evidence and reflection~~ — Evidence: quest completion screen.
 - [x] ~~Persist completion, status and progress event atomically~~ — Evidence: SQLite transaction.
-- [x] ~~Connect PersonalService and SQLite repository to application context~~ — Evidence: `PersonalAppProvider`.
-- [x] ~~Add UI for creating a goal, skill and first quest~~ — Evidence: `/setup` route.
-- [x] ~~Replace Today demo quests with live SQLite active quests~~ — Evidence: Today focus reload and repository query.
-- [x] ~~Add UI for opening and completing a real quest~~ — Evidence: `/quest/[id]` route.
-- [x] ~~Show completed work in Today and skill history~~ — Evidence: SQLite-backed Progress history and `/skill/[id]` detail.
+- [x] ~~Connect PersonalService and SQLite repository to application context~~ — Evidence: provider.
+- [x] ~~Add UI for creating a goal, skill and first quest~~ — Evidence: `/setup`.
+- [x] ~~Replace Today demo quests with live SQLite active quests~~ — Evidence: live query.
+- [x] ~~Add UI for opening and completing a real quest~~ — Evidence: `/quest/[id]`.
+- [x] ~~Show completed work in Today and skill history~~ — Evidence: Progress and `/skill/[id]`.
 - [ ] Add SQLite-backed lifecycle and persistence tests.
-  Progress: service tests pass against memory repository; startup cross-launch evidence is visible in Settings, while automated device SQLite integration remains.
+  Progress: service tests pass against memory repository; automated device SQLite integration remains.
 
-**Decision gate:** Pavel performs the complete loop through UI with persistent data and visible history.
+**Decision gate:** complete loop through UI with persistent data and visible history.
 
 ---
 
 ## P4 — Skill tree and progress visualization
 
-- [x] ~~Add directed skill relationships and cycle protection~~ — Evidence: `connectSkills`, memory/SQLite edge persistence and cycle/cross-goal tests.
-- [x] ~~Display interactive skill tree~~ — Evidence: goal-grouped layered graph with pressable skill nodes and dependency labels.
-- [x] ~~Show growing, stable, due, fading and paused states~~ — Evidence: semantic status labels and colors on every graph node.
-- [x] ~~Show progress by day, week, month, goal and skill~~ — Evidence: period cards, seven-day rhythm, goal rollups, skill rollups and per-skill history.
-- [x] ~~Keep activity separate from demonstrated skill~~ — Evidence: Progress reports XP activity while graph nodes and rollups report reviewed mastery and health.
+- [x] ~~Add directed skill relationships and cycle protection~~ — Evidence: persistent edges and tests.
+- [x] ~~Display interactive skill tree~~ — Evidence: layered pressable graph.
+- [x] ~~Show growing, stable, due, fading and paused states~~ — Evidence: semantic graph nodes.
+- [x] ~~Show progress by day, week, month, goal and skill~~ — Evidence: period and entity rollups.
+- [x] ~~Keep activity separate from demonstrated skill~~ — Evidence: XP versus reviewed mastery.
 - [ ] Verify interaction with at least 50 skills.
-  Progress: an automated fixture verifies all 50 skills appear exactly once across ten navigable levels; final press/scroll inspection on a device remains.
+  Progress: automated fixture verifies 50 skills across ten levels; final device press/scroll check remains.
 
 ---
 
 ## P5 — Weekly review and development techniques
 
-- [ ] Implement structured weekly review.
-- [ ] Surface achievements, stalled skills and repetitions.
+- [x] ~~Implement structured weekly review~~ — Evidence: persistent SQLite review form, history and progress event.
+- [x] ~~Surface achievements, stalled skills and repetitions~~ — Evidence: seven-day facts and due/fading skill callout.
 - [ ] Allow reviewed mastery/support adjustments.
 - [ ] Implement spaced repetition and recovery without guilt.
 - [ ] Support maintenance without XP rewards.
@@ -120,7 +120,6 @@ This is the live operating plan. Every agent must read it before working and upd
 ## Future — Family product
 
 Deferred, not completed:
-
 - [ ] Parent interviews and Wizard-of-Oz pilot.
 - [ ] Parent/child accounts, rewards and child-safety review.
 - [ ] Monetisation, B2B2C and marketplace.
@@ -133,77 +132,44 @@ Deferred, not completed:
 
 ## Blockers and decisions needed
 
-- One physical-device or simulator close/reopen remains to confirm the SQLite cross-launch indicator.
+- Device close/reopen remains for SQLite confirmation.
 - Dark theme is not implemented.
 - Automated device-level SQLite integration tests remain.
-- A final device press/scroll check remains for the 50-skill P4 gate.
+- Device press/scroll check remains for the 50-skill P4 gate.
 - Mobile file-access strategy is not selected.
 
 ## Changelog
 
+### 2026-07-16 — Persistent weekly review
+
+- Added `WeeklyReview` to domain and repository contracts.
+- Persisted weekly reviews and completion events atomically in SQLite.
+- Added a structured review form with seven-day facts, due/fading skills and previous decisions.
+- Required one concrete next-week decision and added service tests.
+
 ### 2026-07-16 — Fifty-skill graph verification
 
-- Added a deterministic 50-skill, 45-edge scale fixture.
-- Verified every skill appears exactly once across ten dependency levels.
-- Kept final device press and horizontal-scroll inspection explicit instead of marking it complete without evidence.
+- Added a deterministic 50-skill, 45-edge fixture and verified unique placement across ten levels.
+- Kept final device interaction explicit.
 
 ### 2026-07-16 — Progress period and entity rollups
 
-- Added deterministic activity summaries for today, seven days and thirty days.
-- Added goal rollups with linked skill, completion and XP counts.
-- Added skill rollups with activity XP and reviewed mastery shown separately.
-- Added fixed-time automated tests covering day, week, month, goal and skill aggregation.
+- Added today, seven-day and thirty-day summaries plus goal and skill rollups.
+- Kept XP activity separate from reviewed mastery and added fixed-time tests.
 
-### 2026-07-16 — Skill graph CI stabilization
+### 2026-07-16 — Skill graph delivery
 
-- Fixed strict indexed-access typing in the graph-level traversal.
-- Expanded Mobile CI failure comments to include typecheck, test and bundle logs.
-- Kept the interactive-tree plan evidence intact while restoring the required validation gate.
-
-### 2026-07-16 — Interactive skill tree
-
-- Replaced the flat skill list with goal-grouped graph levels derived from persisted edges.
-- Added pressable skill nodes with dependency names, health state, support level and reviewed mastery.
-- Added deterministic layout tests for branching, disconnected nodes and multiple-parent depth.
-- Confirmed in the plan that skill health and activity/mastery separation are visible.
-
-### 2026-07-16 — Directed skill graph foundation
-
-- Added repository operations for persistent directed skill edges.
-- Added idempotent same-goal skill connection and removal service operations.
-- Prevented self-links, cross-goal links and direct or transitive cycles.
-- Added automated graph behavior tests against the memory repository.
+- Added cycle-safe persistent edges, interactive layered rendering, skill health and history.
+- Added layout tests and restored strict CI validation after rollout.
 
 ### 2026-07-16 — Cross-launch SQLite verification
 
-- Preserved the previous successful startup marker before writing the current marker.
-- Added a Settings status that makes cross-launch SQLite evidence visible and gives the exact final device step.
-- Reconciled the plan and README with the already-delivered completed-work and skill-history UI.
+- Added previous-launch evidence and a visible Settings status.
 
-### 2026-07-15 — Completed-work and skill history
+### 2026-07-15 — Persistent Personal UI and service
 
-- Added live completed quest history to Progress.
-- Added SQLite-backed skill list and skill detail history.
-- Kept activity XP separate from reviewed mastery.
-
-### 2026-07-15 — Persistent Personal UI
-
-- Added application context for SQLite repository and PersonalService.
-- Replaced demo Today data with live active quests.
-- Added first-path setup form for goal, skill, quest and L3–L0.
-- Added evidence/reflection completion screen.
-- Added focus/revision refresh after writes.
-- Completed visual QA of the setup form with no overflow or overlap.
-- Full Mobile CI and Android Expo bundle pass.
-
-### 2026-07-15 — Personal service vertical slice
-
-- Added repository implementations, PersonalService and atomic completion events.
-- Added 4 lifecycle/validation tests.
-
-### 2026-07-15 — Runtime and foundation
-
-- Added SQLite startup health checks, Expo bundle validation and Personal MVP shell.
+- Added SQLite-backed goal, skill, quest, completion, evidence, reflection and history flows.
+- Added Android bundle validation and domain tests.
 
 ### 2026-07-15 — Personal-first pivot
 
