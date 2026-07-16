@@ -75,7 +75,7 @@ This is the live operating plan. Every agent must read it before working and upd
 - [x] ~~Add UI for opening and completing a real quest~~ — Evidence: `/quest/[id]`.
 - [x] ~~Show completed work in Today and skill history~~ — Evidence: Progress and `/skill/[id]`.
 - [ ] Add SQLite-backed lifecycle and persistence tests.
-  Progress: service tests pass against memory repository; automated device SQLite integration remains.
+  Progress: service tests pass against memory repository; startup-marker coverage now exists, but automated device SQLite integration remains.
 
 **Decision gate:** complete loop through UI with persistent data and visible history.
 
@@ -148,6 +148,12 @@ Deferred, not completed:
 - External note opening still needs device verification with Obsidian installed.
 
 ## Changelog
+
+### 2026-07-16 — SQLite health-marker coverage
+
+- Extracted startup-marker persistence logic into a pure storage helper.
+- Added automated coverage for first-launch and second-launch marker behavior without needing a device runtime.
+- Reduced the remaining SQLite-testing gap to device-level integration rather than untested health-marker logic.
 
 ### 2026-07-16 — Export-input regression coverage
 
