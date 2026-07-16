@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { usePersonalApp } from "../../src/application/PersonalAppProvider";
+import { ExternalNoteCard } from "../../src/components/ExternalNoteCard";
 import type { Quest } from "../../src/domain/types";
 import { theme } from "../../src/theme";
 export default function QuestScreen() {
@@ -14,6 +15,7 @@ export default function QuestScreen() {
   return <SafeAreaView style={styles.safe} edges={["top", "bottom"]}><KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === "ios" ? "padding" : undefined}><ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
     <Pressable onPress={() => router.back()}><Text style={styles.back}>← Сегодня</Text></Pressable><View style={[styles.badge, maintenance && styles.maintenanceBadge]}><Text style={[styles.badgeText, maintenance && styles.maintenanceBadgeText]}>{maintenance ? `L${quest.supportLevel} · Поддержание без XP` : `L${quest.supportLevel} · +${quest.xpReward} XP`}</Text></View><Text style={styles.title}>{quest.title}</Text>{quest.description ? <Text style={styles.description}>{quest.description}</Text> : null}
     {maintenance ? <View style={styles.maintenanceNote}><Text style={styles.maintenanceTitle}>Практика ради сохранения формы</Text><Text style={styles.maintenanceText}>Завершение сохранит доказательство и рефлексию, но не начислит XP и не изменит мастерство автоматически.</Text></View> : null}
+    <ExternalNoteCard entityType="quest" entityId={quest.id} />
     <View style={styles.divider} /><Text style={styles.label}>Доказательство</Text><TextInput value={evidenceNote} onChangeText={setEvidenceNote} placeholder="Что конкретно сделано?" placeholderTextColor={theme.colors.muted} style={styles.multiline} multiline textAlignVertical="top" /><Text style={styles.label}>Рефлексия</Text><TextInput value={reflection} onChangeText={setReflection} placeholder="Что сработало и что изменить в следующий раз?" placeholderTextColor={theme.colors.muted} style={styles.multiline} multiline textAlignVertical="top" />{error ? <Text style={styles.error}>{error}</Text> : null}<Pressable onPress={complete} disabled={saving} style={({ pressed }) => [styles.button, saving && styles.disabled, pressed && styles.pressed]}><Text style={styles.buttonText}>{saving ? "Сохраняю…" : maintenance ? "Завершить поддержание" : "Завершить квест"}</Text></Pressable><Text style={styles.note}>{maintenance ? "Действие будет записано с 0 XP. Никакой скрытой награды или штрафа." : "XP зафиксирует действие. Мастерство изменится только после честного обзора."}</Text>
   </ScrollView></KeyboardAvoidingView></SafeAreaView>;
 }
