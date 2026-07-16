@@ -51,6 +51,7 @@ export function buildSkillGraphLevels(skills: Skill[], edges: SkillEdge[]): Skil
   const pending = skills.filter((skill) => indegree.get(skill.id) === 0).map((skill) => skill.id);
   for (let index = 0; index < pending.length; index += 1) {
     const parentId = pending[index];
+    if (!parentId) continue;
     const parentDepth = depth.get(parentId) ?? 0;
     for (const childId of childrenByParent.get(parentId) ?? []) {
       depth.set(childId, Math.max(depth.get(childId) ?? 0, parentDepth + 1));
