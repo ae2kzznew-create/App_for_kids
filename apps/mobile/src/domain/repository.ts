@@ -9,6 +9,7 @@ export interface PersonalRepository {
   listGoals(profileId: string): Promise<Goal[]>;
   getSkill(id: string): Promise<Skill | null>;
   saveSkill(skill: Skill): Promise<void>;
+  saveReviewedSkillWithEvent(skill: Skill, event: ProgressEvent): Promise<void>;
   listSkills(goalId: string): Promise<Skill[]>;
   listSkillsForProfile(profileId: string): Promise<Skill[]>;
   saveSkillEdge(edge: SkillEdge): Promise<void>;
