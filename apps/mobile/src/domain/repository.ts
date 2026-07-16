@@ -1,14 +1,6 @@
-import type { Goal, Profile, ProgressEvent, Quest, QuestCompletion, QuestSkill, Skill, SkillEdge } from "./types";
+import type { Goal, Profile, ProgressEvent, Quest, QuestCompletion, QuestSkill, Skill, SkillEdge, WeeklyReview } from "./types";
 
-export interface CompletedQuestSummary {
-  questId: string;
-  title: string;
-  completedAt: string;
-  xpGranted: number;
-  evidenceNote?: string;
-  reflection?: string;
-  skillIds: string[];
-}
+export interface CompletedQuestSummary { questId: string; title: string; completedAt: string; xpGranted: number; evidenceNote?: string; reflection?: string; skillIds: string[]; }
 
 export interface PersonalRepository {
   ensureProfile(profile: Profile): Promise<void>;
@@ -30,5 +22,7 @@ export interface PersonalRepository {
   listCompletions(questId: string): Promise<QuestCompletion[]>;
   listCompletedQuests(limit?: number): Promise<CompletedQuestSummary[]>;
   listSkillHistory(skillId: string, limit?: number): Promise<CompletedQuestSummary[]>;
+  saveWeeklyReviewWithEvent(review: WeeklyReview, event: ProgressEvent): Promise<void>;
+  listWeeklyReviews(profileId: string, limit?: number): Promise<WeeklyReview[]>;
   listProgressEvents(entityId: string): Promise<ProgressEvent[]>;
 }
