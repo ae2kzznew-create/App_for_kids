@@ -4,10 +4,10 @@ This is the live operating plan. Every agent must read it before working and upd
 
 ## Status
 
-- **Current stage:** P2–P4 device gates, P5 implemented, P6 ready
-- **Current milestone:** Begin Markdown export with stable YAML IDs
+- **Current stage:** P2–P4 device gates, P5 implemented, P6 in progress
+- **Current milestone:** Import Markdown without duplicates
 - **Last updated:** 2026-07-16
-- **Application status:** the full P5 review loop works, including explicit mastery, spaced repetition, guilt-free recovery and visible maintenance actions with zero XP
+- **Application status:** goals, skills, quests and weekly reviews export as shareable Markdown documents with stable YAML identities
 - **Primary user:** Pavel, acting as architect, performer and coach
 - **Active direction:** `docs/product/PERSONAL-FIRST-DIRECTION.md`
 
@@ -102,8 +102,8 @@ This is the live operating plan. Every agent must read it before working and upd
 
 ## P6 — Markdown and second-brain integration
 
-- [ ] Export goals, skills, quests and reviews to Markdown.
-- [ ] Include stable IDs in YAML frontmatter.
+- [x] ~~Export goals, skills, quests and reviews to Markdown~~ — Evidence: deterministic document builder, Settings preview and native share sheet.
+- [x] ~~Include stable IDs in YAML frontmatter~~ — Evidence: every document starts with `levera_id` and `levera_type`; tests verify stable paths and output.
 - [ ] Import without duplicates.
 - [ ] Link external notes and Obsidian URIs.
 - [ ] Document vault structure and test round trips.
@@ -138,30 +138,21 @@ Deferred, not completed:
 - Dark theme is not implemented.
 - Automated device-level SQLite integration tests remain.
 - Device press/scroll check remains for the 50-skill P4 gate.
-- Mobile file-access strategy is not selected.
+- Direct file/vault import strategy remains to be selected; export currently uses explicit native sharing.
 
 ## Changelog
 
-### 2026-07-16 — Zero-XP maintenance mode
+### 2026-07-16 — Stable Markdown export
 
-- Added an explicit maintenance switch when creating a path.
-- Displayed maintenance separately from rewarded activity in Today and quest detail.
-- Preserved evidence and reflection while completion, progress events and activity totals stay at zero XP.
-- Added a domain test proving maintenance does not change mastery automatically.
-- Completed the implementation portion of P5.
+- Added one Markdown document per goal, skill, quest and weekly review.
+- Added stable paths and YAML frontmatter with `levera_id` and `levera_type`.
+- Preserved relations, support, mastery, repetition, status, maintenance and review decisions.
+- Added an in-app preview and explicit native share action without automatic cloud transfer.
+- Added deterministic export tests and an all-quest repository query.
 
-### 2026-07-16 — Spaced repetition and gentle recovery
+### 2026-07-16 — P5 completion
 
-- Added mastery-based intervals, derived repetition health, an ordered queue, pause and zero-XP recovery.
-- Added deterministic interval, state, queue and recovery tests.
-
-### 2026-07-16 — Reviewed skill adjustments
-
-- Added evidence-required mastery and L3–L0 adjustment with atomic zero-XP events.
-
-### 2026-07-16 — Persistent weekly review
-
-- Added persistent reviews, seven-day facts, due/fading skills and previous decisions.
+- Added weekly reviews, evidence-based mastery, spaced repetition, guilt-free recovery and zero-XP maintenance.
 
 ### 2026-07-16 — Skill graph and progress
 
