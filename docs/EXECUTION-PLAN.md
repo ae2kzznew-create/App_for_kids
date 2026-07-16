@@ -4,10 +4,10 @@ This is the live operating plan. Every agent must read it before working and upd
 
 ## Status
 
-- **Current stage:** P2 + P3 gate, with P4 visualization in progress
-- **Current milestone:** Confirm SQLite persistence and expand progress views beyond the first interactive skill tree
+- **Current stage:** P2 + P3 gate, with P4 visualization nearing completion
+- **Current milestone:** Confirm SQLite persistence and verify the skill graph with at least 50 skills
 - **Last updated:** 2026-07-16
-- **Application status:** the persistent personal loop works; skills render as a pressable layered graph, and strict typechecking is restored after the graph rollout
+- **Application status:** the persistent personal loop works; progress is visible by day, week, month, goal and skill, while activity remains separate from reviewed mastery
 - **Primary user:** Pavel, acting as architect, performer and coach
 - **Active direction:** `docs/product/PERSONAL-FIRST-DIRECTION.md`
 
@@ -81,11 +81,10 @@ This is the live operating plan. Every agent must read it before working and upd
 - [x] ~~Add directed skill relationships and cycle protection~~ — Evidence: `connectSkills`, memory/SQLite edge persistence and cycle/cross-goal tests.
 - [x] ~~Display interactive skill tree~~ — Evidence: goal-grouped layered graph with pressable skill nodes and dependency labels.
 - [x] ~~Show growing, stable, due, fading and paused states~~ — Evidence: semantic status labels and colors on every graph node.
-- [ ] Show progress by day, week, month, goal and skill.
-  Progress: seven-day activity and per-skill history exist; month and goal rollups remain.
-- [x] ~~Keep activity separate from demonstrated skill~~ — Evidence: Progress reports XP activity while graph nodes report reviewed mastery and health.
+- [x] ~~Show progress by day, week, month, goal and skill~~ — Evidence: period cards, seven-day rhythm, goal rollups, skill rollups and per-skill history.
+- [x] ~~Keep activity separate from demonstrated skill~~ — Evidence: Progress reports XP activity while graph nodes and rollups report reviewed mastery and health.
 - [ ] Verify interaction with at least 50 skills.
-  Progress: deterministic graph-level layout tests cover chains, branching, disconnected nodes and multiple parents; scale fixture remains.
+  Progress: deterministic graph-level layout tests cover chains, branching, disconnected nodes and multiple parents; 50-skill scale fixture and device interaction remain.
 
 ---
 
@@ -137,10 +136,17 @@ Deferred, not completed:
 - One physical-device or simulator close/reopen remains to confirm the SQLite cross-launch indicator.
 - Dark theme is not implemented.
 - Automated device-level SQLite integration tests remain.
-- Month and goal progress aggregation remain.
+- A 50-skill scale fixture and device interaction check remain for P4.
 - Mobile file-access strategy is not selected.
 
 ## Changelog
+
+### 2026-07-16 — Progress period and entity rollups
+
+- Added deterministic activity summaries for today, seven days and thirty days.
+- Added goal rollups with linked skill, completion and XP counts.
+- Added skill rollups with activity XP and reviewed mastery shown separately.
+- Added fixed-time automated tests covering day, week, month, goal and skill aggregation.
 
 ### 2026-07-16 — Skill graph CI stabilization
 
