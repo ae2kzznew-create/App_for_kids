@@ -5,11 +5,17 @@ This is the live operating plan. Every agent must read it before working and upd
 ## Status
 
 - **Current stage:** P2–P4 device gates, P5 implemented, P6 in progress
-- **Current milestone:** Link external notes and Obsidian URIs
+- **Current milestone:** Document vault structure and finish round-trip coverage
 - **Last updated:** 2026-07-16
-- **Application status:** local data round-trips through Markdown by stable ID without duplicate goals, skills, quests or weekly reviews
+- **Application status:** skills and quests can persist and open Obsidian paths, explicit Obsidian URIs and web notes
 - **Primary user:** Pavel, acting as architect, performer and coach
 - **Active direction:** `docs/product/PERSONAL-FIRST-DIRECTION.md`
+
+## Operating mode
+
+- Work autonomously from this plan: implement, test, update the plan, open a PR, repair CI and merge successful work.
+- Ask Pavel only for a real blocker, irreversible action, security/privacy concern or product decision that materially changes direction.
+- Never mark device-only verification complete without performing it.
 
 ## Progress overview
 
@@ -105,9 +111,9 @@ This is the live operating plan. Every agent must read it before working and upd
 - [x] ~~Export goals, skills, quests and reviews to Markdown~~ — Evidence: deterministic document builder, Settings preview and native share sheet.
 - [x] ~~Include stable IDs in YAML frontmatter~~ — Evidence: every document starts with `levera_id` and `levera_type`; tests verify stable paths and output.
 - [x] ~~Import without duplicates~~ — Evidence: parser validates stable identities and relations, repositories upsert all four entity types, repeated round-trip test creates no copies, and Settings accepts pasted documents or bundles.
-- [ ] Link external notes and Obsidian URIs.
+- [x] ~~Link external notes and Obsidian URIs~~ — Evidence: persistent external-note repository, validated vault paths/Obsidian URI/web URL helpers, and open/save/remove controls on skill and quest screens.
 - [ ] Document vault structure and test round trips.
-  Progress: automated export/import/re-import round trip is covered; vault layout documentation remains.
+  Progress: automated export/import/re-import round trip exists; external URI tests exist; vault layout documentation and note-link Markdown round trip remain.
 
 ---
 
@@ -140,8 +146,17 @@ Deferred, not completed:
 - Automated device-level SQLite integration tests remain.
 - Device press/scroll check remains for the 50-skill P4 gate.
 - Direct file picker and vault access strategy remain to be selected; import currently uses explicit paste and validation in Settings.
+- External note opening still needs device verification with Obsidian installed.
 
 ## Changelog
+
+### 2026-07-16 — External notes and Obsidian URI
+
+- Activated the existing local `external_note_links` storage contract in both repositories.
+- Added safe classification for vault paths, explicit Obsidian URIs and http(s) links.
+- Added encoded Obsidian URI generation and tests that reject unsupported schemes.
+- Added reusable save/open/remove controls to skill and quest screens without touching the external note itself.
+- Recorded autonomous execution as the default project operating mode.
 
 ### 2026-07-16 — Duplicate-safe Markdown import
 
