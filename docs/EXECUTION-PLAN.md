@@ -4,10 +4,10 @@ This is the live operating plan. Every agent must read it before working and upd
 
 ## Status
 
-- **Current stage:** P2–P4 device gates, with P5 nearing completion
-- **Current milestone:** Support maintenance without XP rewards
+- **Current stage:** P2–P4 device gates, P5 implemented, P6 ready
+- **Current milestone:** Begin Markdown export with stable YAML IDs
 - **Last updated:** 2026-07-16
-- **Application status:** reviewed mastery schedules repetition at growing intervals; due and fading skills can pause or recover gently without lost progress, streak pressure or XP
+- **Application status:** the full P5 review loop works, including explicit mastery, spaced repetition, guilt-free recovery and visible maintenance actions with zero XP
 - **Primary user:** Pavel, acting as architect, performer and coach
 - **Active direction:** `docs/product/PERSONAL-FIRST-DIRECTION.md`
 
@@ -19,7 +19,7 @@ This is the live operating plan. Every agent must read it before working and upd
 - [ ] P2 — Local application shell
 - [ ] P3 — Goals, skills and quests vertical slice
 - [ ] P4 — Skill tree and progress visualization
-- [ ] P5 — Weekly review and development techniques
+- [x] ~~P5 — Weekly review and development techniques~~ — Evidence: weekly review, evidence-based mastery, repetition, recovery and maintenance.
 - [ ] P6 — Markdown and second-brain integration
 - [ ] P7 — Personal dogfooding and stabilization
 - [ ] Future — Family product validation and expansion
@@ -94,7 +94,9 @@ This is the live operating plan. Every agent must read it before working and upd
 - [x] ~~Surface achievements, stalled skills and repetitions~~ — Evidence: seven-day facts and due/fading callout.
 - [x] ~~Allow reviewed mastery/support adjustments~~ — Evidence: evidence-required skill review, atomic event and no XP.
 - [x] ~~Implement spaced repetition and recovery without guilt~~ — Evidence: mastery-based intervals, due/fading queue, pause and gentle zero-XP recovery.
-- [ ] Support maintenance without XP rewards.
+- [x] ~~Support maintenance without XP rewards~~ — Evidence: explicit maintenance mode, visible zero-XP labels and completion tests.
+
+**Decision gate:** automated P5 flow complete; device dogfooding remains part of P7.
 
 ---
 
@@ -140,30 +142,30 @@ Deferred, not completed:
 
 ## Changelog
 
+### 2026-07-16 — Zero-XP maintenance mode
+
+- Added an explicit maintenance switch when creating a path.
+- Displayed maintenance separately from rewarded activity in Today and quest detail.
+- Preserved evidence and reflection while completion, progress events and activity totals stay at zero XP.
+- Added a domain test proving maintenance does not change mastery automatically.
+- Completed the implementation portion of P5.
+
 ### 2026-07-16 — Spaced repetition and gentle recovery
 
-- Added mastery-based intervals of 1, 3, 7, 14 and 30 days.
-- Derived growing, stable, due and fading states from persisted review dates.
-- Added an ordered repetition queue to the skill tree.
-- Added pause and gentle recovery that preserve mastery, add support when needed and never award or remove XP.
+- Added mastery-based intervals, derived repetition health, an ordered queue, pause and zero-XP recovery.
 - Added deterministic interval, state, queue and recovery tests.
 
 ### 2026-07-16 — Reviewed skill adjustments
 
 - Added evidence-required mastery and L3–L0 adjustment with atomic zero-XP events.
-- Added tests proving reviewed mastery stays separate from activity XP.
 
 ### 2026-07-16 — Persistent weekly review
 
-- Added persistent weekly reviews, seven-day facts, due/fading skills and previous decisions.
+- Added persistent reviews, seven-day facts, due/fading skills and previous decisions.
 
-### 2026-07-16 — Fifty-skill graph verification
+### 2026-07-16 — Skill graph and progress
 
-- Added a deterministic 50-skill fixture and verified unique placement across ten levels.
-
-### 2026-07-16 — Progress and skill graph delivery
-
-- Added period/entity rollups, cycle-safe edges, interactive rendering and skill health.
+- Added a 50-skill fixture, period/entity rollups, cycle-safe edges, interactive rendering and skill health.
 
 ### 2026-07-16 — Cross-launch SQLite verification
 
