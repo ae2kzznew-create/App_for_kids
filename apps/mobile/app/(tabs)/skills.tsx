@@ -3,115 +3,26 @@ import { useCallback, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { usePersonalApp } from "../../src/application/PersonalAppProvider";
+import { buildRepetitionQueue, withRepetitionStatus } from "../../src/domain/repetition";
 import { buildSkillGraphLevels } from "../../src/domain/skillGraph";
 import type { Goal, Skill, SkillEdge } from "../../src/domain/types";
 import { theme } from "../../src/theme";
-
 const statusLabel = { growing: "Растёт", stable: "Стабилен", due: "Повторить", fading: "Угасает", paused: "Пауза" } as const;
 const statusColor = { growing: theme.colors.blue, stable: theme.colors.green, due: theme.colors.orange, fading: theme.colors.red, paused: theme.colors.muted } as const;
-
 export default function SkillsScreen() {
-  const router = useRouter();
-  const { repository, revision } = usePersonalApp();
-  const [goals, setGoals] = useState<Goal[]>([]);
-  const [skills, setSkills] = useState<Skill[]>([]);
-  const [edges, setEdges] = useState<SkillEdge[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useFocusEffect(useCallback(() => {
-    let active = true;
-    setLoading(true);
-    Promise.all([
-      repository.listGoals("pavel"),
-      repository.listSkillsForProfile("pavel"),
-      repository.listSkillEdges(),
-    ])
-      .then(([nextGoals, nextSkills, nextEdges]) => {
-        if (!active) return;
-        setGoals(nextGoals.filter((goal) => goal.status !== "archived"));
-        setSkills(nextSkills);
-        setEdges(nextEdges);
-      })
-      .finally(() => { if (active) setLoading(false); });
-    return () => { active = false; };
-  }, [repository, revision]));
-
+  const router = useRouter(); const { repository, revision } = usePersonalApp(); const [goals, setGoals] = useState<Goal[]>([]); const [skills, setSkills] = useState<Skill[]>([]); const [edges, setEdges] = useState<SkillEdge[]>([]); const [loading, setLoading] = useState(true);
+  useFocusEffect(useCallback(() => { let active = true; setLoading(true); Promise.all([repository.listGoals("pavel"), repository.listSkillsForProfile("pavel"), repository.listSkillEdges()]).then(([nextGoals, nextSkills, nextEdges]) => { if (!active) return; const now = new Date().toISOString(); setGoals(nextGoals.filter((goal) => goal.status !== "archived")); setSkills(nextSkills.map((skill) => withRepetitionStatus(skill, now))); setEdges(nextEdges); }).finally(() => { if (active) setLoading(false); }); return () => { active = false; }; }, [repository, revision]));
+  const queue = buildRepetitionQueue(skills, new Date().toISOString());
   return <SafeAreaView style={styles.safe} edges={["top"]}><ScrollView contentContainerStyle={styles.content}>
-    <Text style={styles.eyebrow}>ЛИЧНАЯ КАРТА РОСТА</Text>
-    <Text style={styles.title}>Древо навыков</Text>
-    <Text style={styles.subtitle}>Двигайся от основы к следующему уровню. Нажми на навык, чтобы открыть доказательства и историю.</Text>
+    <Text style={styles.eyebrow}>ЛИЧНАЯ КАРТА РОСТА</Text><Text style={styles.title}>Древо навыков</Text><Text style={styles.subtitle}>Двигайся от основы к следующему уровню. Повторение — приглашение вернуться, а не потерянная серия.</Text>
+    {queue.length > 0 ? <View style={styles.repetition}><Text style={styles.repetitionTitle}>Можно спокойно вернуться · {queue.length}</Text><Text style={styles.repetitionText}>{queue.slice(0, 4).map((skill) => skill.title).join(" · ")}</Text></View> : null}
     {loading ? <ActivityIndicator color={theme.colors.blue} style={styles.loader} /> : null}
     {!loading && skills.length === 0 ? <Pressable accessibilityRole="button" onPress={() => router.push("/setup")} style={styles.empty}><Text style={styles.emptyTitle}>Навыков пока нет</Text><Text style={styles.emptyText}>Создай первый путь, чтобы увидеть его здесь.</Text></Pressable> : null}
-    {!loading ? goals.map((goal) => {
-      const goalSkills = skills.filter((skill) => skill.goalId === goal.id);
-      if (goalSkills.length === 0) return null;
-      return <GoalGraph key={goal.id} goal={goal} skills={goalSkills} edges={edges} onOpenSkill={(skillId) => router.push({ pathname: "/skill/[id]", params: { id: skillId } })} />;
-    }) : null}
+    {!loading ? goals.map((goal) => { const goalSkills = skills.filter((skill) => skill.goalId === goal.id); if (goalSkills.length === 0) return null; return <GoalGraph key={goal.id} goal={goal} skills={goalSkills} edges={edges} onOpenSkill={(skillId) => router.push({ pathname: "/skill/[id]", params: { id: skillId } })} />; }) : null}
   </ScrollView></SafeAreaView>;
 }
-
-function GoalGraph({ goal, skills, edges, onOpenSkill }: { goal: Goal; skills: Skill[]; edges: SkillEdge[]; onOpenSkill: (skillId: string) => void }) {
-  const skillIds = new Set(skills.map((skill) => skill.id));
-  const graphEdges = edges.filter((edge) => skillIds.has(edge.parentSkillId) && skillIds.has(edge.childSkillId));
-  const levels = buildSkillGraphLevels(skills, graphEdges);
-  const titleById = new Map(skills.map((skill) => [skill.id, skill.title]));
-  const parentsByChild = new Map<string, string[]>();
-  for (const edge of graphEdges) {
-    const parents = parentsByChild.get(edge.childSkillId) ?? [];
-    parents.push(titleById.get(edge.parentSkillId) ?? "Навык");
-    parentsByChild.set(edge.childSkillId, parents);
-  }
-
-  return <View style={styles.goalSection}>
-    <View style={styles.goalHeader}><Text style={styles.goalTitle}>{goal.title}</Text><Text style={styles.goalMeta}>{skills.length} навыков · {graphEdges.length} связей</Text></View>
-    {levels.map((level, index) => <View key={level.depth}>
-      {index > 0 ? <View style={styles.levelConnector}><View style={styles.connectorLine} /><Text style={styles.connectorArrow}>↓</Text></View> : null}
-      <Text style={styles.levelLabel}>{level.depth === 0 ? "ОСНОВА" : `УРОВЕНЬ ${level.depth + 1}`}</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.levelRow}>
-        {level.skills.map((skill) => <SkillNode key={skill.id} skill={skill} parents={parentsByChild.get(skill.id) ?? []} onPress={() => onOpenSkill(skill.id)} />)}
-      </ScrollView>
-    </View>)}
-  </View>;
+function GoalGraph({ goal, skills, edges, onOpenSkill }: { goal: Goal; skills: Skill[]; edges: SkillEdge[]; onOpenSkill: (skillId: string) => void }) { const skillIds = new Set(skills.map((skill) => skill.id)); const graphEdges = edges.filter((edge) => skillIds.has(edge.parentSkillId) && skillIds.has(edge.childSkillId)); const levels = buildSkillGraphLevels(skills, graphEdges); const titleById = new Map(skills.map((skill) => [skill.id, skill.title])); const parentsByChild = new Map<string, string[]>(); for (const edge of graphEdges) { const parents = parentsByChild.get(edge.childSkillId) ?? []; parents.push(titleById.get(edge.parentSkillId) ?? "Навык"); parentsByChild.set(edge.childSkillId, parents); }
+  return <View style={styles.goalSection}><View style={styles.goalHeader}><Text style={styles.goalTitle}>{goal.title}</Text><Text style={styles.goalMeta}>{skills.length} навыков · {graphEdges.length} связей</Text></View>{levels.map((level, index) => <View key={level.depth}>{index > 0 ? <View style={styles.levelConnector}><View style={styles.connectorLine} /><Text style={styles.connectorArrow}>↓</Text></View> : null}<Text style={styles.levelLabel}>{level.depth === 0 ? "ОСНОВА" : `УРОВЕНЬ ${level.depth + 1}`}</Text><ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.levelRow}>{level.skills.map((skill) => <SkillNode key={skill.id} skill={skill} parents={parentsByChild.get(skill.id) ?? []} onPress={() => onOpenSkill(skill.id)} />)}</ScrollView></View>)}</View>;
 }
-
-function SkillNode({ skill, parents, onPress }: { skill: Skill; parents: string[]; onPress: () => void }) {
-  return <Pressable accessibilityRole="button" accessibilityLabel={`Открыть навык ${skill.title}`} onPress={onPress} style={({ pressed }) => [styles.node, pressed && styles.pressed]}>
-    <View style={styles.nodeTop}><View style={[styles.statusDot, { backgroundColor: statusColor[skill.status] }]} /><Text style={[styles.status, { color: statusColor[skill.status] }]}>{statusLabel[skill.status]}</Text><Text style={styles.level}>L{skill.supportLevel}</Text></View>
-    <Text style={styles.nodeTitle}>{skill.title}</Text>
-    {parents.length > 0 ? <Text style={styles.parentText} numberOfLines={2}>После: {parents.join(", ")}</Text> : <Text style={styles.parentText}>Начальная точка</Text>}
-    <View style={styles.masteryRow}><View style={styles.track}><View style={[styles.fill, { width: `${skill.masteryScore}%` }]} /></View><Text style={styles.score}>{skill.masteryScore}</Text></View>
-  </Pressable>;
-}
-
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: theme.colors.canvas },
-  content: { padding: 20, paddingBottom: 48 },
-  eyebrow: { color: theme.colors.blue, fontSize: 12, fontWeight: "800", letterSpacing: 1 },
-  title: { color: theme.colors.text, fontSize: 34, fontWeight: "700", marginTop: 6 },
-  subtitle: { color: theme.colors.muted, fontSize: 16, lineHeight: 23, marginTop: 8, marginBottom: 24 },
-  loader: { marginVertical: 30 },
-  goalSection: { marginBottom: 28 },
-  goalHeader: { backgroundColor: theme.colors.text, borderRadius: 16, padding: 18, marginBottom: 18 },
-  goalTitle: { color: "#FFFFFF", fontSize: 19, fontWeight: "700" },
-  goalMeta: { color: "rgba(255,255,255,.65)", marginTop: 5 },
-  levelLabel: { color: theme.colors.muted, fontSize: 11, fontWeight: "800", letterSpacing: 1, marginBottom: 8 },
-  levelRow: { gap: 10, paddingRight: 20 },
-  levelConnector: { height: 32, alignItems: "center", justifyContent: "center" },
-  connectorLine: { position: "absolute", height: 22, width: 2, backgroundColor: theme.colors.border },
-  connectorArrow: { color: theme.colors.blue, backgroundColor: theme.colors.canvas, fontSize: 16, fontWeight: "800", paddingHorizontal: 5 },
-  node: { width: 196, minHeight: 150, backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.border, borderRadius: 14, padding: 14 },
-  pressed: { opacity: 0.72, borderColor: theme.colors.blue },
-  nodeTop: { minHeight: 24, flexDirection: "row", alignItems: "center", gap: 7 },
-  statusDot: { width: 10, height: 10, borderRadius: 5 },
-  status: { flex: 1, fontSize: 12, fontWeight: "700" },
-  level: { color: theme.colors.muted, fontSize: 12, fontWeight: "800" },
-  nodeTitle: { color: theme.colors.text, fontSize: 17, lineHeight: 22, fontWeight: "700", marginTop: 9 },
-  parentText: { color: theme.colors.muted, fontSize: 12, lineHeight: 17, marginTop: 7, minHeight: 34 },
-  masteryRow: { flexDirection: "row", alignItems: "center", gap: 9, marginTop: 10 },
-  track: { flex: 1, height: 6, backgroundColor: theme.colors.soft, borderRadius: 3, overflow: "hidden" },
-  fill: { height: "100%", backgroundColor: theme.colors.blue, borderRadius: 3 },
-  score: { color: theme.colors.text, fontSize: 13, fontWeight: "800", width: 25, textAlign: "right" },
-  empty: { minHeight: 88, backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.border, borderRadius: 14, padding: 18 },
-  emptyTitle: { color: theme.colors.text, fontSize: 17, fontWeight: "700" },
-  emptyText: { color: theme.colors.muted, marginTop: 5, lineHeight: 21 },
-});
+function SkillNode({ skill, parents, onPress }: { skill: Skill; parents: string[]; onPress: () => void }) { return <Pressable accessibilityRole="button" accessibilityLabel={`Открыть навык ${skill.title}`} onPress={onPress} style={({ pressed }) => [styles.node, pressed && styles.pressed]}><View style={styles.nodeTop}><View style={[styles.statusDot, { backgroundColor: statusColor[skill.status] }]} /><Text style={[styles.status, { color: statusColor[skill.status] }]}>{statusLabel[skill.status]}</Text><Text style={styles.level}>L{skill.supportLevel}</Text></View><Text style={styles.nodeTitle}>{skill.title}</Text>{parents.length > 0 ? <Text style={styles.parentText} numberOfLines={2}>После: {parents.join(", ")}</Text> : <Text style={styles.parentText}>Начальная точка</Text>}<View style={styles.masteryRow}><View style={styles.track}><View style={[styles.fill, { width: `${skill.masteryScore}%` }]} /></View><Text style={styles.score}>{skill.masteryScore}</Text></View></Pressable>; }
+const styles = StyleSheet.create({ safe: { flex: 1, backgroundColor: theme.colors.canvas }, content: { padding: 20, paddingBottom: 48 }, eyebrow: { color: theme.colors.blue, fontSize: 12, fontWeight: "800", letterSpacing: 1 }, title: { color: theme.colors.text, fontSize: 34, fontWeight: "700", marginTop: 6 }, subtitle: { color: theme.colors.muted, fontSize: 16, lineHeight: 23, marginTop: 8, marginBottom: 18 }, repetition: { backgroundColor: theme.colors.orangeSoft, borderRadius: 14, padding: 15, marginBottom: 20 }, repetitionTitle: { color: theme.colors.text, fontWeight: "800" }, repetitionText: { color: theme.colors.muted, lineHeight: 20, marginTop: 5 }, loader: { marginVertical: 30 }, goalSection: { marginBottom: 28 }, goalHeader: { backgroundColor: theme.colors.text, borderRadius: 16, padding: 18, marginBottom: 18 }, goalTitle: { color: "#FFFFFF", fontSize: 19, fontWeight: "700" }, goalMeta: { color: "rgba(255,255,255,.65)", marginTop: 5 }, levelLabel: { color: theme.colors.muted, fontSize: 11, fontWeight: "800", letterSpacing: 1, marginBottom: 8 }, levelRow: { gap: 10, paddingRight: 20 }, levelConnector: { height: 32, alignItems: "center", justifyContent: "center" }, connectorLine: { position: "absolute", height: 22, width: 2, backgroundColor: theme.colors.border }, connectorArrow: { color: theme.colors.blue, backgroundColor: theme.colors.canvas, fontSize: 16, fontWeight: "800", paddingHorizontal: 5 }, node: { width: 196, minHeight: 150, backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.border, borderRadius: 14, padding: 14 }, pressed: { opacity: 0.72, borderColor: theme.colors.blue }, nodeTop: { minHeight: 24, flexDirection: "row", alignItems: "center", gap: 7 }, statusDot: { width: 10, height: 10, borderRadius: 5 }, status: { flex: 1, fontSize: 12, fontWeight: "700" }, level: { color: theme.colors.muted, fontSize: 12, fontWeight: "800" }, nodeTitle: { color: theme.colors.text, fontSize: 17, lineHeight: 22, fontWeight: "700", marginTop: 9 }, parentText: { color: theme.colors.muted, fontSize: 12, lineHeight: 17, marginTop: 7, minHeight: 34 }, masteryRow: { flexDirection: "row", alignItems: "center", gap: 9, marginTop: 10 }, track: { flex: 1, height: 6, backgroundColor: theme.colors.soft, borderRadius: 3, overflow: "hidden" }, fill: { height: "100%", backgroundColor: theme.colors.blue, borderRadius: 3 }, score: { color: theme.colors.text, fontSize: 13, fontWeight: "800", width: 25, textAlign: "right" }, empty: { minHeight: 88, backgroundColor: theme.colors.surface, borderWidth: 1, borderColor: theme.colors.border, borderRadius: 14, padding: 18 }, emptyTitle: { color: theme.colors.text, fontSize: 17, fontWeight: "700" }, emptyText: { color: theme.colors.muted, marginTop: 5, lineHeight: 21 } });
