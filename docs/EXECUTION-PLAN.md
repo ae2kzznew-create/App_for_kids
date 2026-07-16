@@ -4,10 +4,10 @@ This is the live operating plan. Every agent must read it before working and upd
 
 ## Status
 
-- **Current stage:** P2–P4 device gates, with P5 weekly review started
-- **Current milestone:** Dogfood the persistent weekly review, then add reviewed mastery/support adjustments
+- **Current stage:** P2–P4 device gates, with P5 development techniques in progress
+- **Current milestone:** Add spaced repetition and guilt-free recovery
 - **Last updated:** 2026-07-16
-- **Application status:** the personal loop, graph and progress views work; weekly reviews now persist facts, blockers and one concrete next-week decision
+- **Application status:** the personal loop, graph, progress and weekly review work; mastery and support now change only through explicit evidence-based review without XP
 - **Primary user:** Pavel, acting as architect, performer and coach
 - **Active direction:** `docs/product/PERSONAL-FIRST-DIRECTION.md`
 
@@ -90,9 +90,9 @@ This is the live operating plan. Every agent must read it before working and upd
 
 ## P5 — Weekly review and development techniques
 
-- [x] ~~Implement structured weekly review~~ — Evidence: persistent SQLite review form, history and progress event.
-- [x] ~~Surface achievements, stalled skills and repetitions~~ — Evidence: seven-day facts and due/fading skill callout.
-- [ ] Allow reviewed mastery/support adjustments.
+- [x] ~~Implement structured weekly review~~ — Evidence: persistent review form, history and progress event.
+- [x] ~~Surface achievements, stalled skills and repetitions~~ — Evidence: seven-day facts and due/fading callout.
+- [x] ~~Allow reviewed mastery/support adjustments~~ — Evidence: evidence-required skill review, atomic event and no XP.
 - [ ] Implement spaced repetition and recovery without guilt.
 - [ ] Support maintenance without XP rewards.
 
@@ -140,27 +140,26 @@ Deferred, not completed:
 
 ## Changelog
 
+### 2026-07-16 — Reviewed skill adjustments
+
+- Added evidence-required mastery and L3–L0 adjustment from skill detail.
+- Validated mastery bounds, support levels, notes and meaningful changes in the service layer.
+- Persisted the updated skill and zero-XP `skill_reviewed` event atomically.
+- Added tests proving reviewed mastery stays separate from activity XP.
+
 ### 2026-07-16 — Persistent weekly review
 
-- Added `WeeklyReview` to domain and repository contracts.
-- Persisted weekly reviews and completion events atomically in SQLite.
-- Added a structured review form with seven-day facts, due/fading skills and previous decisions.
+- Added `WeeklyReview`, atomic SQLite events, seven-day facts, due/fading skills and previous decisions.
 - Required one concrete next-week decision and added service tests.
 
 ### 2026-07-16 — Fifty-skill graph verification
 
-- Added a deterministic 50-skill, 45-edge fixture and verified unique placement across ten levels.
-- Kept final device interaction explicit.
+- Added a deterministic 50-skill fixture and verified unique placement across ten levels.
 
-### 2026-07-16 — Progress period and entity rollups
+### 2026-07-16 — Progress and skill graph delivery
 
-- Added today, seven-day and thirty-day summaries plus goal and skill rollups.
-- Kept XP activity separate from reviewed mastery and added fixed-time tests.
-
-### 2026-07-16 — Skill graph delivery
-
-- Added cycle-safe persistent edges, interactive layered rendering, skill health and history.
-- Added layout tests and restored strict CI validation after rollout.
+- Added period/entity rollups, cycle-safe edges, interactive layered rendering and skill health.
+- Kept XP activity separate from reviewed mastery and restored strict CI validation.
 
 ### 2026-07-16 — Cross-launch SQLite verification
 
