@@ -5,9 +5,9 @@ This is the live operating plan. Every agent must read it before working and upd
 ## Status
 
 - **Current stage:** P2–P4 device gates, P5 implemented, P6 in progress
-- **Current milestone:** Import Markdown without duplicates
+- **Current milestone:** Link external notes and Obsidian URIs
 - **Last updated:** 2026-07-16
-- **Application status:** goals, skills, quests and weekly reviews export as shareable Markdown documents with stable YAML identities
+- **Application status:** local data round-trips through Markdown by stable ID without duplicate goals, skills, quests or weekly reviews
 - **Primary user:** Pavel, acting as architect, performer and coach
 - **Active direction:** `docs/product/PERSONAL-FIRST-DIRECTION.md`
 
@@ -104,9 +104,10 @@ This is the live operating plan. Every agent must read it before working and upd
 
 - [x] ~~Export goals, skills, quests and reviews to Markdown~~ — Evidence: deterministic document builder, Settings preview and native share sheet.
 - [x] ~~Include stable IDs in YAML frontmatter~~ — Evidence: every document starts with `levera_id` and `levera_type`; tests verify stable paths and output.
-- [ ] Import without duplicates.
+- [x] ~~Import without duplicates~~ — Evidence: parser validates stable identities and relations, repositories upsert all four entity types, repeated round-trip test creates no copies, and Settings accepts pasted documents or bundles.
 - [ ] Link external notes and Obsidian URIs.
 - [ ] Document vault structure and test round trips.
+  Progress: automated export/import/re-import round trip is covered; vault layout documentation remains.
 
 ---
 
@@ -138,9 +139,17 @@ Deferred, not completed:
 - Dark theme is not implemented.
 - Automated device-level SQLite integration tests remain.
 - Device press/scroll check remains for the 50-skill P4 gate.
-- Direct file/vault import strategy remains to be selected; export currently uses explicit native sharing.
+- Direct file picker and vault access strategy remain to be selected; import currently uses explicit paste and validation in Settings.
 
 ## Changelog
+
+### 2026-07-16 — Duplicate-safe Markdown import
+
+- Added parsing for individual Levera Markdown documents and exported bundles.
+- Added strict stable identity, type, range and relation validation before persistence.
+- Added repository upserts for weekly reviews alongside existing goal, skill and quest identities.
+- Added Settings paste import with created/updated counts and explicit local-only behavior.
+- Added export/import/re-import tests proving that the same stable IDs do not create duplicates.
 
 ### 2026-07-16 — Stable Markdown export
 
