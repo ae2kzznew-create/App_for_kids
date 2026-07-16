@@ -23,8 +23,8 @@ class FakeDatabaseHealthStore implements DatabaseHealthStore {
     this.values.set(String(params[0]), String(params[1]));
   }
 
-  async withTransactionAsync<T>(callback: () => Promise<T>) {
-    return callback();
+  async withTransactionAsync(callback: () => Promise<void>) {
+    await callback();
   }
 }
 

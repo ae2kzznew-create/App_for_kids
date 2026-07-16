@@ -8,7 +8,7 @@ export interface DatabaseHealthStore {
   getFirstAsync<T>(sql: string, ...params: Array<string | number>): Promise<T | null>;
   getAllAsync<T>(sql: string, ...params: Array<string | number>): Promise<T[]>;
   runAsync(sql: string, ...params: Array<string | number>): Promise<unknown>;
-  withTransactionAsync<T>(callback: () => Promise<T>): Promise<T>;
+  withTransactionAsync(callback: () => Promise<void>): Promise<void>;
 }
 
 const currentStartKey = "last_successful_start";
