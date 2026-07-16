@@ -3,6 +3,8 @@ export type SupportLevel = 0 | 1 | 2 | 3;
 export type SkillStatus = "growing" | "stable" | "due" | "fading" | "paused";
 export type GoalStatus = "active" | "completed" | "archived";
 export type QuestStatus = "planned" | "active" | "completed" | "archived";
+export type ExternalNoteEntityType = "goal" | "skill" | "quest" | "review";
+export type ExternalNoteProvider = "obsidian" | "web" | "markdown";
 
 export interface Profile { id: EntityId; displayName: string; createdAt: string; updatedAt: string; }
 export interface Goal { id: EntityId; profileId: EntityId; title: string; description?: string; status: GoalStatus; createdAt: string; updatedAt: string; }
@@ -12,4 +14,5 @@ export interface Quest { id: EntityId; title: string; description?: string; supp
 export interface QuestSkill { questId: EntityId; skillId: EntityId; contributionWeight: number; }
 export interface QuestCompletion { id: EntityId; questId: EntityId; completedAt: string; evidenceNote?: string; evidenceUrl?: string; reflection?: string; xpGranted: number; }
 export interface WeeklyReview { id: EntityId; profileId: EntityId; weekStart: string; achievements?: string; blockers?: string; decisions: string; completedAt: string; }
+export interface ExternalNoteLink { id: EntityId; entityType: ExternalNoteEntityType; entityId: EntityId; provider: ExternalNoteProvider; externalPath?: string; externalUrl?: string; updatedAt: string; }
 export interface ProgressEvent { id: EntityId; type: "quest_completed" | "skill_reviewed" | "skill_level_changed" | "weekly_review_completed"; entityId: EntityId; occurredAt: string; xpDelta: number; metadata?: Record<string, string | number | boolean>; }
