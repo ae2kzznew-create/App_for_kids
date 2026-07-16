@@ -4,10 +4,10 @@ This is the live operating plan. Every agent must read it before working and upd
 
 ## Status
 
-- **Current stage:** P2 + P3 gate, with P4 visualization nearing completion
-- **Current milestone:** Confirm SQLite persistence and verify the skill graph with at least 50 skills
+- **Current stage:** P2 + P3 gate, with P4 automated verification complete
+- **Current milestone:** Confirm SQLite persistence and complete device interaction checks before closing P2–P4
 - **Last updated:** 2026-07-16
-- **Application status:** the persistent personal loop works; progress is visible by day, week, month, goal and skill, while activity remains separate from reviewed mastery
+- **Application status:** the persistent personal loop works; progress is visible by period, goal and skill, and the graph layout is automatically verified with 50 skills across ten levels
 - **Primary user:** Pavel, acting as architect, performer and coach
 - **Active direction:** `docs/product/PERSONAL-FIRST-DIRECTION.md`
 
@@ -84,7 +84,7 @@ This is the live operating plan. Every agent must read it before working and upd
 - [x] ~~Show progress by day, week, month, goal and skill~~ — Evidence: period cards, seven-day rhythm, goal rollups, skill rollups and per-skill history.
 - [x] ~~Keep activity separate from demonstrated skill~~ — Evidence: Progress reports XP activity while graph nodes and rollups report reviewed mastery and health.
 - [ ] Verify interaction with at least 50 skills.
-  Progress: deterministic graph-level layout tests cover chains, branching, disconnected nodes and multiple parents; 50-skill scale fixture and device interaction remain.
+  Progress: an automated fixture verifies all 50 skills appear exactly once across ten navigable levels; final press/scroll inspection on a device remains.
 
 ---
 
@@ -136,10 +136,16 @@ Deferred, not completed:
 - One physical-device or simulator close/reopen remains to confirm the SQLite cross-launch indicator.
 - Dark theme is not implemented.
 - Automated device-level SQLite integration tests remain.
-- A 50-skill scale fixture and device interaction check remain for P4.
+- A final device press/scroll check remains for the 50-skill P4 gate.
 - Mobile file-access strategy is not selected.
 
 ## Changelog
+
+### 2026-07-16 — Fifty-skill graph verification
+
+- Added a deterministic 50-skill, 45-edge scale fixture.
+- Verified every skill appears exactly once across ten dependency levels.
+- Kept final device press and horizontal-scroll inspection explicit instead of marking it complete without evidence.
 
 ### 2026-07-16 — Progress period and entity rollups
 

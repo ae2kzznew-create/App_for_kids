@@ -46,3 +46,17 @@ test("places a multi-parent child after its deepest dependency", () => {
     ["d"],
   ]);
 });
+
+test("lays out fifty skills exactly once across ten navigable levels", () => {
+  const skills = Array.from({ length: 50 }, (_, index) => skill(`skill_${index + 1}`));
+  const edges = Array.from({ length: 45 }, (_, index) => edge(`skill_${index + 1}`, `skill_${index + 6}`));
+  const levels = buildSkillGraphLevels(skills, edges);
+  const renderedIds = levels.flatMap((level) => level.skills.map((item) => item.id));
+
+  assert.equal(levels.length, 10);
+  assert.ok(levels.every((level) => level.skills.length === 5));
+  assert.equal(renderedIds.length, 50);
+  assert.equal(new Set(renderedIds).size, 50);
+  assert.deepEqual(renderedIds.slice(0, 5), ["skill_1", "skill_2", "skill_3", "skill_4", "skill_5"]);
+  assert.deepEqual(renderedIds.slice(-5), ["skill_46", "skill_47", "skill_48", "skill_49", "skill_50"]);
+});
