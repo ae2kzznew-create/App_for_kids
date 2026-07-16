@@ -8,7 +8,7 @@ export default function RootLayout() {
   return (
     <DatabaseProvider>
       <PersonalAppProvider>
-        <StatusBar style="dark" />
+        <StatusBar style={theme.isDark ? "light" : "dark"} />
         <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: theme.colors.canvas } }} />
       </PersonalAppProvider>
     </DatabaseProvider>

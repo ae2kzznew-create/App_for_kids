@@ -5,9 +5,9 @@ This is the live operating plan. Every agent must read it before working and upd
 ## Status
 
 - **Current stage:** P2–P4 device gates, P6 complete, P7 pending
-- **Current milestone:** Close remaining device-only gates and dark-theme stabilization for the personal alpha
+- **Current milestone:** Close remaining device-only gates for the personal alpha
 - **Last updated:** 2026-07-16
-- **Application status:** goals, skills, quests, reviews and external-note links can round-trip through Markdown, and explicit Obsidian URIs and web notes can open from skill and quest screens
+- **Application status:** goals, skills, quests, reviews and external-note links can round-trip through Markdown, explicit Obsidian URIs and web notes can open from skill and quest screens, and the app now follows light/dark brand tokens
 - **Primary user:** Pavel, acting as architect, performer and coach
 - **Active direction:** `docs/product/PERSONAL-FIRST-DIRECTION.md`
 
@@ -50,8 +50,7 @@ This is the live operating plan. Every agent must read it before working and upd
 - [x] ~~Configure SQLite migrations and root startup initialization~~ — Evidence: storage layer and `DatabaseProvider`.
 - [x] ~~Add startup SQLite write/read health check and error UI~~ — Evidence: database startup code.
 - [x] ~~Separate domain/storage logic from UI~~ — Evidence: source structure.
-- [ ] Add complete light/dark brand tokens.
-  Progress: light design and persistent forms exist; dark theme remains.
+- [x] ~~Add complete light/dark brand tokens~~ — Evidence: system-aware palettes in `apps/mobile/src/theme.ts` and matching status-bar selection in `apps/mobile/app/_layout.tsx`.
 - [x] ~~Pass clean install, TypeScript, all automated tests and Android Expo bundle~~ — Evidence: Mobile CI.
 - [ ] Verify SQLite persistence across restart on simulator or physical device.
   Progress: Settings exposes cross-launch evidence; one full device close/reopen remains.
@@ -143,13 +142,18 @@ Deferred, not completed:
 ## Blockers and decisions needed
 
 - Device close/reopen remains for SQLite confirmation.
-- Dark theme is not implemented.
 - Automated device-level SQLite integration tests remain.
 - Device press/scroll check remains for the 50-skill P4 gate.
 - Direct file picker and vault access strategy remain to be selected; import currently uses explicit paste and validation in Settings.
 - External note opening still needs device verification with Obsidian installed.
 
 ## Changelog
+
+### 2026-07-16 — Dark theme token pass
+
+- Added system-aware brand palettes in `apps/mobile/src/theme.ts`.
+- Switched the root status bar style to follow the active light/dark palette.
+- Marked the shell-token milestone complete and narrowed the remaining work to device verification gates.
 
 ### 2026-07-16 — Export linked external notes from Settings
 
