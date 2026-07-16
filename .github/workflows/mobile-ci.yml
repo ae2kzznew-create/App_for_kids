@@ -27,22 +27,29 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
       - name: Typecheck
-        run: npm run typecheck
+        id: typecheck
+        run: npm run typecheck > typecheck.log 2>&1
       - name: Test domain rules
-        run: npm test
+        id: tests
+        run: npm test > test.log 2>&1
       - name: Bundle Android application
         id: bundle
         run: npx expo export --platform android --output-dir dist/android > bundle.log 2>&1
-      - name: Report bundle failure
-        if: failure() && steps.bundle.outcome == 'failure'
+      - name: Report validation failure
+        if: failure()
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           {
-            echo "### Expo bundle failure"
+            echo "### Mobile CI failure"
             echo
-            echo '```text'
-            tail -n 120 bundle.log
-            echo '```'
-          } > bundle-comment.md
-          gh pr comment "${{ github.event.pull_request.number }}" --body-file bundle-comment.md
+            for log in typecheck.log test.log bundle.log; do
+              if [ -f "$log" ]; then
+                echo "#### $log"
+                echo '```text'
+                tail -n 120 "$log"
+                echo '```'
+              fi
+            done
+          } > validation-comment.md
+          gh pr comment "${{ github.event.pull_request.number }}" --body-file validation-comment.md
