@@ -5,8 +5,8 @@ import { ActivityIndicator, Pressable, ScrollView, Share, StyleSheet, Text, Text
 import { SafeAreaView } from "react-native-safe-area-context";
 import { usePersonalApp } from "../../src/application/PersonalAppProvider";
 import { buildMarkdownBundle, buildMarkdownDocuments } from "../../src/domain/markdownExport";
+import { loadMarkdownExportInput } from "../../src/domain/markdownExportInput";
 import { importMarkdownBundle } from "../../src/domain/markdownImport";
-import type { ExternalNoteLink } from "../../src/domain/types";
 import { useDatabase } from "../../src/storage/DatabaseProvider";
 import { type DatabaseHealth, readDatabaseHealth } from "../../src/storage/database";
 import { theme } from "../../src/theme";
@@ -32,15 +32,7 @@ export default function SettingsScreen() {
   async function buildExport(share: boolean) {
     setExporting(true); setExportError("");
     try {
-      const [goals, skills, quests, reviews] = await Promise.all([repository.listGoals("pavel"), repository.listSkillsForProfile("pavel"), repository.listQuests(), repository.listWeeklyReviews("pavel", 52)]);
-      const exportQuests = await Promise.all(quests.map(async (quest) => ({ quest, skillIds: (await repository.listQuestSkills(quest.id)).map((link) => link.skillId) })));
-      const noteLinks = (await Promise.all([
-        ...goals.map((goal) => repository.getExternalNoteLink("goal", goal.id)),
-        ...skills.map((skill) => repository.getExternalNoteLink("skill", skill.id)),
-        ...quests.map((quest) => repository.getExternalNoteLink("quest", quest.id)),
-        ...reviews.map((review) => repository.getExternalNoteLink("review", review.id)),
-      ])).filter((link): link is ExternalNoteLink => Boolean(link));
-      const input = { goals, skills, quests: exportQuests, reviews, noteLinks };
+      const input = await loadMarkdownExportInput(repository, "pavel");
       const documents = buildMarkdownDocuments(input); const bundle = buildMarkdownBundle(input);
       setDocumentCount(documents.length); setMarkdown(bundle);
       if (share) await Share.share({ title: "Levera Markdown export", message: bundle });

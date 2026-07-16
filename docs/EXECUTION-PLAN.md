@@ -149,6 +149,12 @@ Deferred, not completed:
 
 ## Changelog
 
+### 2026-07-16 — Export-input regression coverage
+
+- Extracted Markdown export-input assembly into a reusable helper used by Settings.
+- Added automated coverage that proves saved external-note links are included for goals, skills, quests and weekly reviews before bundling.
+- Reduced the chance of future UI-side regressions when export assembly changes.
+
 ### 2026-07-16 — Dark theme token pass
 
 - Added system-aware brand palettes in `apps/mobile/src/theme.ts`.
