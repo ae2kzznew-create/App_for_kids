@@ -151,6 +151,12 @@ Deferred, not completed:
 
 ## Changelog
 
+### 2026-07-16 — Export linked external notes from Settings
+
+- Wired Settings export to load saved external-note links for goals, skills, quests and weekly reviews.
+- Ensured the shared Markdown bundle now carries the external-note frontmatter already covered by import/export tests.
+- Kept the documented P6 round-trip flow aligned with the actual application behavior.
+
 ### 2026-07-16 — P6 plan alignment after latest Markdown commits
 
 - Confirmed the latest repository changes already include external-note frontmatter in Markdown export/import.
