@@ -7,5 +7,5 @@ export interface PersonalRepository {
   saveSkillEdge(edge: SkillEdge): Promise<void>; deleteSkillEdge(id: string): Promise<void>; listSkillEdges(): Promise<SkillEdge[]>;
   getQuest(id: string): Promise<Quest | null>; saveQuest(quest: Quest, links: QuestSkill[]): Promise<void>; listQuests(): Promise<Quest[]>; listQuestSkills(questId: string): Promise<QuestSkill[]>; listActiveQuests(): Promise<Quest[]>;
   saveCompletionWithEvent(completion: QuestCompletion, event: ProgressEvent, completedQuest: Quest): Promise<void>; listCompletions(questId: string): Promise<QuestCompletion[]>; listCompletedQuests(limit?: number): Promise<CompletedQuestSummary[]>; listSkillHistory(skillId: string, limit?: number): Promise<CompletedQuestSummary[]>;
-  saveWeeklyReviewWithEvent(review: WeeklyReview, event: ProgressEvent): Promise<void>; listWeeklyReviews(profileId: string, limit?: number): Promise<WeeklyReview[]>; listProgressEvents(entityId: string): Promise<ProgressEvent[]>;
+  getWeeklyReview(id: string): Promise<WeeklyReview | null>; saveImportedWeeklyReview(review: WeeklyReview): Promise<void>; saveWeeklyReviewWithEvent(review: WeeklyReview, event: ProgressEvent): Promise<void>; listWeeklyReviews(profileId: string, limit?: number): Promise<WeeklyReview[]>; listProgressEvents(entityId: string): Promise<ProgressEvent[]>;
 }
