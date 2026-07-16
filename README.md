@@ -24,7 +24,8 @@ Before making repository changes, read:
 - Application source: Expo/React Native/TypeScript with Expo Router and local SQLite.
 - Working flow: create goal, skill and quest; complete with evidence/reflection; inspect completed-work and skill history.
 - Markdown status: goals, skills, quests, reviews and external-note links now round-trip through deterministic Markdown with stable IDs.
-- Current verification: TypeScript, automated domain tests and Android bundle pass; remaining gates are device restart confirmation, device interaction with 50 skills, Obsidian opening on a device with the app installed, and dark theme implementation.
+- Theme status: the app now applies brand tokens for both light and dark system appearance.
+- Current verification: TypeScript, automated domain tests and Android bundle pass; remaining gates are device restart confirmation, device interaction with 50 skills, Obsidian opening on a device with the app installed, and device-level SQLite integration coverage.
 - Family interviews and Wizard-of-Oz validation: deferred.
 
 ## Original product documentation
