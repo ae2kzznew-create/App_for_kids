@@ -16,7 +16,10 @@ All project documentation is grouped here so the repository root remains availab
 
 ## Canonical documents
 
+- Live execution plan: `EXECUTION-PLAN.md`
 - Product source of truth: `product/Product-Bible.html`
+- Active personal-first direction: `product/PERSONAL-FIRST-DIRECTION.md`
 - Research entry point: `research/README.md`
 - MVP implementation brief: `technical/MVP-Technical-Brief.html`
+- Markdown and Obsidian vault contract: `technical/OBSIDIAN-VAULT.md`
 - Validation sequence: `validation/Mom-Test-Interview-Script.html` → `validation/Wizard-of-Oz-Guide.html` → `validation/W4-Retention-Test-Protocol.html`

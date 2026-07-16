@@ -20,10 +20,11 @@ Before making repository changes, read:
 ## Current status
 
 - Active direction: **Levera Personal**.
-- Current stage: **persistent personal loop**.
+- Current stage: **device-gate stabilization after P6 completion**.
 - Application source: Expo/React Native/TypeScript with Expo Router and local SQLite.
 - Working flow: create goal, skill and quest; complete with evidence/reflection; inspect completed-work and skill history.
-- Current verification: TypeScript, automated domain tests and Android bundle pass; physical-device restart confirmation remains.
+- Markdown status: goals, skills, quests, reviews and external-note links now round-trip through deterministic Markdown with stable IDs.
+- Current verification: TypeScript, automated domain tests and Android bundle pass; remaining gates are device restart confirmation, device interaction with 50 skills, Obsidian opening on a device with the app installed, and dark theme implementation.
 - Family interviews and Wizard-of-Oz validation: deferred.
 
 ## Original product documentation

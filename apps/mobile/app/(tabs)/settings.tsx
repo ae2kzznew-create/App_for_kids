@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { usePersonalApp } from "../../src/application/PersonalAppProvider";
 import { buildMarkdownBundle, buildMarkdownDocuments } from "../../src/domain/markdownExport";
 import { importMarkdownBundle } from "../../src/domain/markdownImport";
+import type { ExternalNoteLink } from "../../src/domain/types";
 import { useDatabase } from "../../src/storage/DatabaseProvider";
 import { type DatabaseHealth, readDatabaseHealth } from "../../src/storage/database";
 import { theme } from "../../src/theme";
@@ -33,7 +34,13 @@ export default function SettingsScreen() {
     try {
       const [goals, skills, quests, reviews] = await Promise.all([repository.listGoals("pavel"), repository.listSkillsForProfile("pavel"), repository.listQuests(), repository.listWeeklyReviews("pavel", 52)]);
       const exportQuests = await Promise.all(quests.map(async (quest) => ({ quest, skillIds: (await repository.listQuestSkills(quest.id)).map((link) => link.skillId) })));
-      const input = { goals, skills, quests: exportQuests, reviews };
+      const noteLinks = (await Promise.all([
+        ...goals.map((goal) => repository.getExternalNoteLink("goal", goal.id)),
+        ...skills.map((skill) => repository.getExternalNoteLink("skill", skill.id)),
+        ...quests.map((quest) => repository.getExternalNoteLink("quest", quest.id)),
+        ...reviews.map((review) => repository.getExternalNoteLink("review", review.id)),
+      ])).filter((link): link is ExternalNoteLink => Boolean(link));
+      const input = { goals, skills, quests: exportQuests, reviews, noteLinks };
       const documents = buildMarkdownDocuments(input); const bundle = buildMarkdownBundle(input);
       setDocumentCount(documents.length); setMarkdown(bundle);
       if (share) await Share.share({ title: "Levera Markdown export", message: bundle });
@@ -54,7 +61,7 @@ export default function SettingsScreen() {
 
   return <SafeAreaView style={styles.safe} edges={["top"]}><ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.content}>
     <Text style={styles.eyebrow}>ВТОРОЙ МОЗГ</Text><Text style={styles.title}>Связи</Text>
-    <View style={styles.exportCard}><View style={styles.exportHeader}><View style={styles.icon}><MaterialCommunityIcons name="language-markdown-outline" size={26} color={theme.colors.blue} /></View><View style={styles.body}><Text style={styles.cardTitle}>Markdown export</Text><Text style={styles.cardText}>Цели, навыки, квесты и обзоры становятся отдельными документами со стабильными YAML ID.</Text></View></View>
+    <View style={styles.exportCard}><View style={styles.exportHeader}><View style={styles.icon}><MaterialCommunityIcons name="language-markdown-outline" size={26} color={theme.colors.blue} /></View><View style={styles.body}><Text style={styles.cardTitle}>Markdown export</Text><Text style={styles.cardText}>Цели, навыки, квесты, обзоры и связанные внешние заметки становятся отдельными документами со стабильными YAML ID.</Text></View></View>
       <View style={styles.actions}><Pressable disabled={exporting} onPress={() => buildExport(false)} style={styles.secondaryButton}><Text style={styles.secondaryButtonText}>Собрать</Text></Pressable><Pressable disabled={exporting} onPress={() => buildExport(true)} style={styles.primaryButton}>{exporting ? <ActivityIndicator color="#FFFFFF" /> : <Text style={styles.primaryButtonText}>Поделиться</Text>}</Pressable></View>
       {exportError ? <Text style={styles.error}>{exportError}</Text> : null}
       {markdown ? <View style={styles.preview}><Text style={styles.previewTitle}>{documentCount} Markdown-документов готовы</Text><Text selectable numberOfLines={12} style={styles.previewText}>{markdown}</Text></View> : <Text style={styles.exportHint}>Экспорт остаётся локальным, пока ты не выберешь приложение через системное меню.</Text>}
