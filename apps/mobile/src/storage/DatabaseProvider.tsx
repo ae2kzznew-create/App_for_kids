@@ -1,6 +1,6 @@
 import type { SQLiteDatabase } from "expo-sqlite";
 import { createContext, type ReactNode, useContext, useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
 import { theme } from "../theme";
 import { openDatabase } from "./database";
 
@@ -13,9 +13,11 @@ const DatabaseContext = createContext<DatabaseState>({ status: "loading", databa
 
 export function DatabaseProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<DatabaseState>({ status: "loading", database: null, error: null });
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     let active = true;
+    setState({ status: "loading", database: null, error: null });
     openDatabase()
       .then((database) => {
         if (active) setState({ status: "ready", database, error: null });
@@ -28,7 +30,7 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
     return () => {
       active = false;
     };
-  }, []);
+  }, [attempt]);
 
   const value = useMemo(() => state, [state]);
 
@@ -46,6 +48,13 @@ export function DatabaseProvider({ children }: { children: ReactNode }) {
       <View style={styles.center}>
         <Text style={styles.errorTitle}>Не удалось открыть локальную базу</Text>
         <Text style={styles.message}>{state.error.message}</Text>
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => setAttempt((value) => value + 1)}
+          style={({ pressed }) => [styles.retryButton, pressed && styles.retryButtonPressed]}
+        >
+          <Text style={styles.retryButtonText}>Попробовать снова</Text>
+        </Pressable>
       </View>
     );
   }
@@ -72,4 +81,16 @@ const styles = StyleSheet.create({
   },
   errorTitle: { color: theme.colors.red, fontSize: 18, fontWeight: "700", textAlign: "center" },
   message: { color: theme.colors.muted, fontSize: 15, lineHeight: 22, textAlign: "center" },
+  retryButton: {
+    minHeight: 46,
+    minWidth: 180,
+    borderRadius: 12,
+    backgroundColor: theme.colors.blue,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 18,
+    marginTop: 4,
+  },
+  retryButtonPressed: { opacity: 0.8 },
+  retryButtonText: { color: "#FFFFFF", fontWeight: "800", fontSize: 15 },
 });

@@ -48,7 +48,7 @@ This is the live operating plan. Every agent must read it before working and upd
 - [x] ~~Create Expo/React Native/TypeScript application~~ — Evidence: `apps/mobile/`.
 - [x] ~~Configure Expo Router and five-tab shell~~ — Evidence: application routes.
 - [x] ~~Configure SQLite migrations and root startup initialization~~ — Evidence: storage layer and `DatabaseProvider`.
-- [x] ~~Add startup SQLite write/read health check and error UI~~ — Evidence: database startup code.
+- [x] ~~Add startup SQLite write/read health check, retry action and error UI~~ — Evidence: database startup code and recoverable initialization screen.
 - [x] ~~Separate domain/storage logic from UI~~ — Evidence: source structure.
 - [x] ~~Add complete light/dark brand tokens~~ — Evidence: system-aware palettes in `apps/mobile/src/theme.ts` and matching status-bar selection in `apps/mobile/app/_layout.tsx`.
 - [x] ~~Pass clean install, TypeScript, all automated tests and Android Expo bundle~~ — Evidence: Mobile CI.
@@ -152,6 +152,12 @@ Deferred, not completed:
 - External note opening still needs device verification with Obsidian installed.
 
 ## Changelog
+
+### 2026-07-17 — Retry on database startup failure
+
+- Added a retry action to the database initialization error screen instead of forcing a full app restart.
+- Improved recoverability for transient startup issues during personal-alpha dogfooding.
+- Kept the P2 shell status aligned with the new error-handling behavior.
 
 ### 2026-07-17 — Personal dogfooding protocol
 
