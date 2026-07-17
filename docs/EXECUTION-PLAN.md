@@ -100,6 +100,7 @@ This is the live operating plan. Every agent must read it before working and upd
 - [x] ~~Allow reviewed mastery/support adjustments~~ — Evidence: evidence-required skill review, atomic event and no XP.
 - [x] ~~Implement spaced repetition and recovery without guilt~~ — Evidence: mastery-based intervals, due/fading queue, pause and gentle zero-XP recovery.
 - [x] ~~Support maintenance without XP rewards~~ — Evidence: explicit maintenance mode, visible zero-XP labels and completion tests.
+- [x] ~~Use live repetition status during weekly reviews~~ — Evidence: review attention state now recalculates from current time instead of stale stored values.
 
 **Decision gate:** automated P5 flow complete; device dogfooding remains part of P7.
 
@@ -152,6 +153,12 @@ Deferred, not completed:
 - External note opening still needs device verification with Obsidian installed.
 
 ## Changelog
+
+### 2026-07-17 — Live review attention state
+
+- Updated the weekly review screen to derive due/fading skills from current time instead of stale persisted status values.
+- Improved the honesty of the review attention summary during dogfooding.
+- Kept the live plan aligned with the corrected repetition behavior.
 
 ### 2026-07-17 — Reuse existing goals in setup
 
