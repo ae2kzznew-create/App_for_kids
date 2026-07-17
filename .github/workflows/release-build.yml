@@ -1,0 +1,62 @@
+name: Release builds
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "apps/mobile/**"
+      - "apps/web/**"
+      - ".github/workflows/release-build.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-builds
+  cancel-in-progress: true
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Use Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Install dependencies
+        working-directory: apps/mobile
+        run: npm install --no-audit --no-fund
+      - name: Generate native Android project
+        working-directory: apps/mobile
+        run: npx expo prebuild --platform android
+      - name: Build installable APK
+        working-directory: apps/mobile/android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease --no-daemon
+      - name: Collect artifacts
+        run: |
+          mkdir -p dist
+          cp apps/mobile/android/app/build/outputs/apk/release/app-release.apk dist/Levera.apk
+          mkdir -p dist/Levera-Web
+          cp apps/web/index.html dist/Levera-Web/
+          cp apps/web/README.md dist/Levera-Web/README.md
+          printf 'start "" "%%~dp0index.html"\r\n' > dist/Levera-Web/start-levera.bat
+          cd dist && zip -r Levera-Web.zip Levera-Web
+      - name: Publish "latest" release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete latest --cleanup-tag -y --repo "$GITHUB_REPOSITORY" || true
+          gh release create latest dist/Levera.apk dist/Levera-Web.zip \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "Levera — свежие сборки" \
+            --notes "Levera.apk — установка на Android напрямую (разреши установку из неизвестных источников). Levera-Web.zip — распакуй и открой index.html в Chrome/Edge на компьютере."
