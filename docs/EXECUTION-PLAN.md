@@ -75,7 +75,7 @@ This is the live operating plan. Every agent must read it before working and upd
 - [x] ~~Add UI for opening and completing a real quest~~ — Evidence: `/quest/[id]`.
 - [x] ~~Show completed work in Today and skill history~~ — Evidence: Progress and `/skill/[id]`.
 - [ ] Add SQLite-backed lifecycle and persistence tests.
-  Progress: service tests pass against memory repository; startup-marker coverage now exists, but automated device SQLite integration remains.
+  Progress: service tests pass against memory repository; startup-marker coverage now exists, additional service edge-case coverage exists, but automated device SQLite integration remains.
 
 **Decision gate:** complete loop through UI with persistent data and visible history.
 
@@ -148,6 +148,12 @@ Deferred, not completed:
 - External note opening still needs device verification with Obsidian installed.
 
 ## Changelog
+
+### 2026-07-17 — Service edge-case coverage
+
+- Added tests for idempotent skill disconnection and quest skill-ID deduplication.
+- Added validation coverage for negative XP rewards and recovery attempts on skills that are not waiting for recovery.
+- Reduced the chance of regressions around vertical-slice edge cases while manual device gates remain open.
 
 ### 2026-07-17 — Manual device verification checklist
 
