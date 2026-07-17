@@ -451,16 +451,17 @@ function questItem(quest){
   const done = quest.fields.status === "completed";
   const skills = (Array.isArray(quest.fields.skill_ids) ? quest.fields.skill_ids : []).map((id) => (get("skill", id) || { title: id }).title).join(", ");
   const xp = quest.fields.maintenance === true || questXp(quest) === 0 ? '<span class="badge gray">поддержание · 0 XP</span>' : '<span class="badge ' + (done ? "green" : "blue") + '">✦ ' + questXp(quest) + " XP</span>";
-  const actions = quest.fields.status === "active" || quest.fields.status === "planned"
+  const edit = '<button class="small" data-action="edit-quest" data-id="' + esc(quest.id) + '" title="Изменить" aria-label="Изменить квест">✎</button>';
+  const actions = edit + (quest.fields.status === "active" || quest.fields.status === "planned"
     ? '<button class="small primary" data-action="complete" data-id="' + esc(quest.id) + '">Выполнить</button>'
-    : (done ? '<button class="small" data-action="reopen" data-id="' + esc(quest.id) + '">Вернуть</button>' : "");
+    : (done ? '<button class="small" data-action="reopen" data-id="' + esc(quest.id) + '">Вернуть</button>' : ""));
   return '<div class="item"><div class="iic ' + (done ? "soft-green" : "soft-blue") + '" aria-hidden="true">' + (done ? "✅" : "⚔️") + '</div><div class="body"><div class="title' + (done ? " done" : "") + '">' + esc(quest.title) + '</div><div class="meta">' + badge(QUEST_STATUS, quest.fields.status) + " " + xp + '<span>L' + esc(quest.fields.support_level) + '</span><span>·</span><span>' + esc(skills || "—") + "</span></div>" + (descriptionBody(quest.body) ? '<div class="desc">' + esc(descriptionBody(quest.body)) + "</div>" : "") + '</div><div class="side">' + actions + "</div></div>";
 }
 function skillItem(skill){
   const goal = get("goal", skill.fields.goal_id);
   const status = skillLiveStatus(skill);
   const mastery = Number(skill.fields.mastery_score) || 0;
-  return '<div class="item"><div class="iic soft-green" aria-hidden="true">🌱</div><div class="body"><div class="title">' + esc(skill.title) + '</div><div class="meta">' + badge(SKILL_STATUS, status) + '<span class="row" style="gap:8px;flex:1;min-width:140px;max-width:240px"><span class="bar"><i class="' + barColor(status) + '" style="width:' + mastery + '%"></i></span><span>' + mastery + "/100</span></span><span>L" + esc(skill.fields.support_level) + "</span>" + (goal ? "<span>·</span><span>" + esc(goal.title) + "</span>" : "") + "</div></div></div>";
+  return '<div class="item"><div class="iic soft-green" aria-hidden="true">🌱</div><div class="body"><div class="title">' + esc(skill.title) + '</div><div class="meta">' + badge(SKILL_STATUS, status) + '<span class="row" style="gap:8px;flex:1;min-width:140px;max-width:240px"><span class="bar"><i class="' + barColor(status) + '" style="width:' + mastery + '%"></i></span><span>' + mastery + "/100</span></span><span>L" + esc(skill.fields.support_level) + "</span>" + (goal ? "<span>·</span><span>" + esc(goal.title) + "</span>" : "") + '</div></div><div class="side"><button class="small" data-action="edit-skill" data-id="' + esc(skill.id) + '" title="Изменить" aria-label="Изменить навык">✎</button></div></div>';
 }
 function renderGoals(){
   const goals = byType("goal");
@@ -470,7 +471,7 @@ function renderGoals(){
     const quests = byType("quest").filter((quest) => (quest.fields.skill_ids || []).some((id) => skillIds.has(id)));
     const doneCount = quests.filter((quest) => quest.fields.status === "completed").length;
     const percent = quests.length ? Math.round(doneCount / quests.length * 100) : 0;
-    return '<div class="goal-block"><div class="head"><div class="gic soft-blue" aria-hidden="true">🎯</div><span class="title">' + esc(goal.title) + "</span>" + badge(GOAL_STATUS, goal.fields.status) + '<button class="small" data-action="add-skill" data-id="' + esc(goal.id) + '">+ Навык</button></div>' +
+    return '<div class="goal-block"><div class="head"><div class="gic soft-blue" aria-hidden="true">🎯</div><span class="title">' + esc(goal.title) + "</span>" + badge(GOAL_STATUS, goal.fields.status) + '<button class="small" data-action="edit-goal" data-id="' + esc(goal.id) + '" title="Изменить" aria-label="Изменить цель">✎</button><button class="small" data-action="add-skill" data-id="' + esc(goal.id) + '">+ Навык</button></div>' +
       (descriptionBody(goal.body) ? '<div class="gdesc">' + esc(descriptionBody(goal.body)) + "</div>" : "") +
       (quests.length ? '<div class="gprogress"><span class="bar"><i style="width:' + percent + '%"></i></span><span>' + doneCount + " из " + quests.length + " квестов выполнено</span></div>" : "") +
       '<div class="subsection">НАВЫКИ · ' + skills.length + "</div>" + (skills.length ? skills.map(skillItem).join("") : emptyState("🌱", "Пока нет навыков", "Добавь первый кнопкой «+ Навык».")) +
@@ -522,6 +523,7 @@ function bindActions(){
     const id = button.dataset.id;
     button.onclick = () => ({
       "add-goal": dlgGoal, "add-skill": () => dlgSkill(id), "add-quest": dlgQuest, "add-review": dlgReview,
+      "edit-goal": () => dlgEditGoal(id), "edit-skill": () => dlgEditSkill(id), "edit-quest": () => dlgEditQuest(id),
       complete: () => dlgComplete(id), reopen: () => reopenQuest(id),
     })[button.dataset.action]();
   }
@@ -560,6 +562,55 @@ function dlgQuest(){
     const parsed = { id, type: "quest", title, body: "", fields: { levera_id: id, levera_type: "quest", skill_ids: skillIds, status: "active", support_level: Number(dialog.querySelector("#fSupport").value), xp_reward: xp, maintenance: xp === 0, updated: now() } };
     await saveEntity(parsed, title, dialog.querySelector("#fDesc").value.trim());
     await afterWrite("Квест создан");
+  });
+}
+function statusOptions(map, current){
+  return Object.keys(map).map((key) => '<option value="' + key + '"' + (key === current ? " selected" : "") + '>' + map[key][0] + "</option>").join("");
+}
+function supportOptions(current){
+  return [3, 2, 1, 0].map((level) => '<option value="' + level + '"' + (Number(current) === level ? " selected" : "") + '>L' + level + "</option>").join("");
+}
+function dlgEditGoal(id){
+  const goal = get("goal", id); if (!goal) return;
+  openDialog("<h3>✎ Изменить цель</h3><label>Название</label><input id=\"fTitle\" value=\"" + esc(goal.title) + "\"><label>Статус</label><select id=\"fStatus\">" + statusOptions(GOAL_STATUS, goal.fields.status) + "</select><label>Описание</label><textarea id=\"fDesc\">" + esc(descriptionBody(goal.body)) + "</textarea>", async (dialog) => {
+    const title = dialog.querySelector("#fTitle").value.trim(); if (!title) { show("Нужно название"); return false; }
+    goal.fields.status = dialog.querySelector("#fStatus").value;
+    goal.fields.updated = now();
+    await saveEntity(goal, title, dialog.querySelector("#fDesc").value.trim());
+    await afterWrite("Цель обновлена");
+  });
+}
+function dlgEditSkill(id){
+  const skill = get("skill", id); if (!skill) return;
+  const options = byType("goal").map((goal) => '<option value="' + esc(goal.id) + '"' + (goal.id === skill.fields.goal_id ? " selected" : "") + '>' + esc(goal.title) + "</option>").join("");
+  openDialog("<h3>✎ Изменить навык</h3><label>Название</label><input id=\"fTitle\" value=\"" + esc(skill.title) + "\"><label>Цель</label><select id=\"fGoal\">" + options + "</select><label>Статус (пауза — без чувства вины)</label><select id=\"fStatus\">" + statusOptions(SKILL_STATUS, skill.fields.status) + "</select><label>Мастерство 0–100 (меняй только по реальным доказательствам)</label><input id=\"fMastery\" type=\"number\" min=\"0\" max=\"100\" value=\"" + (Number(skill.fields.mastery_score) || 0) + "\"><label>Уровень поддержки</label><select id=\"fSupport\">" + supportOptions(skill.fields.support_level) + "</select><label>Описание</label><textarea id=\"fDesc\">" + esc(descriptionBody(skill.body)) + "</textarea>", async (dialog) => {
+    const title = dialog.querySelector("#fTitle").value.trim(); if (!title) { show("Нужно название"); return false; }
+    skill.fields.goal_id = dialog.querySelector("#fGoal").value;
+    skill.fields.status = dialog.querySelector("#fStatus").value;
+    skill.fields.mastery_score = Math.max(0, Math.min(100, Math.floor(Number(dialog.querySelector("#fMastery").value) || 0)));
+    skill.fields.support_level = Number(dialog.querySelector("#fSupport").value);
+    skill.fields.updated = now();
+    await saveEntity(skill, title, dialog.querySelector("#fDesc").value.trim());
+    await afterWrite("Навык обновлён");
+  });
+}
+function dlgEditQuest(id){
+  const quest = get("quest", id); if (!quest) return;
+  const selected = new Set(Array.isArray(quest.fields.skill_ids) ? quest.fields.skill_ids : []);
+  const options = byType("skill").map((skill) => '<option value="' + esc(skill.id) + '"' + (selected.has(skill.id) ? " selected" : "") + '>' + esc(skill.title) + "</option>").join("");
+  openDialog("<h3>✎ Изменить квест</h3><label>Название</label><input id=\"fTitle\" value=\"" + esc(quest.title) + "\"><label>Навыки</label><select id=\"fSkills\" multiple size=\"4\">" + options + "</select><label>Статус</label><select id=\"fStatus\">" + statusOptions(QUEST_STATUS, quest.fields.status) + "</select><label>XP (0 = поддержание без награды)</label><input id=\"fXp\" type=\"number\" min=\"0\" max=\"100000\" value=\"" + questXp(quest) + "\"><label>Уровень поддержки</label><select id=\"fSupport\">" + supportOptions(quest.fields.support_level) + "</select><label>Описание</label><textarea id=\"fDesc\">" + esc(descriptionBody(quest.body)) + "</textarea>", async (dialog) => {
+    const title = dialog.querySelector("#fTitle").value.trim(); if (!title) { show("Нужно название"); return false; }
+    const skillIds = [...dialog.querySelector("#fSkills").selectedOptions].map((option) => option.value);
+    if (!skillIds.length) { show("Выбери хотя бы один навык"); return false; }
+    const xp = Math.max(0, Math.floor(Number(dialog.querySelector("#fXp").value) || 0));
+    quest.fields.skill_ids = skillIds;
+    quest.fields.status = dialog.querySelector("#fStatus").value;
+    quest.fields.xp_reward = xp;
+    quest.fields.maintenance = xp === 0;
+    quest.fields.support_level = Number(dialog.querySelector("#fSupport").value);
+    quest.fields.updated = now();
+    await saveEntity(quest, title, dialog.querySelector("#fDesc").value.trim());
+    await afterWrite("Квест обновлён");
   });
 }
 function dlgComplete(id){
