@@ -7,7 +7,7 @@ This is the live operating plan. Every agent must read it before working and upd
 - **Current stage:** P2–P4 device gates, P6 complete, P7 pending
 - **Current milestone:** Close remaining device-only gates for the personal alpha and prepare the four-week dogfooding run
 - **Last updated:** 2026-07-17
-- **Application status:** goals, skills, quests, reviews and external-note links round-trip through Markdown, Settings can bind an Android sync folder and export/import Markdown files directly through it, the single-file web companion (`apps/web/index.html`) reads and writes the same vault folder on desktop, and every `main` update publishes a downloadable APK and web bundle to the rolling `latest` GitHub release linked from the README
+- **Application status:** goals, skills, quests, reviews and external-note links round-trip through Markdown, Settings can bind an Android sync folder and export/import Markdown files directly through it, the web companion and the new Windows application (`Levera.exe`, Electron shell over the shared UI) read and write the same vault folder on desktop with a remembered folder, and every `main` update publishes the APK, the Windows executable and the web bundle to the rolling `latest` GitHub release linked from the README
 - **Primary user:** Pavel, acting as architect, performer and coach
 - **Active direction:** `docs/product/PERSONAL-FIRST-DIRECTION.md`
 
@@ -123,7 +123,7 @@ This is the live operating plan. Every agent must read it before working and upd
 - [ ] Create Pavel's real goals and skills.
   Progress: the setup protocol is documented in `docs/technical/PERSONAL-DOGFOODING-PROTOCOL.md`, and the setup flow can now add new skills and quests into existing goals, while Today now links directly into the weekly review loop.
 - [ ] Keep the Markdown vault folder synchronized with Google Drive during the run.
-  Progress: Settings can bind a sync folder through the Android folder picker, export one Markdown file per entity into it with duplicate-free updates, and import the whole folder back; the desktop web companion (`apps/web/index.html`) works with the same folder on the computer. Pairing the folder with Autosync for Google Drive and on-device verification remain.
+  Progress: Settings can bind a sync folder through the Android folder picker, export one Markdown file per entity into it with duplicate-free updates, and import the whole folder back; the desktop web companion and the Windows application work with the same folder on the computer, and the Windows application remembers the folder between launches. Pairing the folder with Autosync for Google Drive and on-device verification remain.
 - [ ] Use daily for four weeks and complete four weekly reviews.
   Progress: the weekly logging and review format are documented in `docs/technical/PERSONAL-DOGFOODING-PROTOCOL.md`.
 - [ ] Track friction and fix data loss/blocking UX first.
@@ -153,10 +153,15 @@ Deferred, not completed:
 - Device press/scroll check remains for the 50-skill P4 gate.
 - Vault access strategy selected: a user-chosen local sync folder (Android Storage Access Framework) mirrored to Google Drive by an external tool such as Autosync; on-device verification of folder pick, file export, Autosync round trip and duplicate-free import remains. Paste import in Settings stays as the fallback path.
 - External note opening still needs device verification with Obsidian installed.
-- The rolling `latest` release (`Levera.apk` + `Levera-Web.zip`) still needs one manual install verification on the phone and computer.
-- The web companion needs a manual check in Chrome/Edge against the real Drive-synced folder.
+- The rolling `latest` release (`Levera.apk` + `Levera.exe` + `Levera-Web.zip`) still needs one manual install verification on the phone and computer, including the remembered-folder behavior of the Windows application.
 
 ## Changelog
+
+### 2026-07-17 — Windows desktop application
+
+- Added `apps/desktop/`, an Electron shell around the shared web UI that runs as a normal Windows application (`Levera.exe`, portable single file).
+- The vault folder is picked once through the native dialog, stored in the user profile and reconnected automatically on every start; file access goes through the main process and touches only `.md` files in the chosen folder.
+- Extended the release workflow with a Windows build job and published `Levera.exe` to the rolling `latest` release; updated the README download section to point Windows users at the executable with the web bundle as fallback.
 
 ### 2026-07-17 — README download section
 
