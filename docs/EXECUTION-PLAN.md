@@ -7,7 +7,7 @@ This is the live operating plan. Every agent must read it before working and upd
 - **Current stage:** P2–P4 device gates, P6 complete, P7 pending
 - **Current milestone:** Close remaining device-only gates for the personal alpha and prepare the four-week dogfooding run
 - **Last updated:** 2026-07-17
-- **Application status:** goals, skills, quests, reviews and external-note links can round-trip through Markdown, explicit Obsidian URIs and web notes can open from skill and quest screens, the app follows light/dark brand tokens, and Settings can now bind an Android sync folder and export/import Markdown files directly through it
+- **Application status:** goals, skills, quests, reviews and external-note links round-trip through Markdown, Settings can bind an Android sync folder and export/import Markdown files directly through it, and the new single-file web companion (`apps/web/index.html`) reads and writes the same vault folder on desktop
 - **Primary user:** Pavel, acting as architect, performer and coach
 - **Active direction:** `docs/product/PERSONAL-FIRST-DIRECTION.md`
 
@@ -123,7 +123,7 @@ This is the live operating plan. Every agent must read it before working and upd
 - [ ] Create Pavel's real goals and skills.
   Progress: the setup protocol is documented in `docs/technical/PERSONAL-DOGFOODING-PROTOCOL.md`, and the setup flow can now add new skills and quests into existing goals, while Today now links directly into the weekly review loop.
 - [ ] Keep the Markdown vault folder synchronized with Google Drive during the run.
-  Progress: Settings can bind a sync folder through the Android folder picker, export one Markdown file per entity into it with duplicate-free updates, and import the whole folder back; pairing the folder with Autosync for Google Drive and on-device verification remain.
+  Progress: Settings can bind a sync folder through the Android folder picker, export one Markdown file per entity into it with duplicate-free updates, and import the whole folder back; the desktop web companion (`apps/web/index.html`) works with the same folder on the computer. Pairing the folder with Autosync for Google Drive and on-device verification remain.
 - [ ] Use daily for four weeks and complete four weekly reviews.
   Progress: the weekly logging and review format are documented in `docs/technical/PERSONAL-DOGFOODING-PROTOCOL.md`.
 - [ ] Track friction and fix data loss/blocking UX first.
@@ -153,8 +153,17 @@ Deferred, not completed:
 - Device press/scroll check remains for the 50-skill P4 gate.
 - Vault access strategy selected: a user-chosen local sync folder (Android Storage Access Framework) mirrored to Google Drive by an external tool such as Autosync; on-device verification of folder pick, file export, Autosync round trip and duplicate-free import remains. Paste import in Settings stays as the fallback path.
 - External note opening still needs device verification with Obsidian installed.
+- Installable Android build (EAS `preview` APK profile) still needs to be produced once with Pavel's Expo account.
+- The web companion needs a manual check in Chrome/Edge against the real Drive-synced folder.
 
 ## Changelog
+
+### 2026-07-17 — Levera Web companion and APK build profiles
+
+- Added `apps/web/index.html`, a single-file desktop web companion: it opens the local vault folder through the browser, shows goals, skills, quests and weekly reviews, and writes new entities, quest completions and weekly reviews back as Levera Markdown.
+- Matched the mobile folder-export file naming so web-created files update in place instead of duplicating, preserved unknown frontmatter fields, and ignored non-Levera Markdown notes.
+- Added a read-only demo mode, light/dark theme and `apps/web/README.md` with static-hosting deployment notes.
+- Added `apps/mobile/eas.json` build profiles and the Android package identifier so an installable APK can be produced with EAS.
 
 ### 2026-07-17 — Google Drive vault folder sync
 
