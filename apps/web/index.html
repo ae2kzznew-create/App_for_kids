@@ -110,7 +110,7 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:24px}
       <button id="btnPickBig" class="primary">Открыть папку vault</button>
       <button id="btnDemo" class="ghost">Посмотреть на демо-данных</button>
     </div>
-    <p class="note">Нужен Chrome или Edge на компьютере. Файлы не покидают твой диск.</p>
+    <p class="note" id="connectNote">Нужен Chrome или Edge на компьютере. Файлы не покидают твой диск.</p>
   </div>
   <div id="app" hidden>
     <nav class="tabs" id="tabs"></nav>
@@ -258,6 +258,18 @@ function fsVault(handle){
       await writable.close();
     },
     remove: async (name) => handle.removeEntry(name),
+  };
+}
+
+function desktopVault(folderPath){
+  const bridge = window.leveraVault;
+  return {
+    label: "Папка: " + folderPath,
+    demo: false,
+    list: () => bridge.list(),
+    read: (name) => bridge.read(name),
+    write: (name, content) => bridge.write(name, content),
+    remove: (name) => bridge.remove(name),
   };
 }
 
@@ -488,6 +500,11 @@ async function afterWrite(message){ await loadVault(); show(message + (vault.dem
 
 // ---------- Boot ----------
 async function pickFolder(){
+  if (window.leveraVault) {
+    const folder = await window.leveraVault.pickFolder();
+    if (folder) { vault = desktopVault(folder); await loadVault(); show("Папка сохранена — теперь она подключается автоматически"); }
+    return;
+  }
   if (!window.showDirectoryPicker) { show("Нужен Chrome или Edge на компьютере"); return; }
   try {
     const handle = await window.showDirectoryPicker({ mode: "readwrite" });
@@ -504,11 +521,22 @@ async function tryRestore(){
     if (permission === "granted" || (await handle.requestPermission({ mode: "readwrite" })) === "granted") { vault = fsVault(handle); await loadVault(); }
   } catch {}
 }
+async function boot(){
+  if (window.leveraVault) {
+    el("connectNote").textContent = "Папка выбирается один раз — дальше приложение подключается к ней само при каждом запуске.";
+    try {
+      const saved = await window.leveraVault.getFolder();
+      if (saved) { vault = desktopVault(saved); await loadVault(); }
+    } catch {}
+    return;
+  }
+  if (location.hash === "#demo") { vault = demoVault(); await loadVault(); } else { await tryRestore(); }
+}
 el("btnPick").onclick = pickFolder;
 el("btnPickBig").onclick = pickFolder;
 el("btnDemo").onclick = async () => { vault = demoVault(); await loadVault(); };
 el("btnReload").onclick = () => loadVault().then(() => show("Обновлено"));
-if (location.hash === "#demo") { vault = demoVault(); loadVault(); } else { tryRestore(); }
+boot();
 </script>
 </body>
 </html>
