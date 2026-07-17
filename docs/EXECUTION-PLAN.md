@@ -53,7 +53,7 @@ This is the live operating plan. Every agent must read it before working and upd
 - [x] ~~Add complete light/dark brand tokens~~ — Evidence: system-aware palettes in `apps/mobile/src/theme.ts` and matching status-bar selection in `apps/mobile/app/_layout.tsx`.
 - [x] ~~Pass clean install, TypeScript, all automated tests and Android Expo bundle~~ — Evidence: Mobile CI.
 - [ ] Verify SQLite persistence across restart on simulator or physical device.
-  Progress: Settings exposes cross-launch evidence; one full device close/reopen remains. Manual steps are documented in `docs/technical/DEVICE-VERIFICATION-CHECKLIST.md`.
+  Progress: Settings exposes cross-launch evidence, a manual status refresh, and one full device close/reopen still remains. Manual steps are documented in `docs/technical/DEVICE-VERIFICATION-CHECKLIST.md`.
 
 **Decision gate:** application runs on device and persists a record across restart.
 
@@ -152,6 +152,12 @@ Deferred, not completed:
 - External note opening still needs device verification with Obsidian installed.
 
 ## Changelog
+
+### 2026-07-17 — Manual SQLite-health refresh
+
+- Added a manual refresh action to the Settings health card.
+- Made it easier to re-check cross-launch persistence evidence during device verification.
+- Kept the live plan aligned with the improved verification workflow.
 
 ### 2026-07-17 — Retry on database startup failure
 
