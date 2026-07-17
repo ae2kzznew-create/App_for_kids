@@ -14,16 +14,18 @@ Before making repository changes, read:
 
 ## Repository layout
 
-- [`apps/mobile/`](apps/mobile/) — Expo/React Native personal application.
+- [`apps/mobile/`](apps/mobile/) — Expo/React Native personal application for Android.
+- [`apps/web/`](apps/web/) — single-file desktop web companion that works with the Markdown vault folder.
 - [`docs/`](docs/) — product, research, validation, technical, brand, marketing, business and legal documents.
 
 ## Current status
 
 - Active direction: **Levera Personal**.
 - Current stage: **device-gate stabilization after P6 completion**.
-- Application source: Expo/React Native/TypeScript with Expo Router and local SQLite.
+- Application source: Expo/React Native/TypeScript with Expo Router and local SQLite; installable Android builds via EAS profiles in `apps/mobile/eas.json`.
 - Working flow: create goal, skill and quest; complete with evidence/reflection; inspect completed-work and skill history.
-- Markdown status: goals, skills, quests, reviews and external-note links now round-trip through deterministic Markdown with stable IDs.
+- Markdown status: goals, skills, quests, reviews and external-note links now round-trip through deterministic Markdown with stable IDs, directly through a chosen sync folder on Android.
+- Desktop status: `apps/web/index.html` reads and writes the same vault folder on the computer (Chrome/Edge), deployable as static hosting.
 - Theme status: the app now applies brand tokens for both light and dark system appearance.
 - Current verification: TypeScript, automated domain tests and Android bundle pass; remaining gates are device restart confirmation, device interaction with 50 skills, Obsidian opening on a device with the app installed, and device-level SQLite integration coverage.
 - Family interviews and Wizard-of-Oz validation: deferred.
