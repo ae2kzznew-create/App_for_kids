@@ -7,7 +7,7 @@ This is the live operating plan. Every agent must read it before working and upd
 - **Current stage:** P2–P4 device gates, P6 complete, P7 pending
 - **Current milestone:** Close remaining device-only gates for the personal alpha and prepare the four-week dogfooding run
 - **Last updated:** 2026-07-17
-- **Application status:** goals, skills, quests, reviews and external-note links round-trip through Markdown, Settings can bind an Android sync folder and export/import Markdown files directly through it, and the new single-file web companion (`apps/web/index.html`) reads and writes the same vault folder on desktop
+- **Application status:** goals, skills, quests, reviews and external-note links round-trip through Markdown, Settings can bind an Android sync folder and export/import Markdown files directly through it, the single-file web companion (`apps/web/index.html`) reads and writes the same vault folder on desktop, and every `main` update publishes a downloadable APK and web bundle to the rolling `latest` GitHub release
 - **Primary user:** Pavel, acting as architect, performer and coach
 - **Active direction:** `docs/product/PERSONAL-FIRST-DIRECTION.md`
 
@@ -153,10 +153,16 @@ Deferred, not completed:
 - Device press/scroll check remains for the 50-skill P4 gate.
 - Vault access strategy selected: a user-chosen local sync folder (Android Storage Access Framework) mirrored to Google Drive by an external tool such as Autosync; on-device verification of folder pick, file export, Autosync round trip and duplicate-free import remains. Paste import in Settings stays as the fallback path.
 - External note opening still needs device verification with Obsidian installed.
-- Installable Android build (EAS `preview` APK profile) still needs to be produced once with Pavel's Expo account.
+- The rolling `latest` release (`Levera.apk` + `Levera-Web.zip`) still needs one manual install verification on the phone and computer.
 - The web companion needs a manual check in Chrome/Edge against the real Drive-synced folder.
 
 ## Changelog
+
+### 2026-07-17 — One-click downloadable builds
+
+- Added `.github/workflows/release-build.yml`: every `main` change to the apps builds an installable `Levera.apk` (Expo prebuild + Gradle release signed with the debug keystore) and packages `Levera-Web.zip` with a desktop launcher.
+- Published both artifacts to the rolling `latest` GitHub release so the download links stay stable.
+- Replaced the account-bound one-time EAS step with the automated CI build; EAS profiles remain for store-grade builds later.
 
 ### 2026-07-17 — Levera Web companion and APK build profiles
 
