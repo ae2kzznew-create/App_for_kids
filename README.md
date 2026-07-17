@@ -8,12 +8,13 @@ The original family and child product remains documented as a future direction.
 
 [![Скачать APK для Android](https://img.shields.io/badge/📱_Телефон_(Android)-Скачать_Levera.apk-3DDC84?style=for-the-badge)](https://github.com/ae2kzznew-create/App_for_kids/releases/download/latest/Levera.apk)
 
-[![Скачать архив для компьютера](https://img.shields.io/badge/💻_Компьютер-Скачать_Levera--Web.zip-2783DE?style=for-the-badge)](https://github.com/ae2kzznew-create/App_for_kids/releases/download/latest/Levera-Web.zip)
+[![Скачать приложение для Windows](https://img.shields.io/badge/💻_Компьютер_(Windows)-Скачать_Levera.exe-2783DE?style=for-the-badge)](https://github.com/ae2kzznew-create/App_for_kids/releases/download/latest/Levera.exe)
 
-| Устройство | Файл | Как установить |
+| Устройство | Файл | Как запустить |
 | --- | --- | --- |
 | 📱 Телефон (Android) | [`Levera.apk`](https://github.com/ae2kzznew-create/App_for_kids/releases/download/latest/Levera.apk) | Скачай с телефона и открой файл. Если Android спросит — разреши установку из неизвестных источников для браузера. |
-| 💻 Компьютер | [`Levera-Web.zip`](https://github.com/ae2kzznew-create/App_for_kids/releases/download/latest/Levera-Web.zip) | Распакуй архив. Windows: запусти `start-levera.bat`. Mac/Linux: открой `index.html` в Chrome или Edge. |
+| 💻 Компьютер (Windows) | [`Levera.exe`](https://github.com/ae2kzznew-create/App_for_kids/releases/download/latest/Levera.exe) | Один файл, без установки: скачай и запусти. При первом запуске SmartScreen может предупредить — «Подробнее» → «Выполнить в любом случае». Папка vault выбирается один раз и дальше подключается автоматически. |
+| 🌐 Запасной вариант (любая ОС) | [`Levera-Web.zip`](https://github.com/ae2kzznew-create/App_for_kids/releases/download/latest/Levera-Web.zip) | Распакуй и открой `index.html` в Chrome или Edge. |
 
 Сборки обновляются автоматически при каждом изменении приложения — ссылки всегда ведут на свежую версию. Все релизы: [Releases → latest](https://github.com/ae2kzznew-create/App_for_kids/releases/tag/latest).
 
@@ -28,17 +29,18 @@ Before making repository changes, read:
 ## Repository layout
 
 - [`apps/mobile/`](apps/mobile/) — Expo/React Native personal application for Android.
-- [`apps/web/`](apps/web/) — single-file desktop web companion that works with the Markdown vault folder.
+- [`apps/web/`](apps/web/) — single-file web companion that works with the Markdown vault folder.
+- [`apps/desktop/`](apps/desktop/) — Electron shell that turns the web companion into a Windows application with a remembered vault folder.
 - [`docs/`](docs/) — product, research, validation, technical, brand, marketing, business and legal documents.
 
 ## Current status
 
 - Active direction: **Levera Personal**.
 - Current stage: **device-gate stabilization after P6 completion**.
-- Application source: Expo/React Native/TypeScript with Expo Router and local SQLite; installable Android APK and the desktop web bundle are published automatically to the rolling [`latest` release](https://github.com/ae2kzznew-create/App_for_kids/releases/tag/latest).
+- Application source: Expo/React Native/TypeScript with Expo Router and local SQLite; installable Android APK, the Windows executable and the web bundle are published automatically to the rolling [`latest` release](https://github.com/ae2kzznew-create/App_for_kids/releases/tag/latest).
 - Working flow: create goal, skill and quest; complete with evidence/reflection; inspect completed-work and skill history.
 - Markdown status: goals, skills, quests, reviews and external-note links now round-trip through deterministic Markdown with stable IDs, directly through a chosen sync folder on Android.
-- Desktop status: `apps/web/index.html` reads and writes the same vault folder on the computer (Chrome/Edge), deployable as static hosting.
+- Desktop status: `Levera.exe` (Electron) and `apps/web/index.html` (Chrome/Edge) read and write the same vault folder on the computer; the desktop app remembers the folder between launches.
 - Theme status: the app now applies brand tokens for both light and dark system appearance.
 - Current verification: TypeScript, automated domain tests and Android bundle pass; remaining gates are device restart confirmation, device interaction with 50 skills, Obsidian opening on a device with the app installed, and device-level SQLite integration coverage.
 - Family interviews and Wizard-of-Oz validation: deferred.

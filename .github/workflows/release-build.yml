@@ -7,6 +7,7 @@ on:
     paths:
       - "apps/mobile/**"
       - "apps/web/**"
+      - "apps/desktop/**"
       - ".github/workflows/release-build.yml"
 
 permissions:
@@ -17,7 +18,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-and-publish:
+  android:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -51,12 +52,57 @@ jobs:
           cp apps/web/README.md dist/Levera-Web/README.md
           printf 'start "" "%%~dp0index.html"\r\n' > dist/Levera-Web/start-levera.bat
           cd dist && zip -r Levera-Web.zip Levera-Web
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-and-web
+          path: |
+            dist/Levera.apk
+            dist/Levera-Web.zip
+
+  windows-desktop:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Copy shared UI into the desktop shell
+        shell: bash
+        run: |
+          mkdir -p apps/desktop/app
+          cp apps/web/index.html apps/desktop/app/index.html
+      - name: Install dependencies
+        working-directory: apps/desktop
+        run: npm install --no-audit --no-fund
+      - name: Build portable Windows executable
+        working-directory: apps/desktop
+        run: npx electron-builder --win portable --publish never
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-desktop
+          path: apps/desktop/dist/Levera.exe
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: [android, windows-desktop]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+          path: dist
       - name: Publish "latest" release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release delete latest --cleanup-tag -y --repo "$GITHUB_REPOSITORY" || true
-          gh release create latest dist/Levera.apk dist/Levera-Web.zip \
+          gh release create latest dist/Levera.apk dist/Levera.exe dist/Levera-Web.zip \
             --repo "$GITHUB_REPOSITORY" \
             --title "Levera — свежие сборки" \
-            --notes "Levera.apk — установка на Android напрямую (разреши установку из неизвестных источников). Levera-Web.zip — распакуй и открой index.html в Chrome/Edge на компьютере."
+            --notes "Levera.apk — установка на Android напрямую. Levera.exe — приложение для Windows: папка выбирается один раз и подключается автоматически. Levera-Web.zip — запасной браузерный вариант."

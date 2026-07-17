@@ -1,0 +1,24 @@
+{
+  "name": "levera-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Levera desktop application for Windows: works with the Markdown vault folder.",
+  "author": "Pavel",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win portable --publish never"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0"
+  },
+  "build": {
+    "appId": "com.pavel.levera.desktop",
+    "productName": "Levera",
+    "directories": { "output": "dist" },
+    "files": ["main.js", "preload.js", "app/**"],
+    "win": { "target": [{ "target": "portable", "arch": ["x64"] }] },
+    "portable": { "artifactName": "Levera.exe" }
+  }
+}
