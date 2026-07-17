@@ -1,0 +1,103 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import type { MarkdownDocument } from "../src/domain/markdownExport";
+import { parseMarkdownBundle } from "../src/domain/markdownImport";
+import {
+  exportDocumentsToVault,
+  fileDisplayName,
+  isLeveraDocument,
+  readVaultBundle,
+  vaultFileName,
+  type VaultFileSystem,
+} from "../src/domain/vaultSync";
+
+const directoryUri = "content://com.android.externalstorage.documents/tree/primary%3ALeveraVault";
+
+function createVault(initialFiles: Record<string, string> = {}) {
+  const files = new Map<string, string>();
+  const uriFor = (name: string) => `${directoryUri}/document/primary%3ALeveraVault%2F${encodeURIComponent(name)}`;
+  for (const [name, content] of Object.entries(initialFiles)) files.set(uriFor(name), content);
+  const fileSystem: VaultFileSystem = {
+    listFiles: async () => [...files.keys()],
+    readFile: async (fileUri) => {
+      const content = files.get(fileUri);
+      if (content === undefined) throw new Error(`Missing file: ${fileUri}`);
+      return content;
+    },
+    writeFile: async (fileUri, content) => {
+      if (!files.has(fileUri)) throw new Error(`Missing file: ${fileUri}`);
+      files.set(fileUri, content);
+    },
+    createFile: async (_directory, baseName) => {
+      const fileUri = uriFor(`${baseName}.md`);
+      if (files.has(fileUri)) throw new Error(`File already exists: ${fileUri}`);
+      files.set(fileUri, "");
+      return fileUri;
+    },
+  };
+  return { files, fileSystem, uriFor };
+}
+
+function sampleDocument(
+  folder: string,
+  id: string,
+  type: MarkdownDocument["entityType"],
+  title: string,
+): MarkdownDocument {
+  return {
+    path: `${folder}/${id}-${title}.md`,
+    entityId: id,
+    entityType: type,
+    content: `---\nlevera_id: ${JSON.stringify(id)}\nlevera_type: ${JSON.stringify(type)}\n---\n\n# ${title}\n`,
+  };
+}
+
+test("vaultFileName flattens folders into stable file names", () => {
+  assert.equal(vaultFileName("goals/goal_1-first-goal.md"), "goals__goal_1-first-goal.md");
+});
+
+test("fileDisplayName decodes SAF document URIs", () => {
+  const { uriFor } = createVault();
+  assert.equal(fileDisplayName(uriFor("goals__goal_1.md")), "goals__goal_1.md");
+});
+
+test("isLeveraDocument requires frontmatter with levera_id", () => {
+  assert.equal(isLeveraDocument('---\nlevera_id: "goal_1"\nlevera_type: "goal"\n---\n\n# Title\n'), true);
+  assert.equal(isLeveraDocument("# Just an Obsidian note"), false);
+});
+
+test("export creates files once and updates them without duplicates", async () => {
+  const { files, fileSystem } = createVault();
+  const documents = [
+    sampleDocument("goals", "goal_1", "goal", "first"),
+    sampleDocument("skills", "skill_1", "skill", "strength"),
+  ];
+  const first = await exportDocumentsToVault(fileSystem, directoryUri, documents);
+  assert.deepEqual(first, { total: 2, created: 2, updated: 0 });
+  assert.equal(files.size, 2);
+
+  const second = await exportDocumentsToVault(fileSystem, directoryUri, documents);
+  assert.deepEqual(second, { total: 2, created: 0, updated: 2 });
+  assert.equal(files.size, 2);
+});
+
+test("readVaultBundle keeps only Levera documents and round-trips through the bundle parser", async () => {
+  const { fileSystem } = createVault({
+    "random-note.md": "# Just an Obsidian note\n\nNo frontmatter here.",
+    "image.png": "binary",
+  });
+  const documents = [
+    sampleDocument("goals", "goal_1", "goal", "first"),
+    sampleDocument("quests", "quest_1", "quest", "practice"),
+  ];
+  await exportDocumentsToVault(fileSystem, directoryUri, documents);
+
+  const bundle = await readVaultBundle(fileSystem, directoryUri);
+  const parsed = parseMarkdownBundle(bundle);
+  assert.deepEqual(parsed.map((item) => item.id).sort(), ["goal_1", "quest_1"]);
+});
+
+test("readVaultBundle fails when the folder has no Levera markdown", async () => {
+  const { fileSystem } = createVault({ "random-note.md": "# Just a note" });
+  await assert.rejects(() => readVaultBundle(fileSystem, directoryUri), /No Levera Markdown files/);
+});
