@@ -121,7 +121,7 @@ This is the live operating plan. Every agent must read it before working and upd
 ## P7 — Personal dogfooding
 
 - [ ] Create Pavel's real goals and skills.
-  Progress: the setup protocol is documented in `docs/technical/PERSONAL-DOGFOODING-PROTOCOL.md`, and the setup flow can now add new skills and quests into existing goals, but the real starter set still needs to be created.
+  Progress: the setup protocol is documented in `docs/technical/PERSONAL-DOGFOODING-PROTOCOL.md`, and the setup flow can now add new skills and quests into existing goals, while Today now links directly into the weekly review loop.
 - [ ] Use daily for four weeks and complete four weekly reviews.
   Progress: the weekly logging and review format are documented in `docs/technical/PERSONAL-DOGFOODING-PROTOCOL.md`.
 - [ ] Track friction and fix data loss/blocking UX first.
@@ -153,6 +153,12 @@ Deferred, not completed:
 - External note opening still needs device verification with Obsidian installed.
 
 ## Changelog
+
+### 2026-07-17 — Today review shortcut
+
+- Turned the Today review card into a direct shortcut to the weekly review screen.
+- Reduced friction for moving from daily execution into the weekly reflection loop during dogfooding.
+- Kept the live plan aligned with the tighter P7 usage flow.
 
 ### 2026-07-17 — Live review attention state
 
