@@ -87,7 +87,7 @@ test("export rewrites only documents whose content changed", async () => {
   const skillDocument = sampleDocument("skills", "skill_1", "skill", "strength");
   await exportDocumentsToVault(fileSystem, directoryUri, [goalDocument, skillDocument]);
 
-  const changedGoal: MarkdownDocument = { ...goalDocument, content: `${goalDocument.content}\nUpdated.\n` };
+  const changedGoal = { ...goalDocument, content: `${goalDocument.content}\nUpdated.\n` };
   const result = await exportDocumentsToVault(fileSystem, directoryUri, [changedGoal, skillDocument]);
   assert.deepEqual(result, { total: 2, created: 0, updated: 1, unchanged: 1 });
   assert.equal(files.get(uriFor("goals__goal_1-first.md")), changedGoal.content);
