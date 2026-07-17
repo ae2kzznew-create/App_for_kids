@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Levera Web — рабочий стол второго мозга</title>
+<title>Levera — рабочий стол твоего развития</title>
 <style>
 :root{
   --canvas:#FFFFFF; --surface:#F9F8F7; --surface2:#F0EFED; --border:#E6E5E3;
@@ -12,90 +12,161 @@
   --green:#46A171; --green-soft:#E8F1EC;
   --orange:#D5803B; --orange-soft:#FBEBDE;
   --red:#E56458; --red-soft:#FCE9E7;
+  --shadow:0 1px 2px rgba(0,0,0,.05), 0 4px 12px rgba(0,0,0,.04);
 }
 @media (prefers-color-scheme: dark){
   :root{
-    --canvas:#191919; --surface:#202020; --surface2:#2A2A29; --border:rgba(255,255,255,.2);
+    --canvas:#191919; --surface:#202020; --surface2:#2C2C2B; --border:rgba(255,255,255,.14);
     --text:#FFFFFF; --muted:rgba(255,255,255,.65);
-    --blue:#5E9FE8; --blue-soft:rgba(94,159,232,.12);
-    --green:#72BC8F; --green-soft:rgba(114,188,143,.12);
-    --orange:#DE9255; --orange-soft:rgba(222,146,85,.12);
-    --red:#E97366; --red-soft:rgba(233,115,102,.12);
+    --blue:#5E9FE8; --blue-soft:rgba(94,159,232,.14);
+    --green:#72BC8F; --green-soft:rgba(114,188,143,.14);
+    --orange:#DE9255; --orange-soft:rgba(222,146,85,.14);
+    --red:#E97366; --red-soft:rgba(233,115,102,.14);
+    --shadow:none;
   }
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--canvas);color:var(--text);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
-header{display:flex;align-items:center;gap:12px;padding:14px 24px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--canvas);z-index:5;flex-wrap:wrap}
-header .logo{width:34px;height:34px;border-radius:8px;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px}
-header h1{font-size:18px;font-weight:700;margin-right:auto}
-.chip{font-size:13px;color:var(--muted);border:1px solid var(--border);border-radius:999px;padding:4px 12px;max-width:340px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.chip.ok{color:var(--green);border-color:var(--green);background:var(--green-soft)}
-button{font:inherit;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:8px;padding:9px 14px;min-height:44px}
+html{scrollbar-gutter:stable}
+body{background:var(--canvas);color:var(--text);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+button{font:inherit;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:8px;padding:9px 16px;min-height:44px;transition:background .12s,border-color .12s}
 button:hover{background:var(--surface2)}
 button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 button.primary{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600}
-button.primary:hover{filter:brightness(1.06)}
-button.ghost{border-color:var(--blue);color:var(--blue);background:transparent}
-button.small{min-height:36px;padding:5px 10px;font-size:14px}
-main{max-width:1080px;margin:0 auto;padding:24px}
-nav.tabs{display:flex;gap:4px;margin-bottom:24px;border-bottom:1px solid var(--border);overflow-x:auto}
-nav.tabs button{border:none;background:none;border-radius:8px 8px 0 0;padding:10px 14px;color:var(--muted);border-bottom:2px solid transparent;min-height:44px;white-space:nowrap}
-nav.tabs button.active{color:var(--text);font-weight:600;border-bottom-color:var(--blue)}
-.grid{display:grid;gap:16px}
-.grid.stats{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px}
-.card h3{font-size:14px;color:var(--muted);font-weight:600;margin-bottom:4px}
-.card .big{font-size:30px;font-weight:700}
-.card .sub{font-size:13px;color:var(--muted)}
-section h2{font-size:20px;margin:28px 0 12px}
-section h2:first-child{margin-top:0}
-.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.item{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border:1px solid var(--border);border-radius:12px;background:var(--surface);margin-bottom:10px}
+button.primary:hover{filter:brightness(1.07)}
+button.ghost{border-color:var(--blue);color:var(--blue);background:transparent;font-weight:600}
+button.ghost:hover{background:var(--blue-soft)}
+button.small{min-height:38px;padding:6px 12px;font-size:14px;border-radius:8px}
+@media (prefers-reduced-motion: reduce){ *{transition:none !important;animation:none !important} }
+
+/* ---------- Header ---------- */
+header{display:flex;align-items:center;gap:12px;padding:12px 24px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--canvas);z-index:5;flex-wrap:wrap}
+header .logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--blue),#5E9FE8);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;flex:none}
+header .brand{margin-right:auto}
+header .brand b{font-size:17px;font-weight:700;display:block;line-height:1.2}
+header .brand span{font-size:12px;color:var(--muted)}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);border:1px solid var(--border);border-radius:999px;padding:5px 13px;max-width:340px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--muted);flex:none}
+.chip.ok{color:var(--green);border-color:transparent;background:var(--green-soft)}
+.chip.ok::before{background:var(--green)}
+
+main{max-width:1060px;margin:0 auto;padding:28px 24px 48px}
+
+/* ---------- Connect screen ---------- */
+#connect{max-width:720px;margin:40px auto 0;text-align:center}
+#connect .art{width:76px;height:76px;border-radius:20px;background:linear-gradient(135deg,var(--blue),#5E9FE8);color:#fff;font-size:36px;display:flex;align-items:center;justify-content:center;margin:0 auto 22px;box-shadow:var(--shadow)}
+#connect h2{font-size:28px;letter-spacing:-.3px;margin-bottom:10px}
+#connect>p{color:var(--muted);max-width:540px;margin:0 auto 6px}
+#connect .actions{display:flex;gap:12px;justify-content:center;margin-top:26px;flex-wrap:wrap}
+#connect .features{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-top:36px;text-align:left}
+#connect .feature{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px}
+#connect .feature .fic{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:10px}
+#connect .feature b{display:block;font-size:14px;margin-bottom:3px}
+#connect .feature span{font-size:13px;color:var(--muted);line-height:1.45}
+#connect .note{font-size:13px;color:var(--muted);margin-top:26px}
+
+/* ---------- Tabs ---------- */
+nav.tabs{display:flex;gap:6px;margin-bottom:26px;overflow-x:auto;padding-bottom:2px}
+nav.tabs button{border:1px solid transparent;background:none;border-radius:999px;padding:8px 16px;color:var(--muted);min-height:42px;white-space:nowrap;display:inline-flex;align-items:center;gap:7px;font-size:15px}
+nav.tabs button:hover{background:var(--surface2);color:var(--text)}
+nav.tabs button.active{color:var(--text);font-weight:600;background:var(--surface);border-color:var(--border);box-shadow:var(--shadow)}
+nav.tabs button .tic{font-size:15px}
+
+/* ---------- Sections ---------- */
+.section-head{display:flex;align-items:baseline;gap:10px;margin:30px 0 14px;flex-wrap:wrap}
+.section-head:first-child{margin-top:0}
+.section-head h2{font-size:20px;letter-spacing:-.2px}
+.section-head .count{font-size:13px;color:var(--muted);font-weight:600}
+.section-head .spacer{margin-left:auto}
+.hero{margin-bottom:22px}
+.hero .date{color:var(--muted);font-size:13px;font-weight:600;letter-spacing:.6px;text-transform:uppercase}
+.hero h2{font-size:30px;letter-spacing:-.4px;margin-top:2px}
+
+/* ---------- Cards & stats ---------- */
+.grid{display:grid;gap:14px}
+.grid.stats{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;gap:14px;align-items:center}
+.stat .sic{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex:none}
+.stat .big{font-size:26px;font-weight:700;line-height:1.15}
+.stat .lbl{font-size:13px;color:var(--muted)}
+.soft-blue{background:var(--blue-soft)} .soft-green{background:var(--green-soft)} .soft-orange{background:var(--orange-soft)} .soft-red{background:var(--red-soft)} .soft-gray{background:var(--surface2)}
+
+/* ---------- List items ---------- */
+.item{display:flex;gap:14px;align-items:flex-start;padding:15px 16px;border:1px solid var(--border);border-radius:12px;background:var(--surface);margin-bottom:10px}
+.item .iic{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex:none;margin-top:2px}
 .item .body{flex:1;min-width:0}
-.item .title{font-weight:600}
-.item .meta{font-size:13px;color:var(--muted);margin-top:2px}
-.item .desc{font-size:14px;color:var(--muted);margin-top:6px;white-space:pre-wrap}
-.badge{display:inline-block;font-size:12px;font-weight:600;border-radius:999px;padding:2px 10px}
+.item .title{font-weight:600;line-height:1.35}
+.item .title.done{color:var(--muted);text-decoration:line-through}
+.item .meta{font-size:13px;color:var(--muted);margin-top:5px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.item .desc{font-size:14px;color:var(--muted);margin-top:7px;white-space:pre-wrap;line-height:1.5}
+.item .side{display:flex;align-items:center;gap:8px;flex:none}
+.badge{display:inline-flex;align-items:center;font-size:12px;font-weight:600;border-radius:999px;padding:2.5px 10px;white-space:nowrap}
 .badge.blue{background:var(--blue-soft);color:var(--blue)}
 .badge.green{background:var(--green-soft);color:var(--green)}
 .badge.orange{background:var(--orange-soft);color:var(--orange)}
 .badge.red{background:var(--red-soft);color:var(--red)}
 .badge.gray{background:var(--surface2);color:var(--muted)}
-.empty{border:1px dashed var(--border);border-radius:12px;padding:32px;text-align:center;color:var(--muted)}
-#connect{max-width:640px;margin:48px auto;text-align:center}
-#connect .art{width:72px;height:72px;border-radius:16px;background:var(--blue-soft);color:var(--blue);font-size:34px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
-#connect h2{font-size:26px;margin-bottom:10px}
-#connect p{color:var(--muted);margin-bottom:8px}
-#connect .actions{display:flex;gap:12px;justify-content:center;margin-top:24px;flex-wrap:wrap}
-#connect .note{font-size:13px;color:var(--muted);margin-top:20px}
-dialog{border:1px solid var(--border);border-radius:12px;background:var(--canvas);color:var(--text);padding:24px;width:min(520px,92vw)}
-dialog::backdrop{background:rgba(0,0,0,.35)}
-dialog h3{margin-bottom:14px;font-size:18px}
-label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:12px 0 4px}
-input,textarea,select{width:100%;font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 10px;min-height:44px}
-textarea{min-height:80px;resize:vertical}
-input:focus,textarea:focus,select:focus{outline:2px solid var(--blue);outline-offset:1px}
-.dialog-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
-.msg{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--text);color:var(--canvas);padding:10px 18px;border-radius:8px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw}
-.msg.show{opacity:1}
-.skill-table{width:100%;border-collapse:collapse;font-size:14px}
-.skill-table th{color:var(--muted);font-weight:600;text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
-.skill-table td{padding:10px;border-bottom:1px solid var(--border)}
+
+/* ---------- Callout ---------- */
+.callout{border:1px solid var(--orange);border-radius:12px;background:var(--orange-soft);padding:16px;margin-bottom:10px}
+.callout .ct{display:flex;align-items:center;gap:9px;font-weight:700;margin-bottom:10px}
+.callout .item{background:var(--canvas);margin-bottom:8px}
+.callout .item:last-child{margin-bottom:0}
+
+/* ---------- Empty states ---------- */
+.empty{border:1px dashed var(--border);border-radius:12px;padding:34px 24px;text-align:center;color:var(--muted)}
+.empty .eic{font-size:26px;display:block;margin-bottom:8px}
+
+/* ---------- Skills table ---------- */
 .table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
-.bar{height:6px;border-radius:3px;background:var(--surface2);min-width:90px}
+.skill-table{width:100%;border-collapse:collapse;font-size:14px}
+.skill-table th{color:var(--muted);font-weight:600;text-align:left;padding:11px 14px;border-bottom:1px solid var(--border);white-space:nowrap;font-size:12px;letter-spacing:.5px;text-transform:uppercase}
+.skill-table td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+.skill-table tr:last-child td{border-bottom:none}
+.bar{height:6px;border-radius:3px;background:var(--surface2);min-width:96px;flex:1}
 .bar>i{display:block;height:100%;border-radius:3px;background:var(--green)}
-.goal-block{border:1px solid var(--border);border-radius:12px;background:var(--surface);padding:16px;margin-bottom:14px}
-.goal-block>.head{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.bar>i.orange{background:var(--orange)} .bar>i.red{background:var(--red)} .bar>i.gray{background:var(--muted)} .bar>i.blue{background:var(--blue)}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+
+/* ---------- Goal blocks ---------- */
+.goal-block{border:1px solid var(--border);border-radius:14px;background:var(--surface);padding:18px;margin-bottom:16px}
+.goal-block>.head{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.goal-block>.head .gic{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex:none}
 .goal-block>.head .title{font-size:17px;font-weight:700;margin-right:auto}
-.subsection{margin-top:12px;font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.4px}
-footer{color:var(--muted);font-size:13px;text-align:center;padding:24px}
-@media (max-width:640px){ main{padding:16px} header{padding:12px 16px} }
+.goal-block .gdesc{color:var(--muted);font-size:14px;margin:8px 0 0 50px}
+.goal-block .gprogress{display:flex;align-items:center;gap:10px;margin:12px 0 0 50px;font-size:13px;color:var(--muted)}
+.goal-block .gprogress .bar{max-width:220px}
+.subsection{margin:16px 0 8px;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.8px}
+.goal-block .item{background:var(--canvas)}
+
+/* ---------- Review cards ---------- */
+.review{border:1px solid var(--border);border-radius:12px;background:var(--surface);padding:16px 18px;margin-bottom:12px}
+.review .rhead{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.review .rhead .ric{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.review .rhead b{font-size:15px}
+.review .rhead .fresh{margin-left:auto}
+.review p{font-size:14px;line-height:1.55;margin-top:6px;color:var(--text)}
+.review p b{color:var(--muted);font-weight:600;font-size:13px}
+
+/* ---------- Dialog ---------- */
+dialog{margin:auto;border:1px solid var(--border);border-radius:14px;background:var(--canvas);color:var(--text);padding:24px;width:min(520px,92vw);box-shadow:var(--shadow)}
+dialog::backdrop{background:rgba(0,0,0,.4)}
+dialog h3{margin-bottom:6px;font-size:19px;letter-spacing:-.2px}
+label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin:14px 0 5px}
+input,textarea,select{width:100%;font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:10px 12px;min-height:44px}
+textarea{min-height:84px;resize:vertical}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--blue);outline-offset:1px}
+.dialog-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:22px}
+
+.msg{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--text);color:var(--canvas);padding:11px 20px;border-radius:10px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw;box-shadow:var(--shadow)}
+.msg.show{opacity:1}
+footer{color:var(--muted);font-size:13px;text-align:center;padding:20px 24px 32px}
+@media (max-width:640px){ main{padding:20px 16px 40px} header{padding:10px 16px} .hero h2{font-size:26px} .item{flex-wrap:wrap} .item .side{width:100%;justify-content:flex-end} .goal-block .gdesc,.goal-block .gprogress{margin-left:0} }
 </style>
 </head>
 <body>
 <header>
   <div class="logo" aria-hidden="true">L</div>
-  <h1>Levera Web</h1>
+  <div class="brand"><b>Levera</b><span>рабочий стол развития</span></div>
   <span id="vaultChip" class="chip">Папка не подключена</span>
   <button id="btnPick" class="small">Открыть папку</button>
   <button id="btnReload" class="small" hidden>Обновить</button>
@@ -104,11 +175,15 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:24px}
   <div id="connect">
     <div class="art" aria-hidden="true">⛰</div>
     <h2>Рабочий стол твоего развития</h2>
-    <p>Открой папку с Markdown-файлами Levera — ту самую, которую Google Drive синхронизирует с телефоном и Obsidian.</p>
-    <p>Цели, навыки, квесты и недельные обзоры читаются и сохраняются прямо в неё: без сервера, без аккаунтов.</p>
+    <p>Цели, навыки, квесты и недельные обзоры живут в обычных Markdown-файлах — в той же папке, которую видят телефон, Google Drive и Obsidian.</p>
     <div class="actions">
       <button id="btnPickBig" class="primary">Открыть папку vault</button>
       <button id="btnDemo" class="ghost">Посмотреть на демо-данных</button>
+    </div>
+    <div class="features">
+      <div class="feature"><div class="fic soft-blue">📁</div><b>Локально по умолчанию</b><span>Файлы остаются на твоём диске. Без сервера и аккаунтов.</span></div>
+      <div class="feature"><div class="fic soft-green">🔄</div><b>Общая папка</b><span>Те же данные, что на телефоне и в Obsidian — через Google Drive.</span></div>
+      <div class="feature"><div class="fic soft-orange">✦</div><b>XP ≠ мастерство</b><span>Активность и подтверждённый навык считаются отдельно.</span></div>
     </div>
     <p class="note" id="connectNote">Нужен Chrome или Edge на компьютере. Файлы не покидают твой диск.</p>
   </div>
@@ -232,7 +307,7 @@ function demoVault(){
   put("weekly_review", { levera_id: "review_demo_1", levera_type: "weekly_review", profile_id: "pavel", week_start: mondayOf(new Date()), completed_at: now }, {}, "Weekly review · " + mondayOf(new Date()), reviewBody("Каждый день брал гитару в руки.", "Пальцы устают на баррэ.", "На следующей неделе — по 10 минут ритма ежедневно."));
   files.set("моя-заметка.md", "# Обычная заметка Obsidian\n\nЕё Levera не трогает.");
   return {
-    label: "Демо-данные (изменения не сохраняются на диск)",
+    label: "Демо-данные (не сохраняются)",
     demo: true,
     list: async () => [...files.keys()],
     read: async (name) => files.get(name),
@@ -333,19 +408,24 @@ function skillLiveStatus(skill){
   if ((status === "growing" || status === "stable" || status === "due" || status === "fading") && typeof next === "string" && next && new Date(next) <= new Date()) return status === "fading" ? "fading" : "due";
   return status;
 }
+function barColor(status){ return status === "due" ? "orange" : status === "fading" ? "red" : status === "paused" ? "gray" : status === "stable" ? "blue" : ""; }
 
-const TABS = [["overview", "Обзор"], ["goals", "Цели"], ["skills", "Навыки"], ["quests", "Квесты"], ["reviews", "Недельные обзоры"]];
+const TABS = [["overview", "Обзор", "☀️"], ["goals", "Цели", "🎯"], ["skills", "Навыки", "🌱"], ["quests", "Квесты", "⚔️"], ["reviews", "Обзоры недели", "🗓️"]];
 function render(){
   el("connect").hidden = true; el("app").hidden = false; el("btnReload").hidden = false;
-  const chip = el("vaultChip"); chip.textContent = vault.label; chip.classList.add("ok");
-  el("tabs").innerHTML = TABS.map(([id, label]) => '<button data-tab="' + id + '" class="' + (state.tab === id ? "active" : "") + '">' + label + "</button>").join("");
+  const chip = el("vaultChip"); chip.textContent = vault.label; chip.classList.add("ok"); chip.title = vault.label;
+  el("tabs").innerHTML = TABS.map(([id, label, icon]) => '<button data-tab="' + id + '" class="' + (state.tab === id ? "active" : "") + '"><span class="tic" aria-hidden="true">' + icon + "</span>" + label + "</button>").join("");
   for (const button of el("tabs").querySelectorAll("button")) button.onclick = () => { state.tab = button.dataset.tab; render(); };
   const views = { overview: renderOverview, goals: renderGoals, skills: renderSkills, quests: renderQuests, reviews: renderReviews };
-  el("view").innerHTML = (state.errors.length ? '<div class="item" style="border-color:var(--orange)"><div class="body"><div class="title">Часть файлов пропущена</div><div class="desc">' + state.errors.map(esc).join("\n") + "</div></div></div>" : "") + views[state.tab]();
+  el("view").innerHTML = (state.errors.length ? '<div class="callout" style="border-color:var(--red);background:var(--red-soft)"><div class="ct">⚠️ Часть файлов пропущена</div><div style="font-size:13px;white-space:pre-wrap">' + state.errors.map(esc).join("\n") + "</div></div>" : "") + views[state.tab]();
   bindActions();
 }
 
 function questXp(quest){ return Number(quest.fields.xp_reward) || 0; }
+function todayLabel(){
+  const label = new Intl.DateTimeFormat("ru-RU", { weekday: "long", day: "numeric", month: "long" }).format(new Date());
+  return label.charAt(0).toUpperCase() + label.slice(1);
+}
 function renderOverview(){
   const goals = byType("goal").filter((goal) => goal.fields.status === "active");
   const skills = byType("skill");
@@ -353,26 +433,34 @@ function renderOverview(){
   const active = quests.filter((quest) => quest.fields.status === "active" || quest.fields.status === "planned");
   const attention = skills.filter((skill) => ["due", "fading"].includes(skillLiveStatus(skill)));
   const stats = [
-    ["Активные цели", goals.length, ""],
-    ["Навыков в развитии", skills.filter((skill) => skill.fields.status !== "paused").length, "из " + skills.length],
-    ["Квестов в работе", active.length, "на " + active.reduce((sum, quest) => sum + questXp(quest), 0) + " XP"],
-    ["Требуют внимания", attention.length, "повторение навыков"],
+    ["🎯", "soft-blue", goals.length, "активные цели"],
+    ["🌱", "soft-green", skills.filter((skill) => skill.fields.status !== "paused").length + " / " + skills.length, "навыков в развитии"],
+    ["⚔️", "soft-blue", active.length, "квестов в работе · " + active.reduce((sum, quest) => sum + questXp(quest), 0) + " XP"],
+    ["⏰", attention.length ? "soft-orange" : "soft-gray", attention.length, "требуют повторения"],
   ];
-  return '<section><h2>Сегодня</h2><div class="grid stats">' + stats.map(([title, big, sub]) => '<div class="card"><h3>' + title + '</h3><div class="big">' + big + '</div><div class="sub">' + sub + "</div></div>").join("") + "</div></section>" +
-    '<section><h2>Квесты в работе</h2>' + (active.length ? active.map(questItem).join("") : '<div class="empty">Нет активных квестов — создай новый на вкладке «Квесты».</div>') + "</section>" +
-    (attention.length ? '<section><h2>Пора повторить</h2>' + attention.map(skillItem).join("") + "</section>" : "");
+  return '<div class="hero"><div class="date">' + esc(todayLabel()) + '</div><h2>Сегодня</h2></div>' +
+    '<div class="grid stats">' + stats.map(([icon, tone, big, label]) => '<div class="stat"><div class="sic ' + tone + '" aria-hidden="true">' + icon + '</div><div><div class="big">' + big + '</div><div class="lbl">' + label + "</div></div></div>").join("") + "</div>" +
+    (attention.length ? '<div class="section-head"><h2>Пора повторить</h2><span class="count">' + attention.length + '</span></div><div class="callout"><div class="ct">⏰ Эти навыки давно не повторялись</div>' + attention.map(skillItem).join("") + "</div>" : "") +
+    '<div class="section-head"><h2>Квесты в работе</h2><span class="count">' + active.length + "</span></div>" +
+    (active.length ? active.map(questItem).join("") : emptyState("🌞", "На сегодня активных квестов нет", "Создай новый на вкладке «Квесты»."));
+}
+function emptyState(icon, title, hint){
+  return '<div class="empty"><span class="eic" aria-hidden="true">' + icon + "</span><b>" + title + "</b><br><span style=\"font-size:13px\">" + hint + "</span></div>";
 }
 function questItem(quest){
+  const done = quest.fields.status === "completed";
   const skills = (Array.isArray(quest.fields.skill_ids) ? quest.fields.skill_ids : []).map((id) => (get("skill", id) || { title: id }).title).join(", ");
-  const xp = quest.fields.maintenance === true || questXp(quest) === 0 ? '<span class="badge gray">поддержание · 0 XP</span>' : '<span class="badge blue">' + questXp(quest) + " XP</span>";
+  const xp = quest.fields.maintenance === true || questXp(quest) === 0 ? '<span class="badge gray">поддержание · 0 XP</span>' : '<span class="badge ' + (done ? "green" : "blue") + '">✦ ' + questXp(quest) + " XP</span>";
   const actions = quest.fields.status === "active" || quest.fields.status === "planned"
     ? '<button class="small primary" data-action="complete" data-id="' + esc(quest.id) + '">Выполнить</button>'
-    : (quest.fields.status === "completed" ? '<button class="small" data-action="reopen" data-id="' + esc(quest.id) + '">Вернуть в работу</button>' : "");
-  return '<div class="item"><div class="body"><div class="title">' + esc(quest.title) + "</div><div class=\"meta\">" + badge(QUEST_STATUS, quest.fields.status) + " " + xp + ' · навыки: ' + esc(skills || "—") + "</div>" + (descriptionBody(quest.body) ? '<div class="desc">' + esc(descriptionBody(quest.body)) + "</div>" : "") + '</div><div class="row">' + actions + "</div></div>";
+    : (done ? '<button class="small" data-action="reopen" data-id="' + esc(quest.id) + '">Вернуть</button>' : "");
+  return '<div class="item"><div class="iic ' + (done ? "soft-green" : "soft-blue") + '" aria-hidden="true">' + (done ? "✅" : "⚔️") + '</div><div class="body"><div class="title' + (done ? " done" : "") + '">' + esc(quest.title) + '</div><div class="meta">' + badge(QUEST_STATUS, quest.fields.status) + " " + xp + '<span>L' + esc(quest.fields.support_level) + '</span><span>·</span><span>' + esc(skills || "—") + "</span></div>" + (descriptionBody(quest.body) ? '<div class="desc">' + esc(descriptionBody(quest.body)) + "</div>" : "") + '</div><div class="side">' + actions + "</div></div>";
 }
 function skillItem(skill){
   const goal = get("goal", skill.fields.goal_id);
-  return '<div class="item"><div class="body"><div class="title">' + esc(skill.title) + '</div><div class="meta">' + badge(SKILL_STATUS, skillLiveStatus(skill)) + " мастерство " + esc(skill.fields.mastery_score) + "/100 · L" + esc(skill.fields.support_level) + (goal ? " · цель: " + esc(goal.title) : "") + "</div></div></div>";
+  const status = skillLiveStatus(skill);
+  const mastery = Number(skill.fields.mastery_score) || 0;
+  return '<div class="item"><div class="iic soft-green" aria-hidden="true">🌱</div><div class="body"><div class="title">' + esc(skill.title) + '</div><div class="meta">' + badge(SKILL_STATUS, status) + '<span class="row" style="gap:8px;flex:1;min-width:140px;max-width:240px"><span class="bar"><i class="' + barColor(status) + '" style="width:' + mastery + '%"></i></span><span>' + mastery + "/100</span></span><span>L" + esc(skill.fields.support_level) + "</span>" + (goal ? "<span>·</span><span>" + esc(goal.title) + "</span>" : "") + "</div></div></div>";
 }
 function renderGoals(){
   const goals = byType("goal");
@@ -380,36 +468,41 @@ function renderGoals(){
     const skills = byType("skill").filter((skill) => skill.fields.goal_id === goal.id);
     const skillIds = new Set(skills.map((skill) => skill.id));
     const quests = byType("quest").filter((quest) => (quest.fields.skill_ids || []).some((id) => skillIds.has(id)));
-    return '<div class="goal-block"><div class="head"><span class="title">' + esc(goal.title) + "</span>" + badge(GOAL_STATUS, goal.fields.status) + '<button class="small" data-action="add-skill" data-id="' + esc(goal.id) + '">+ Навык</button></div>' +
-      (descriptionBody(goal.body) ? '<div class="desc" style="color:var(--muted);font-size:14px;margin-top:6px">' + esc(descriptionBody(goal.body)) + "</div>" : "") +
-      '<div class="subsection">НАВЫКИ (' + skills.length + ")</div>" + (skills.length ? skills.map(skillItem).join("") : '<div class="empty">Пока нет навыков.</div>') +
-      '<div class="subsection">КВЕСТЫ (' + quests.length + ")</div>" + (quests.length ? quests.map(questItem).join("") : '<div class="empty">Пока нет квестов.</div>') + "</div>";
+    const doneCount = quests.filter((quest) => quest.fields.status === "completed").length;
+    const percent = quests.length ? Math.round(doneCount / quests.length * 100) : 0;
+    return '<div class="goal-block"><div class="head"><div class="gic soft-blue" aria-hidden="true">🎯</div><span class="title">' + esc(goal.title) + "</span>" + badge(GOAL_STATUS, goal.fields.status) + '<button class="small" data-action="add-skill" data-id="' + esc(goal.id) + '">+ Навык</button></div>' +
+      (descriptionBody(goal.body) ? '<div class="gdesc">' + esc(descriptionBody(goal.body)) + "</div>" : "") +
+      (quests.length ? '<div class="gprogress"><span class="bar"><i style="width:' + percent + '%"></i></span><span>' + doneCount + " из " + quests.length + " квестов выполнено</span></div>" : "") +
+      '<div class="subsection">НАВЫКИ · ' + skills.length + "</div>" + (skills.length ? skills.map(skillItem).join("") : emptyState("🌱", "Пока нет навыков", "Добавь первый кнопкой «+ Навык».")) +
+      '<div class="subsection">КВЕСТЫ · ' + quests.length + "</div>" + (quests.length ? quests.map(questItem).join("") : emptyState("⚔️", "Пока нет квестов", "Создай первый на вкладке «Квесты».")) + "</div>";
   }).join("");
-  return '<section><div class="row" style="justify-content:space-between"><h2>Цели</h2><button class="primary" data-action="add-goal">+ Новая цель</button></div>' + (blocks || '<div class="empty">Целей пока нет — начни с первой.</div>') + "</section>";
+  return '<div class="section-head"><h2>Цели</h2><span class="count">' + goals.length + '</span><span class="spacer"></span><button class="primary" data-action="add-goal">+ Новая цель</button></div>' + (blocks || emptyState("🎯", "Целей пока нет", "Начни с первой — кнопка «+ Новая цель» сверху."));
 }
 function renderSkills(){
   const skills = byType("skill");
   const rows = skills.map((skill) => {
     const goal = get("goal", skill.fields.goal_id);
-    return "<tr><td><strong>" + esc(skill.title) + "</strong></td><td>" + badge(SKILL_STATUS, skillLiveStatus(skill)) + '</td><td><div class="row"><div class="bar"><i style="width:' + (Number(skill.fields.mastery_score) || 0) + '%"></i></div><span style="font-size:13px;color:var(--muted)">' + esc(skill.fields.mastery_score) + "</span></div></td><td>L" + esc(skill.fields.support_level) + "</td><td>" + esc(goal ? goal.title : "—") + "</td></tr>";
+    const status = skillLiveStatus(skill);
+    const mastery = Number(skill.fields.mastery_score) || 0;
+    return "<tr><td><strong>" + esc(skill.title) + "</strong></td><td>" + badge(SKILL_STATUS, status) + '</td><td><div class="row" style="flex-wrap:nowrap"><div class="bar"><i class="' + barColor(status) + '" style="width:' + mastery + '%"></i></div><span style="font-size:13px;color:var(--muted)">' + mastery + "</span></div></td><td>L" + esc(skill.fields.support_level) + "</td><td>" + esc(goal ? goal.title : "—") + "</td></tr>";
   }).join("");
-  return '<section><h2>Навыки</h2>' + (skills.length ? '<div class="table-wrap"><table class="skill-table"><thead><tr><th>Навык</th><th>Статус</th><th>Мастерство</th><th>Поддержка</th><th>Цель</th></tr></thead><tbody>' + rows + "</tbody></table></div>" : '<div class="empty">Навыков пока нет.</div>') + "</section>";
+  return '<div class="section-head"><h2>Навыки</h2><span class="count">' + skills.length + "</span></div>" + (skills.length ? '<div class="table-wrap"><table class="skill-table"><thead><tr><th>Навык</th><th>Статус</th><th>Мастерство</th><th>Поддержка</th><th>Цель</th></tr></thead><tbody>' + rows + "</tbody></table></div>" : emptyState("🌱", "Навыков пока нет", "Добавь навык к цели на вкладке «Цели»."));
 }
 function renderQuests(){
   const quests = byType("quest");
   const open = quests.filter((quest) => quest.fields.status === "active" || quest.fields.status === "planned");
   const done = quests.filter((quest) => quest.fields.status === "completed");
-  return '<section><div class="row" style="justify-content:space-between"><h2>Квесты</h2><button class="primary" data-action="add-quest">+ Новый квест</button></div>' +
-    (open.length ? open.map(questItem).join("") : '<div class="empty">Активных квестов нет.</div>') +
-    (done.length ? "<h2>Выполненные</h2>" + done.map(questItem).join("") : "") + "</section>";
+  return '<div class="section-head"><h2>Квесты</h2><span class="count">' + open.length + '</span><span class="spacer"></span><button class="primary" data-action="add-quest">+ Новый квест</button></div>' +
+    (open.length ? open.map(questItem).join("") : emptyState("⚔️", "Активных квестов нет", "Самое время взять новый вызов.")) +
+    (done.length ? '<div class="section-head"><h2>Выполненные</h2><span class="count">' + done.length + "</span></div>" + done.map(questItem).join("") : "");
 }
 function renderReviews(){
   const reviews = byType("weekly_review").sort((left, right) => String(right.fields.week_start).localeCompare(String(left.fields.week_start)));
-  const items = reviews.map((review) => '<div class="item"><div class="body"><div class="title">Неделя с ' + esc(review.fields.week_start) + '</div>' +
-    (section(review.body, "Achievements") ? '<div class="desc"><strong>Получилось:</strong> ' + esc(section(review.body, "Achievements")) + "</div>" : "") +
-    (section(review.body, "Blockers") ? '<div class="desc"><strong>Мешало:</strong> ' + esc(section(review.body, "Blockers")) + "</div>" : "") +
-    '<div class="desc"><strong>Решение:</strong> ' + esc(section(review.body, "Decision")) + "</div></div></div>").join("");
-  return '<section><div class="row" style="justify-content:space-between"><h2>Недельные обзоры</h2><button class="primary" data-action="add-review">+ Обзор недели</button></div>' + (items || '<div class="empty">Обзоров пока нет. Первый можно сделать прямо сейчас.</div>') + "</section>";
+  const items = reviews.map((review, index) => '<div class="review"><div class="rhead"><div class="ric soft-blue" aria-hidden="true">🗓️</div><b>Неделя с ' + esc(review.fields.week_start) + "</b>" + (index === 0 ? '<span class="badge green fresh">последний</span>' : "") + "</div>" +
+    (section(review.body, "Achievements") ? "<p><b>Получилось · </b>" + esc(section(review.body, "Achievements")) + "</p>" : "") +
+    (section(review.body, "Blockers") ? "<p><b>Мешало · </b>" + esc(section(review.body, "Blockers")) + "</p>" : "") +
+    "<p><b>Решение · </b>" + esc(section(review.body, "Decision")) + "</p></div>").join("");
+  return '<div class="section-head"><h2>Обзоры недели</h2><span class="count">' + reviews.length + '</span><span class="spacer"></span><button class="primary" data-action="add-review">+ Обзор недели</button></div>' + (items || emptyState("🗓️", "Обзоров пока нет", "Первый можно сделать прямо сейчас — это 3 минуты."));
 }
 
 // ---------- Dialogs & actions ----------
@@ -434,7 +527,7 @@ function bindActions(){
   }
 }
 function dlgGoal(){
-  openDialog("<h3>Новая цель</h3><label>Название</label><input id=\"fTitle\" required><label>Описание (необязательно)</label><textarea id=\"fDesc\"></textarea>", async (dialog) => {
+  openDialog("<h3>🎯 Новая цель</h3><label>Название</label><input id=\"fTitle\" required><label>Описание (необязательно)</label><textarea id=\"fDesc\"></textarea>", async (dialog) => {
     const title = dialog.querySelector("#fTitle").value.trim(); if (!title) { show("Нужно название"); return false; }
     const id = newId("goal");
     const parsed = { id, type: "goal", title, body: "", fields: { levera_id: id, levera_type: "goal", profile_id: "pavel", status: "active", updated: now() } };
@@ -446,7 +539,7 @@ function dlgSkill(goalId){
   const goals = byType("goal").filter((goal) => goal.fields.status === "active");
   if (!goals.length) { show("Сначала создай цель"); return; }
   const options = goals.map((goal) => '<option value="' + esc(goal.id) + '"' + (goal.id === goalId ? " selected" : "") + ">" + esc(goal.title) + "</option>").join("");
-  openDialog("<h3>Новый навык</h3><label>Название</label><input id=\"fTitle\"><label>Цель</label><select id=\"fGoal\">" + options + "</select><label>Уровень поддержки (L0 — сам, L3 — с опорой)</label><select id=\"fSupport\"><option value=\"3\">L3</option><option value=\"2\" selected>L2</option><option value=\"1\">L1</option><option value=\"0\">L0</option></select><label>Описание (необязательно)</label><textarea id=\"fDesc\"></textarea>", async (dialog) => {
+  openDialog("<h3>🌱 Новый навык</h3><label>Название</label><input id=\"fTitle\"><label>Цель</label><select id=\"fGoal\">" + options + "</select><label>Уровень поддержки (L0 — сам, L3 — с опорой)</label><select id=\"fSupport\"><option value=\"3\">L3</option><option value=\"2\" selected>L2</option><option value=\"1\">L1</option><option value=\"0\">L0</option></select><label>Описание (необязательно)</label><textarea id=\"fDesc\"></textarea>", async (dialog) => {
     const title = dialog.querySelector("#fTitle").value.trim(); if (!title) { show("Нужно название"); return false; }
     const id = newId("skill");
     const parsed = { id, type: "skill", title, body: "", fields: { levera_id: id, levera_type: "skill", goal_id: dialog.querySelector("#fGoal").value, status: "growing", support_level: Number(dialog.querySelector("#fSupport").value), mastery_score: 0, updated: now() } };
@@ -458,7 +551,7 @@ function dlgQuest(){
   const skills = byType("skill");
   if (!skills.length) { show("Сначала создай навык"); return; }
   const options = skills.map((skill) => '<option value="' + esc(skill.id) + '">' + esc(skill.title) + "</option>").join("");
-  openDialog("<h3>Новый квест</h3><label>Название</label><input id=\"fTitle\"><label>Навыки (Ctrl/Cmd — несколько)</label><select id=\"fSkills\" multiple size=\"4\">" + options + "</select><label>XP (0 = поддержание без награды)</label><input id=\"fXp\" type=\"number\" min=\"0\" max=\"100000\" value=\"25\"><label>Уровень поддержки</label><select id=\"fSupport\"><option value=\"3\">L3</option><option value=\"2\" selected>L2</option><option value=\"1\">L1</option><option value=\"0\">L0</option></select><label>Описание (необязательно)</label><textarea id=\"fDesc\"></textarea>", async (dialog) => {
+  openDialog("<h3>⚔️ Новый квест</h3><label>Название</label><input id=\"fTitle\"><label>Навыки (Ctrl/Cmd — несколько)</label><select id=\"fSkills\" multiple size=\"4\">" + options + "</select><label>XP (0 = поддержание без награды)</label><input id=\"fXp\" type=\"number\" min=\"0\" max=\"100000\" value=\"25\"><label>Уровень поддержки</label><select id=\"fSupport\"><option value=\"3\">L3</option><option value=\"2\" selected>L2</option><option value=\"1\">L1</option><option value=\"0\">L0</option></select><label>Описание (необязательно)</label><textarea id=\"fDesc\"></textarea>", async (dialog) => {
     const title = dialog.querySelector("#fTitle").value.trim(); if (!title) { show("Нужно название"); return false; }
     const skillIds = [...dialog.querySelector("#fSkills").selectedOptions].map((option) => option.value);
     if (!skillIds.length) { show("Выбери хотя бы один навык"); return false; }
@@ -471,7 +564,7 @@ function dlgQuest(){
 }
 function dlgComplete(id){
   const quest = get("quest", id); if (!quest) return;
-  openDialog("<h3>Выполнить: " + esc(quest.title) + "</h3><label>Что получилось / рефлексия (попадёт в описание квеста)</label><textarea id=\"fNote\" placeholder=\"Например: сыграл без остановок, сложнее всего был переход на F\"></textarea>", async (dialog) => {
+  openDialog("<h3>✅ Выполнить: " + esc(quest.title) + "</h3><label>Что получилось / рефлексия (попадёт в описание квеста)</label><textarea id=\"fNote\" placeholder=\"Например: сыграл без остановок, сложнее всего был переход на F\"></textarea>", async (dialog) => {
     quest.fields.status = "completed"; quest.fields.updated = now();
     let body = descriptionBody(quest.body);
     const note = dialog.querySelector("#fNote").value.trim();
@@ -487,7 +580,7 @@ async function reopenQuest(id){
   await afterWrite("Квест снова в работе");
 }
 function dlgReview(){
-  openDialog("<h3>Обзор недели</h3><label>Что получилось</label><textarea id=\"fAch\"></textarea><label>Что мешало</label><textarea id=\"fBlock\"></textarea><label>Решение на следующую неделю (обязательно)</label><textarea id=\"fDec\"></textarea>", async (dialog) => {
+  openDialog("<h3>🗓️ Обзор недели</h3><label>Что получилось</label><textarea id=\"fAch\"></textarea><label>Что мешало</label><textarea id=\"fBlock\"></textarea><label>Решение на следующую неделю (обязательно)</label><textarea id=\"fDec\"></textarea>", async (dialog) => {
     const decisions = dialog.querySelector("#fDec").value.trim(); if (!decisions) { show("Реши, что делаешь на следующей неделе"); return false; }
     const weekStart = mondayOf(new Date());
     const id = newId("review");

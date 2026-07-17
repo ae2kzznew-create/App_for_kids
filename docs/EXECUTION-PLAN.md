@@ -157,6 +157,12 @@ Deferred, not completed:
 
 ## Changelog
 
+### 2026-07-17 — Desktop/web UI design pass
+
+- Redesigned the shared desktop/web UI (`apps/web/index.html`, used by `Levera.exe` and the browser version): brand header, pill navigation with icons, a dated «Сегодня» hero, iconized stat cards, an attention callout for due skills, per-goal progress bars, status-colored mastery bars, redesigned review cards, friendly empty states and refined dark/mobile layouts.
+- Fixed a real defect found during visual QA: modal dialogs lost browser auto-centering because of the CSS reset; dialogs are centered again.
+- Verified with Node assertions on the parser/serializer core and headless visual QA of every tab, the quest dialog, forced dark mode and a 390px mobile viewport; Markdown format and file naming are unchanged.
+
 ### 2026-07-17 — Windows desktop application
 
 - Added `apps/desktop/`, an Electron shell around the shared web UI that runs as a normal Windows application (`Levera.exe`, portable single file).
