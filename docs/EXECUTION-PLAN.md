@@ -120,7 +120,7 @@ This is the live operating plan. Every agent must read it before working and upd
 ## P7 — Personal dogfooding
 
 - [ ] Create Pavel's real goals and skills.
-  Progress: the setup protocol is documented in `docs/technical/PERSONAL-DOGFOODING-PROTOCOL.md`, but the real starter set still needs to be created.
+  Progress: the setup protocol is documented in `docs/technical/PERSONAL-DOGFOODING-PROTOCOL.md`, and the setup flow can now add new skills and quests into existing goals, but the real starter set still needs to be created.
 - [ ] Use daily for four weeks and complete four weekly reviews.
   Progress: the weekly logging and review format are documented in `docs/technical/PERSONAL-DOGFOODING-PROTOCOL.md`.
 - [ ] Track friction and fix data loss/blocking UX first.
@@ -152,6 +152,12 @@ Deferred, not completed:
 - External note opening still needs device verification with Obsidian installed.
 
 ## Changelog
+
+### 2026-07-17 — Reuse existing goals in setup
+
+- Updated `/setup` so the next skill and quest can be added to an existing goal instead of always creating a new one.
+- Reduced friction for preparing Pavel's real starter set before the four-week dogfooding run.
+- Kept the live plan aligned with the improved P7 setup workflow.
 
 ### 2026-07-17 — Manual SQLite-health refresh
 
