@@ -3,6 +3,7 @@ import { useCallback, useMemo, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { usePersonalApp } from "../../src/application/PersonalAppProvider";
+import { withRepetitionStatus } from "../../src/domain/repetition";
 import type { CompletedQuestSummary } from "../../src/domain/repository";
 import type { Skill, WeeklyReview } from "../../src/domain/types";
 import { theme } from "../../src/theme";
@@ -21,7 +22,13 @@ export default function ReviewScreen() {
   useFocusEffect(useCallback(() => {
     let active = true;
     Promise.all([repository.listCompletedQuests(200), repository.listSkillsForProfile("pavel"), repository.listWeeklyReviews("pavel", 8)])
-      .then(([nextHistory, nextSkills, nextReviews]) => { if (active) { setHistory(nextHistory); setSkills(nextSkills); setReviews(nextReviews); } });
+      .then(([nextHistory, nextSkills, nextReviews]) => {
+        if (!active) return;
+        const now = new Date().toISOString();
+        setHistory(nextHistory);
+        setSkills(nextSkills.map((skill) => withRepetitionStatus(skill, now)));
+        setReviews(nextReviews);
+      });
     return () => { active = false; };
   }, [repository, revision]));
 
