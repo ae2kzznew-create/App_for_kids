@@ -22,4 +22,5 @@ All project documentation is grouped here so the repository root remains availab
 - Research entry point: `research/README.md`
 - MVP implementation brief: `technical/MVP-Technical-Brief.html`
 - Markdown and Obsidian vault contract: `technical/OBSIDIAN-VAULT.md`
+- Manual device gates: `technical/DEVICE-VERIFICATION-CHECKLIST.md`
 - Validation sequence: `validation/Mom-Test-Interview-Script.html` → `validation/Wizard-of-Oz-Guide.html` → `validation/W4-Retention-Test-Protocol.html`
