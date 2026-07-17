@@ -6,7 +6,7 @@ This is the live operating plan. Every agent must read it before working and upd
 
 - **Current stage:** P2–P4 device gates, P6 complete, P7 pending
 - **Current milestone:** Close remaining device-only gates for the personal alpha
-- **Last updated:** 2026-07-16
+- **Last updated:** 2026-07-17
 - **Application status:** goals, skills, quests, reviews and external-note links can round-trip through Markdown, explicit Obsidian URIs and web notes can open from skill and quest screens, and the app now follows light/dark brand tokens
 - **Primary user:** Pavel, acting as architect, performer and coach
 - **Active direction:** `docs/product/PERSONAL-FIRST-DIRECTION.md`
@@ -53,7 +53,7 @@ This is the live operating plan. Every agent must read it before working and upd
 - [x] ~~Add complete light/dark brand tokens~~ — Evidence: system-aware palettes in `apps/mobile/src/theme.ts` and matching status-bar selection in `apps/mobile/app/_layout.tsx`.
 - [x] ~~Pass clean install, TypeScript, all automated tests and Android Expo bundle~~ — Evidence: Mobile CI.
 - [ ] Verify SQLite persistence across restart on simulator or physical device.
-  Progress: Settings exposes cross-launch evidence; one full device close/reopen remains.
+  Progress: Settings exposes cross-launch evidence; one full device close/reopen remains. Manual steps are documented in `docs/technical/DEVICE-VERIFICATION-CHECKLIST.md`.
 
 **Decision gate:** application runs on device and persists a record across restart.
 
@@ -89,7 +89,7 @@ This is the live operating plan. Every agent must read it before working and upd
 - [x] ~~Show progress by day, week, month, goal and skill~~ — Evidence: period and entity rollups.
 - [x] ~~Keep activity separate from demonstrated skill~~ — Evidence: XP versus reviewed mastery.
 - [ ] Verify interaction with at least 50 skills.
-  Progress: automated fixture verifies 50 skills across ten levels; final device press/scroll check remains.
+  Progress: automated fixture verifies 50 skills across ten levels; final device press/scroll check remains. Manual steps are documented in `docs/technical/DEVICE-VERIFICATION-CHECKLIST.md`.
 
 ---
 
@@ -148,6 +148,12 @@ Deferred, not completed:
 - External note opening still needs device verification with Obsidian installed.
 
 ## Changelog
+
+### 2026-07-17 — Manual device verification checklist
+
+- Added `docs/technical/DEVICE-VERIFICATION-CHECKLIST.md` for the remaining on-device gates.
+- Documented repeatable pass criteria for SQLite restart, 50-skill interaction, external-note opening and dark-theme smoke checks.
+- Linked the checklist from the live plan so future manual verification can be recorded consistently.
 
 ### 2026-07-16 — SQLite health-marker coverage
 
