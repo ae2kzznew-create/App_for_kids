@@ -35,6 +35,7 @@ ipcMain.handle("vault:pickFolder", async () => {
 });
 
 ipcMain.handle("vault:list", async () => {
+  if (!vaultDir) return [];
   const entries = await fs.readdir(vaultDir, { withFileTypes: true });
   return entries
     .filter((entry) => entry.isFile() && entry.name.toLowerCase().endsWith(".md"))

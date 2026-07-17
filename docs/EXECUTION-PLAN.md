@@ -7,7 +7,7 @@ This is the live operating plan. Every agent must read it before working and upd
 - **Current stage:** P2–P4 device gates, P6 complete, P7 pending
 - **Current milestone:** Close remaining device-only gates for the personal alpha and prepare the four-week dogfooding run
 - **Last updated:** 2026-07-17
-- **Application status:** goals, skills, quests, reviews and external-note links round-trip through Markdown, Settings can bind an Android sync folder and export/import Markdown files directly through it, the web companion and the Windows application (`Levera.exe`) read, write and now edit the same vault folder on desktop with a remembered folder, and every `main` update publishes the APK, the Windows executable and the web bundle to the rolling `latest` GitHub release linked from the README
+- **Application status:** goals, skills, quests, reviews and external-note links round-trip through Markdown, Settings can bind an Android sync folder and export/import Markdown files directly through it, the web companion and the new Windows application (`Levera.exe`, Electron shell over the shared UI) read and write the same vault folder on desktop with a remembered folder, and every `main` update publishes the APK, the Windows executable and the web bundle both to an immutable versioned release (`v0.1.0-build.N`) and to the rolling `latest` GitHub release (updated in place) linked from the README
 - **Primary user:** Pavel, acting as architect, performer and coach
 - **Active direction:** `docs/product/PERSONAL-FIRST-DIRECTION.md`
 
@@ -123,7 +123,7 @@ This is the live operating plan. Every agent must read it before working and upd
 - [ ] Create Pavel's real goals and skills.
   Progress: the setup protocol is documented in `docs/technical/PERSONAL-DOGFOODING-PROTOCOL.md`, and the setup flow can now add new skills and quests into existing goals, while Today now links directly into the weekly review loop.
 - [ ] Keep the Markdown vault folder synchronized with Google Drive during the run.
-  Progress: Settings can bind a sync folder through the Android folder picker, export one Markdown file per entity into it with duplicate-free updates, and import the whole folder back; the desktop web companion and the Windows application work with the same folder on the computer, remember it between launches and can create, complete and edit entities directly. Pairing the folder with Autosync for Google Drive and on-device verification remain.
+  Progress: Settings can bind a sync folder through the Android folder picker, export one Markdown file per entity into it with duplicate-free updates, and import the whole folder back; the desktop web companion and the Windows application work with the same folder on the computer, and the Windows application remembers the folder between launches. Folder export now skips unchanged files, so an external sync tool re-uploads only real changes. Pairing the folder with Autosync for Google Drive and on-device verification remain.
 - [ ] Use daily for four weeks and complete four weekly reviews.
   Progress: the weekly logging and review format are documented in `docs/technical/PERSONAL-DOGFOODING-PROTOCOL.md`.
 - [ ] Track friction and fix data loss/blocking UX first.
@@ -154,14 +154,16 @@ Deferred, not completed:
 - Vault access strategy selected: a user-chosen local sync folder (Android Storage Access Framework) mirrored to Google Drive by an external tool such as Autosync; on-device verification of folder pick, file export, Autosync round trip and duplicate-free import remains. Paste import in Settings stays as the fallback path.
 - External note opening still needs device verification with Obsidian installed.
 - The rolling `latest` release (`Levera.apk` + `Levera.exe` + `Levera-Web.zip`) still needs one manual install verification on the phone and computer, including the remembered-folder behavior of the Windows application.
+- The APK is still signed with the debug keystore; a permanent release keystore in GitHub Secrets is needed before dogfooding installs so later updates install over existing builds without data loss.
 
 ## Changelog
 
-### 2026-07-17 — Editing entities in the desktop/web UI
+### 2026-07-17 — P0 hardening: idempotent vault export and versioned releases
 
-- Added pencil buttons on goal blocks, skill rows and quest cards that open prefilled dialogs: rename, change status (including guilt-free skill pause), move a skill to another goal, adjust mastery, support level, XP and linked skills.
-- Saving reuses the existing Markdown pipeline, so renamed entities move to their new file name without duplicates and unknown frontmatter fields are preserved.
-- Verified with a JS syntax check of the full script, core round-trip assertions and headless visual QA of the goals tab and a prefilled edit dialog.
+- Fixed the desktop `vault:list` handler (`apps/desktop/main.js`) to return an empty list instead of throwing an unhandled error when no vault folder has been selected yet on first launch.
+- Made mobile vault export idempotent (`apps/mobile/src/domain/vaultSync.ts`): files whose content is unchanged are skipped instead of rewritten, so an external sync tool no longer re-uploads the whole vault after every export; the export result now reports `unchanged`, with test coverage for full-skip and partial-update cases.
+- Reworked the release workflow (`.github/workflows/release-build.yml`): the Android `versionCode` is stamped from the CI run number before prebuild, every build publishes an immutable versioned release (`v0.1.0-build.N`), and the rolling `latest` release is updated in place instead of being deleted and recreated — no more dead-link window and full rollback history.
+- Recorded the debug-keystore signing gap as an explicit blocker before dogfooding installs.
 
 ### 2026-07-17 — Desktop/web UI design pass
 
