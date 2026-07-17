@@ -7,7 +7,7 @@ This is the live operating plan. Every agent must read it before working and upd
 - **Current stage:** P2–P4 device gates, P6 complete, P7 pending
 - **Current milestone:** Close remaining device-only gates for the personal alpha and prepare the four-week dogfooding run
 - **Last updated:** 2026-07-17
-- **Application status:** goals, skills, quests, reviews and external-note links round-trip through Markdown, Settings can bind an Android sync folder and export/import Markdown files directly through it, the single-file web companion (`apps/web/index.html`) reads and writes the same vault folder on desktop, and every `main` update publishes a downloadable APK and web bundle to the rolling `latest` GitHub release
+- **Application status:** goals, skills, quests, reviews and external-note links round-trip through Markdown, Settings can bind an Android sync folder and export/import Markdown files directly through it, the single-file web companion (`apps/web/index.html`) reads and writes the same vault folder on desktop, and every `main` update publishes a downloadable APK and web bundle to the rolling `latest` GitHub release linked from the README
 - **Primary user:** Pavel, acting as architect, performer and coach
 - **Active direction:** `docs/product/PERSONAL-FIRST-DIRECTION.md`
 
@@ -157,6 +157,11 @@ Deferred, not completed:
 - The web companion needs a manual check in Chrome/Edge against the real Drive-synced folder.
 
 ## Changelog
+
+### 2026-07-17 — README download section
+
+- Added a prominent download section to the top of the README with badge links to `Levera.apk` (Android) and `Levera-Web.zip` (desktop) from the rolling `latest` release, including short install instructions.
+- Pointed the top-level status line at the automated release distribution instead of the manual EAS step.
 
 ### 2026-07-17 — One-click downloadable builds
 
