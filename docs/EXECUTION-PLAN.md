@@ -5,7 +5,7 @@ This is the live operating plan. Every agent must read it before working and upd
 ## Status
 
 - **Current stage:** P2–P4 device gates, P6 complete, P7 pending
-- **Current milestone:** Close remaining device-only gates for the personal alpha
+- **Current milestone:** Close remaining device-only gates for the personal alpha and prepare the four-week dogfooding run
 - **Last updated:** 2026-07-17
 - **Application status:** goals, skills, quests, reviews and external-note links can round-trip through Markdown, explicit Obsidian URIs and web notes can open from skill and quest screens, and the app now follows light/dark brand tokens
 - **Primary user:** Pavel, acting as architect, performer and coach
@@ -75,7 +75,7 @@ This is the live operating plan. Every agent must read it before working and upd
 - [x] ~~Add UI for opening and completing a real quest~~ — Evidence: `/quest/[id]`.
 - [x] ~~Show completed work in Today and skill history~~ — Evidence: Progress and `/skill/[id]`.
 - [ ] Add SQLite-backed lifecycle and persistence tests.
-  Progress: service tests pass against memory repository; startup-marker coverage now exists, additional service edge-case coverage exists, but automated device SQLite integration remains.
+  Progress: service tests pass against memory repository; startup-marker coverage and additional service edge-case coverage exist, but automated device SQLite integration remains.
 
 **Decision gate:** complete loop through UI with persistent data and visible history.
 
@@ -120,9 +120,13 @@ This is the live operating plan. Every agent must read it before working and upd
 ## P7 — Personal dogfooding
 
 - [ ] Create Pavel's real goals and skills.
+  Progress: the setup protocol is documented in `docs/technical/PERSONAL-DOGFOODING-PROTOCOL.md`, but the real starter set still needs to be created.
 - [ ] Use daily for four weeks and complete four weekly reviews.
+  Progress: the weekly logging and review format are documented in `docs/technical/PERSONAL-DOGFOODING-PROTOCOL.md`.
 - [ ] Track friction and fix data loss/blocking UX first.
+  Progress: blocker and friction logging format is documented in `docs/technical/PERSONAL-DOGFOODING-PROTOCOL.md`.
 - [ ] Decide whether cloud, desktop or AI is next.
+  Progress: end-of-run decision criteria are documented in `docs/technical/PERSONAL-DOGFOODING-PROTOCOL.md`.
 
 ---
 
@@ -148,6 +152,12 @@ Deferred, not completed:
 - External note opening still needs device verification with Obsidian installed.
 
 ## Changelog
+
+### 2026-07-17 — Personal dogfooding protocol
+
+- Added `docs/technical/PERSONAL-DOGFOODING-PROTOCOL.md` for the four-week personal alpha run.
+- Documented the starter-set expectation, daily usage loop, weekly review summary and friction logging format.
+- Added explicit end-of-run decision criteria for choosing cloud, desktop or AI next.
 
 ### 2026-07-17 — Service edge-case coverage
 
