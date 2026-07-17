@@ -66,18 +66,31 @@ test("isLeveraDocument requires frontmatter with levera_id", () => {
   assert.equal(isLeveraDocument("# Just an Obsidian note"), false);
 });
 
-test("export creates files once and updates them without duplicates", async () => {
+test("export creates files once and skips unchanged files on re-export", async () => {
   const { files, fileSystem } = createVault();
   const documents = [
     sampleDocument("goals", "goal_1", "goal", "first"),
     sampleDocument("skills", "skill_1", "skill", "strength"),
   ];
   const first = await exportDocumentsToVault(fileSystem, directoryUri, documents);
-  assert.deepEqual(first, { total: 2, created: 2, updated: 0 });
+  assert.deepEqual(first, { total: 2, created: 2, updated: 0, unchanged: 0 });
   assert.equal(files.size, 2);
 
   const second = await exportDocumentsToVault(fileSystem, directoryUri, documents);
-  assert.deepEqual(second, { total: 2, created: 0, updated: 2 });
+  assert.deepEqual(second, { total: 2, created: 0, updated: 0, unchanged: 2 });
+  assert.equal(files.size, 2);
+});
+
+test("export rewrites only documents whose content changed", async () => {
+  const { files, fileSystem, uriFor } = createVault();
+  const goalDocument = sampleDocument("goals", "goal_1", "goal", "first");
+  const skillDocument = sampleDocument("skills", "skill_1", "skill", "strength");
+  await exportDocumentsToVault(fileSystem, directoryUri, [goalDocument, skillDocument]);
+
+  const changedGoal: MarkdownDocument = { ...goalDocument, content: `${goalDocument.content}\nUpdated.\n` };
+  const result = await exportDocumentsToVault(fileSystem, directoryUri, [changedGoal, skillDocument]);
+  assert.deepEqual(result, { total: 2, created: 0, updated: 1, unchanged: 1 });
+  assert.equal(files.get(uriFor("goals__goal_1-first.md")), changedGoal.content);
   assert.equal(files.size, 2);
 });
 

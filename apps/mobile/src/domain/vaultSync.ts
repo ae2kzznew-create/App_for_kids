@@ -12,6 +12,7 @@ export interface VaultExportResult {
   total: number;
   created: number;
   updated: number;
+  unchanged: number;
 }
 
 export function vaultFileName(documentPath: string) {
@@ -36,13 +37,23 @@ export async function exportDocumentsToVault(
 ): Promise<VaultExportResult> {
   const existing = await files.listFiles(directoryUri);
   const byName = new Map(existing.map((uri) => [fileDisplayName(uri), uri] as const));
-  const result: VaultExportResult = { total: documents.length, created: 0, updated: 0 };
+  const result: VaultExportResult = { total: documents.length, created: 0, updated: 0, unchanged: 0 };
   for (const document of documents) {
     const fileName = vaultFileName(document.path);
     const knownUri = byName.get(fileName);
     if (knownUri) {
-      await files.writeFile(knownUri, document.content);
-      result.updated += 1;
+      let currentContent: string | null = null;
+      try {
+        currentContent = await files.readFile(knownUri);
+      } catch {
+        currentContent = null;
+      }
+      if (currentContent === document.content) {
+        result.unchanged += 1;
+      } else {
+        await files.writeFile(knownUri, document.content);
+        result.updated += 1;
+      }
     } else {
       const createdUri = await files.createFile(directoryUri, fileName.replace(/\.md$/, ""));
       await files.writeFile(createdUri, document.content);
