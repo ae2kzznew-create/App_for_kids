@@ -8,3 +8,7 @@ contextBridge.exposeInMainWorld("leveraVault", {
   write: (name, content) => ipcRenderer.invoke("vault:write", name, content),
   remove: (name) => ipcRenderer.invoke("vault:remove", name),
 });
+
+contextBridge.exposeInMainWorld("leveraAI", {
+  chat: (request) => ipcRenderer.invoke("ai:chat", request),
+});

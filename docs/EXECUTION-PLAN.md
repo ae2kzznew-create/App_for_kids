@@ -7,7 +7,7 @@ This is the live operating plan. Every agent must read it before working and upd
 - **Current stage:** P2–P4 device gates, P6 complete, P7 pending
 - **Current milestone:** Close remaining device-only gates for the personal alpha and prepare the four-week dogfooding run
 - **Last updated:** 2026-07-24
-- **Application status:** goals, skills, quests, reviews and external-note links round-trip through Markdown, Settings can bind an Android sync folder and export/import Markdown files directly through it, the web companion and the new Windows application (`Levera.exe`, Electron shell over the shared UI) read and write the same vault folder on desktop with a remembered folder, and every `main` update publishes the APK, the Windows application (single-file `Levera.exe` and the antivirus-friendly `Levera-Windows.zip`) and the web bundle both to an immutable versioned release (`v0.1.0-build.N`) and to the rolling `latest` GitHub release (updated in place) linked from the README
+- **Application status:** goals, skills, quests, reviews and external-note links round-trip through Markdown, Settings can bind an Android sync folder and export/import Markdown files directly through it, the web companion and the new Windows application (`Levera.exe`, Electron shell over the shared UI) read and write the same vault folder on desktop with a remembered folder, the shared vault now uses the documented `Levera/goals|skills|quests|reviews/` tree layout with automatic migration of legacy flat files, the desktop/web companion has an Obsidian-inspired dark theme with a theme switch and an optional AI plan assistant (GLM-4.5-Flash by default), and every `main` update publishes the APK, the Windows application (single-file `Levera.exe` and the antivirus-friendly `Levera-Windows.zip`) and the web bundle both to an immutable versioned release (`v0.1.0-build.N`) and to the rolling `latest` GitHub release (updated in place) linked from the README
 - **Primary user:** Pavel, acting as architect, performer and coach
 - **Active direction:** `docs/product/PERSONAL-FIRST-DIRECTION.md`
 
@@ -121,9 +121,9 @@ This is the live operating plan. Every agent must read it before working and upd
 ## P7 — Personal dogfooding
 
 - [ ] Create Pavel's real goals and skills.
-  Progress: the setup protocol is documented in `docs/technical/PERSONAL-DOGFOODING-PROTOCOL.md`, and the setup flow can now add new skills and quests into existing goals, while Today now links directly into the weekly review loop.
+  Progress: the setup protocol is documented in `docs/technical/PERSONAL-DOGFOODING-PROTOCOL.md`, and the setup flow can now add new skills and quests into existing goals, while Today now links directly into the weekly review loop. The desktop/web AI plan assistant can now draft the starter set from a plain-language description.
 - [ ] Keep the Markdown vault folder synchronized with Google Drive during the run.
-  Progress: Settings can bind a sync folder through the Android folder picker, export one Markdown file per entity into it with duplicate-free updates, and import the whole folder back; the desktop web companion and the Windows application work with the same folder on the computer, and the Windows application remembers the folder between launches. Folder export now skips unchanged files, so an external sync tool re-uploads only real changes. Pairing the folder with Autosync for Google Drive and on-device verification remain.
+  Progress: Settings can bind a sync folder through the Android folder picker, export one Markdown file per entity into it with duplicate-free updates, and import the whole folder back; the desktop web companion and the Windows application work with the same folder on the computer, and the Windows application remembers the folder between launches. Folder export now skips unchanged files, so an external sync tool re-uploads only real changes. All platforms now share the `Levera/` tree layout inside the folder. Pairing the folder with Autosync for Google Drive and on-device verification remain.
 - [ ] Use daily for four weeks and complete four weekly reviews.
   Progress: the weekly logging and review format are documented in `docs/technical/PERSONAL-DOGFOODING-PROTOCOL.md`.
 - [ ] Track friction and fix data loss/blocking UX first.
@@ -142,7 +142,7 @@ Deferred, not completed:
 
 ## Explicitly deferred from personal MVP
 
-- AI-generated quests.
+- On-phone AI-generated quests (the desktop/web companion now ships an optional AI plan assistant; mobile parity is a follow-up).
 - Cloud and automatic two-way Obsidian sync.
 - Payments and public rankings.
 
@@ -156,8 +156,16 @@ Deferred, not completed:
 - The rolling `latest` release (`Levera.apk` + `Levera.exe` + `Levera-Windows.zip` + `Levera-Web.zip`) still needs one manual install verification on the phone and computer, including the remembered-folder behavior of the Windows application.
 - The APK is still signed with the debug keystore; a permanent release keystore in GitHub Secrets is needed before dogfooding installs so later updates install over existing builds without data loss.
 - `Levera.exe` is unsigned, so Windows SmartScreen and antivirus heuristics can flag or delete the download; the `Levera-Windows.zip` distribution mitigates this, and the permanent fix is code signing or Microsoft Store (MSIX) packaging (P2 candidate).
+- The AI plan assistant needs Pavel to create a free GLM API key once at bigmodel.cn and paste it into the ⚙️ settings dialog of the desktop/web companion; without a key the assistant only opens the settings prompt.
 
 ## Changelog
+
+### 2026-07-24 — Vault tree, dark theme and AI plan assistant
+
+- Aligned every platform with the documented vault contract (`docs/technical/OBSIDIAN-VAULT.md`): entities are now stored as a tree `Levera/goals|skills|quests|reviews/<levera_id>-<slug>.md` inside the chosen folder instead of flat root files. The web/desktop companion migrates legacy flat files (`goals__<id>-<slug>.md`) into the tree automatically on load; mobile folder export creates new files in the tree while updating remaining legacy files in place, and mobile folder import scans subfolders recursively (`apps/mobile/src/domain/vaultSync.ts`, `apps/mobile/src/storage/vaultFileSystem.ts`, with new tests).
+- Split the single-file web companion into `apps/web/index.html` plus `levera-core.js`, `levera-vault.js`, `levera-ui.js`, `levera-ai.js`, `levera-boot.js`, and updated `.github/workflows/release-build.yml` to ship the modules in both the web bundle and the Windows desktop shell.
+- Added an Obsidian-inspired dark theme for the desktop/web companion — graphite surfaces with a violet accent, its own design rather than a copy — plus an auto/light/dark theme switch in the header, remembered between sessions.
+- Added an optional AI plan assistant («✨ План с ИИ» on the Goals tab): a plain-language description becomes one goal, 3–6 skills and starter quests. Defaults to the free GLM-4.5-Flash model from Zhipu AI; any OpenAI-compatible API works. The key is stored locally; on Windows the Electron main process proxies the request (`ai:chat` IPC) to avoid CORS limits.
 
 ### 2026-07-24 — Windows ZIP distribution against antivirus false positives
 

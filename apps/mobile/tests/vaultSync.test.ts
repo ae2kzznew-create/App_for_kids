@@ -6,6 +6,7 @@ import {
   exportDocumentsToVault,
   fileDisplayName,
   isLeveraDocument,
+  legacyVaultFileName,
   readVaultBundle,
   vaultFileName,
   type VaultFileSystem,
@@ -52,13 +53,18 @@ function sampleDocument(
   };
 }
 
-test("vaultFileName flattens folders into stable file names", () => {
-  assert.equal(vaultFileName("goals/goal_1-first-goal.md"), "goals__goal_1-first-goal.md");
+test("vaultFileName places documents inside the Levera folder tree", () => {
+  assert.equal(vaultFileName("goals/goal_1-first-goal.md"), "Levera/goals/goal_1-first-goal.md");
+});
+
+test("legacyVaultFileName flattens folders into the old root file names", () => {
+  assert.equal(legacyVaultFileName("goals/goal_1-first-goal.md"), "goals__goal_1-first-goal.md");
 });
 
 test("fileDisplayName decodes SAF document URIs", () => {
   const { uriFor } = createVault();
   assert.equal(fileDisplayName(uriFor("goals__goal_1.md")), "goals__goal_1.md");
+  assert.equal(fileDisplayName(uriFor("Levera/goals/goal_1.md")), "goal_1.md");
 });
 
 test("isLeveraDocument requires frontmatter with levera_id", () => {
@@ -66,15 +72,16 @@ test("isLeveraDocument requires frontmatter with levera_id", () => {
   assert.equal(isLeveraDocument("# Just an Obsidian note"), false);
 });
 
-test("export creates files once and skips unchanged files on re-export", async () => {
-  const { files, fileSystem } = createVault();
-  const documents = [
-    sampleDocument("goals", "goal_1", "goal", "first"),
-    sampleDocument("skills", "skill_1", "skill", "strength"),
-  ];
+test("export creates tree files once and skips unchanged files on re-export", async () => {
+  const { files, fileSystem, uriFor } = createVault();
+  const goalDocument = sampleDocument("goals", "goal_1", "goal", "first");
+  const skillDocument = sampleDocument("skills", "skill_1", "skill", "strength");
+  const documents = [goalDocument, skillDocument];
   const first = await exportDocumentsToVault(fileSystem, directoryUri, documents);
   assert.deepEqual(first, { total: 2, created: 2, updated: 0, unchanged: 0 });
   assert.equal(files.size, 2);
+  assert.equal(files.get(uriFor("Levera/goals/goal_1-first.md")), goalDocument.content);
+  assert.equal(files.get(uriFor("Levera/skills/skill_1-strength.md")), skillDocument.content);
 
   const second = await exportDocumentsToVault(fileSystem, directoryUri, documents);
   assert.deepEqual(second, { total: 2, created: 0, updated: 0, unchanged: 2 });
@@ -90,8 +97,19 @@ test("export rewrites only documents whose content changed", async () => {
   const changedGoal = { ...goalDocument, content: `${goalDocument.content}\nUpdated.\n` };
   const result = await exportDocumentsToVault(fileSystem, directoryUri, [changedGoal, skillDocument]);
   assert.deepEqual(result, { total: 2, created: 0, updated: 1, unchanged: 1 });
-  assert.equal(files.get(uriFor("goals__goal_1-first.md")), changedGoal.content);
+  assert.equal(files.get(uriFor("Levera/goals/goal_1-first.md")), changedGoal.content);
   assert.equal(files.size, 2);
+});
+
+test("export updates legacy flat root files in place without duplicating them", async () => {
+  const goalDocument = sampleDocument("goals", "goal_1", "goal", "first");
+  const { files, fileSystem, uriFor } = createVault({
+    "goals__goal_1-first.md": "outdated content",
+  });
+  const result = await exportDocumentsToVault(fileSystem, directoryUri, [goalDocument]);
+  assert.deepEqual(result, { total: 1, created: 0, updated: 1, unchanged: 0 });
+  assert.equal(files.size, 1);
+  assert.equal(files.get(uriFor("goals__goal_1-first.md")), goalDocument.content);
 });
 
 test("readVaultBundle keeps only Levera documents and round-trips through the bundle parser", async () => {
