@@ -6,8 +6,8 @@ This is the live operating plan. Every agent must read it before working and upd
 
 - **Current stage:** P2–P4 device gates, P6 complete, P7 pending
 - **Current milestone:** Close remaining device-only gates for the personal alpha and prepare the four-week dogfooding run
-- **Last updated:** 2026-07-22
-- **Application status:** goals, skills, quests, reviews and external-note links round-trip through Markdown, Settings can bind an Android sync folder and export/import Markdown files directly through it, the web companion and the new Windows application (`Levera.exe`, Electron shell over the shared UI) read and write the same vault folder on desktop with a remembered folder, and every `main` update publishes the APK, the Windows executable and the web bundle both to an immutable versioned release (`v0.1.0-build.N`) and to the rolling `latest` GitHub release (updated in place) linked from the README
+- **Last updated:** 2026-07-24
+- **Application status:** goals, skills, quests, reviews and external-note links round-trip through Markdown, Settings can bind an Android sync folder and export/import Markdown files directly through it, the web companion and the new Windows application (`Levera.exe`, Electron shell over the shared UI) read and write the same vault folder on desktop with a remembered folder, and every `main` update publishes the APK, the Windows application (single-file `Levera.exe` and the antivirus-friendly `Levera-Windows.zip`) and the web bundle both to an immutable versioned release (`v0.1.0-build.N`) and to the rolling `latest` GitHub release (updated in place) linked from the README
 - **Primary user:** Pavel, acting as architect, performer and coach
 - **Active direction:** `docs/product/PERSONAL-FIRST-DIRECTION.md`
 
@@ -153,10 +153,24 @@ Deferred, not completed:
 - Device press/scroll check remains for the 50-skill P4 gate.
 - Vault access strategy selected: a user-chosen local sync folder (Android Storage Access Framework) mirrored to Google Drive by an external tool such as Autosync; on-device verification of folder pick, file export, Autosync round trip and duplicate-free import remains. Paste import in Settings stays as the fallback path.
 - External note opening still needs device verification with Obsidian installed.
-- The rolling `latest` release (`Levera.apk` + `Levera.exe` + `Levera-Web.zip`) still needs one manual install verification on the phone and computer, including the remembered-folder behavior of the Windows application.
+- The rolling `latest` release (`Levera.apk` + `Levera.exe` + `Levera-Windows.zip` + `Levera-Web.zip`) still needs one manual install verification on the phone and computer, including the remembered-folder behavior of the Windows application.
 - The APK is still signed with the debug keystore; a permanent release keystore in GitHub Secrets is needed before dogfooding installs so later updates install over existing builds without data loss.
+- `Levera.exe` is unsigned, so Windows SmartScreen and antivirus heuristics can flag or delete the download; the `Levera-Windows.zip` distribution mitigates this, and the permanent fix is code signing or Microsoft Store (MSIX) packaging (P2 candidate).
 
 ## Changelog
+
+### 2026-07-24 — Windows ZIP distribution against antivirus false positives
+
+- Windows Defender was deleting the downloaded portable `Levera.exe` as a false positive (an unsigned self-extracting Electron binary). The release workflow now also packages the unpacked Windows build as `Levera-Windows.zip` — a plain folder with `Levera.exe` inside — and publishes it to both the versioned and the rolling `latest` releases; antivirus heuristics flag this format far less often.
+- The README now recommends the ZIP for Windows and documents recovery steps when SmartScreen or Defender flags the download (keep the download in the browser, SmartScreen «Выполнить в любом случае», Protection history → Allow/Restore).
+- Recorded the unsigned-executable blocker explicitly; the permanent fix is code signing or Microsoft Store (MSIX) packaging.
+- Restored the «Quest completions from the computer» changelog entry below, which was accidentally reverted from `main` by merge #62 (a stale re-merge of the already squash-merged `p1-unified-week-boundary` branch).
+
+### 2026-07-24 — Quest completions from the computer
+
+- Vault import on the phone now creates a quest completion and a progress event for quests completed on the computer (`apps/mobile/src/domain/markdownImport.ts`): a completed quest arriving with `completed_at` and no local completion gains its XP exactly once, atomically, with `source: "vault_import"` metadata.
+- The domain guard now rejects completing an already completed quest (`apps/mobile/src/domain/progress.ts`), so re-imports and double completion cannot double-count XP; covered by new service and import tests.
+- The desktop/web companion (`apps/web/index.html`) now stamps `completed_at` when a quest is completed or its status is set to completed, and clears it when a quest is reopened, so the phone can trust the field.
 
 ### 2026-07-22 — Unified week boundary for weekly reviews
 
