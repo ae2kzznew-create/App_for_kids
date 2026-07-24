@@ -201,7 +201,7 @@ const FOLDERS = { goal: "goals", skill: "skills", quest: "quests", weekly_review
 const MANAGED = {
   goal: ["levera_id","levera_type","profile_id","status","updated"],
   skill: ["levera_id","levera_type","goal_id","status","support_level","mastery_score","next_review_at","updated"],
-  quest: ["levera_id","levera_type","skill_ids","status","support_level","xp_reward","maintenance","scheduled_for","updated"],
+  quest: ["levera_id","levera_type","skill_ids","status","support_level","xp_reward","maintenance","scheduled_for","completed_at","updated"],
   weekly_review: ["levera_id","levera_type","profile_id","week_start","completed_at"],
 };
 function parseValue(raw){
@@ -606,6 +606,7 @@ function dlgEditQuest(id){
     const xp = Math.max(0, Math.floor(Number(dialog.querySelector("#fXp").value) || 0));
     quest.fields.skill_ids = skillIds;
     quest.fields.status = dialog.querySelector("#fStatus").value;
+    if (quest.fields.status === "completed") { if (!quest.fields.completed_at) quest.fields.completed_at = now(); } else { delete quest.fields.completed_at; }
     quest.fields.xp_reward = xp;
     quest.fields.maintenance = xp === 0;
     quest.fields.support_level = Number(dialog.querySelector("#fSupport").value);
@@ -617,7 +618,7 @@ function dlgEditQuest(id){
 function dlgComplete(id){
   const quest = get("quest", id); if (!quest) return;
   openDialog("<h3>✅ Выполнить: " + esc(quest.title) + "</h3><label>Что получилось / рефлексия (попадёт в описание квеста)</label><textarea id=\"fNote\" placeholder=\"Например: сыграл без остановок, сложнее всего был переход на F\"></textarea>", async (dialog) => {
-    quest.fields.status = "completed"; quest.fields.updated = now();
+    quest.fields.status = "completed"; quest.fields.completed_at = now(); quest.fields.updated = now();
     let body = descriptionBody(quest.body);
     const note = dialog.querySelector("#fNote").value.trim();
     if (note) body = (body ? body + "\n\n" : "") + "**Выполнено " + now().slice(0, 10) + ":** " + note;
@@ -627,7 +628,7 @@ function dlgComplete(id){
 }
 async function reopenQuest(id){
   const quest = get("quest", id); if (!quest) return;
-  quest.fields.status = "active"; quest.fields.updated = now();
+  quest.fields.status = "active"; delete quest.fields.completed_at; quest.fields.updated = now();
   await saveEntity(quest, quest.title, descriptionBody(quest.body));
   await afterWrite("Квест снова в работе");
 }
