@@ -22,5 +22,13 @@ CREATE INDEX IF NOT EXISTS idx_completions_quest ON quest_completions(quest_id, 
 CREATE INDEX IF NOT EXISTS idx_repetitions_due ON repetition_schedules(due_at, completed_at);
 CREATE INDEX IF NOT EXISTS idx_progress_occurred ON progress_events(occurred_at);
 `,
+  },
+  {
+    version: 2,
+    name: "unique_weekly_review_per_week",
+    sql: `
+DELETE FROM weekly_reviews WHERE id NOT IN (SELECT id FROM (SELECT id, MAX(completed_at) AS latest_completed_at FROM weekly_reviews GROUP BY profile_id, week_start));
+CREATE UNIQUE INDEX IF NOT EXISTS idx_weekly_reviews_profile_week ON weekly_reviews(profile_id, week_start);
+`,
   }
 ] as const;

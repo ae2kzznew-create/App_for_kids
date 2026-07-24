@@ -6,7 +6,7 @@ This is the live operating plan. Every agent must read it before working and upd
 
 - **Current stage:** P2–P4 device gates, P6 complete, P7 pending
 - **Current milestone:** Close remaining device-only gates for the personal alpha and prepare the four-week dogfooding run
-- **Last updated:** 2026-07-17
+- **Last updated:** 2026-07-22
 - **Application status:** goals, skills, quests, reviews and external-note links round-trip through Markdown, Settings can bind an Android sync folder and export/import Markdown files directly through it, the web companion and the new Windows application (`Levera.exe`, Electron shell over the shared UI) read and write the same vault folder on desktop with a remembered folder, and every `main` update publishes the APK, the Windows executable and the web bundle both to an immutable versioned release (`v0.1.0-build.N`) and to the rolling `latest` GitHub release (updated in place) linked from the README
 - **Primary user:** Pavel, acting as architect, performer and coach
 - **Active direction:** `docs/product/PERSONAL-FIRST-DIRECTION.md`
@@ -157,6 +157,12 @@ Deferred, not completed:
 - The APK is still signed with the debug keystore; a permanent release keystore in GitHub Secrets is needed before dogfooding installs so later updates install over existing builds without data loss.
 
 ## Changelog
+
+### 2026-07-22 — Unified week boundary for weekly reviews
+
+- Aligned the week boundary across platforms: the mobile service (`apps/mobile/src/domain/personalService.ts`) and the desktop/web companion (`apps/web/index.html`) now both compute `week_start` as Monday of the device's local calendar day instead of mixing local and UTC dates, so the phone and the computer agree on the week at any hour.
+- Added storage migration 2 (`apps/mobile/src/storage/migrations.ts`): existing duplicate weekly reviews collapse to the latest entry per profile and week, and a `UNIQUE(profile_id, week_start)` index now enforces one review per week.
+- Completing a weekly review twice in the same week now updates the existing review in place (same stable ID) instead of inserting a duplicate, and vault import replaces a same-week review that arrives with a different stable ID instead of duplicating it; covered by new service and import tests.
 
 ### 2026-07-17 — P0 hardening: idempotent vault export and versioned releases
 
