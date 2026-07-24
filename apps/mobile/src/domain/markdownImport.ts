@@ -1,6 +1,6 @@
 import { createExternalNoteLink } from "./externalNotes";
 import type { PersonalRepository } from "./repository";
-import type { ExternalNoteEntityType, Goal, GoalStatus, Quest, QuestStatus, Skill, SkillStatus, SupportLevel, WeeklyReview } from "./types";
+import type { ExternalNoteEntityType, Goal, GoalStatus, ProgressEvent, Quest, QuestCompletion, QuestStatus, Skill, SkillStatus, SupportLevel, WeeklyReview } from "./types";
 
 type ParsedDocument = { id: string; type: "goal" | "skill" | "quest" | "weekly_review"; title: string; body: string; fields: Record<string, unknown> };
 export interface MarkdownImportResult { total: number; created: number; updated: number; byType: Record<ParsedDocument["type"], number>; }
@@ -33,6 +33,12 @@ export async function importMarkdownBundle(repository: PersonalRepository, markd
     const existing = await repository.getQuest(document.id); count(result, document.type, Boolean(existing)); const updatedAt = stringField(document, "updated", options.importedAt);
     const quest: Quest = { id: document.id, title: document.title, description: descriptionBody(document.body), supportLevel: numberField(document, "support_level", 0, 3, 2) as SupportLevel, status: enumField(document, "status", ["planned", "active", "completed", "archived"] as QuestStatus[], "active"), xpReward: numberField(document, "xp_reward", 0, 100000, 0), scheduledFor: optionalString(document, "scheduled_for"), createdAt: existing?.createdAt ?? updatedAt, updatedAt };
     await repository.saveQuest(quest, skillIds.map((skillId) => ({ questId: quest.id, skillId, contributionWeight: 1 })));
+    const completedAt = quest.status === "completed" ? optionalString(document, "completed_at") : undefined;
+    if (completedAt && (await repository.listCompletions(quest.id)).length === 0) {
+      const completion: QuestCompletion = { id: `completion_import_${quest.id}`, questId: quest.id, completedAt, xpGranted: quest.xpReward };
+      const event: ProgressEvent = { id: `event_completion_import_${quest.id}`, type: "quest_completed", entityId: quest.id, occurredAt: completedAt, xpDelta: quest.xpReward, metadata: { supportLevel: quest.supportLevel, hasEvidence: false, hasReflection: false, source: "vault_import" } };
+      await repository.saveCompletionWithEvent(completion, event, quest);
+    }
   }
   for (const document of documents.filter((item) => item.type === "weekly_review")) {
     const existing = await repository.getWeeklyReview(document.id); count(result, document.type, Boolean(existing));
