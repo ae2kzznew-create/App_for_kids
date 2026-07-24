@@ -11,6 +11,7 @@ export interface CompletionInput {
 
 export function completeQuest(input: CompletionInput): { completion: QuestCompletion; event: ProgressEvent } {
   if (input.quest.status === "archived") throw new Error("Archived quests cannot be completed");
+  if (input.quest.status === "completed") throw new Error("Quest is already completed");
   if (input.quest.xpReward < 0) throw new Error("XP reward cannot be negative");
 
   const completion: QuestCompletion = {
