@@ -283,7 +283,8 @@ function mondayOf(date){
   const value = new Date(date);
   const day = (value.getDay() + 6) % 7;
   value.setDate(value.getDate() - day);
-  return value.toISOString().slice(0, 10);
+  const pad = (part) => String(part).padStart(2, "0");
+  return value.getFullYear() + "-" + pad(value.getMonth() + 1) + "-" + pad(value.getDate());
 }
 if (typeof module !== "undefined") module.exports = { parseDocument, isLeveraDocument, buildMarkdown, entityFileName, descriptionBody, section, reviewBody, slug, safeId, mondayOf, buildFrontmatter };
 /*__CORE_END__*/

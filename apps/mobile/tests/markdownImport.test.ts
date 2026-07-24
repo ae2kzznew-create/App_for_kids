@@ -20,6 +20,15 @@ test("round-trips entities and external notes twice without duplicates", async (
   assert.equal((await repository.listGoals("pavel")).length, 1); assert.equal((await repository.listSkillsForProfile("pavel")).length, 1); assert.equal((await repository.listQuests()).length, 1); assert.equal((await repository.listWeeklyReviews("pavel")).length, 1); assert.deepEqual((await repository.listQuestSkills(quest.id)).map((link) => link.skillId), [skill.id]); assert.equal((await repository.getExternalNoteLink("skill", skill.id))?.externalPath, noteLink.externalPath); assert.equal(repository.externalNoteLinks.size, 1);
 });
 
+test("replaces a same-week review that arrives with a different id", async () => {
+  const repository = new MemoryPersonalRepository(); const options = { defaultProfileId: "pavel", displayName: "Pavel", importedAt: now };
+  await importMarkdownBundle(repository, bundle, options);
+  const webReview = "---\nlevera_id: \"review_web_1\"\nlevera_type: \"weekly_review\"\nprofile_id: \"pavel\"\nweek_start: \"2026-07-13\"\ncompleted_at: \"2026-07-16T18:00:00.000Z\"\n---\n\n# Weekly review · 2026-07-13\n\n## Decision\n\nWeb decision";
+  await importMarkdownBundle(repository, webReview, options);
+  const reviews = await repository.listWeeklyReviews("pavel");
+  assert.equal(reviews.length, 1); assert.equal(reviews[0]?.id, "review_web_1"); assert.equal(reviews[0]?.decisions, "Web decision");
+});
+
 test("rejects missing identity, broken relations and unsafe note URLs", async () => {
   assert.throws(() => parseMarkdownBundle("---\nlevera_type: \"goal\"\n---\n# Missing"), /levera_id/); const repository = new MemoryPersonalRepository(); const options = { defaultProfileId: "pavel", displayName: "Pavel", importedAt: now };
   await assert.rejects(() => importMarkdownBundle(repository, "---\nlevera_id: \"skill_orphan\"\nlevera_type: \"skill\"\ngoal_id: \"missing\"\n---\n# Orphan", options), /missing goal/);
