@@ -74,15 +74,14 @@ test("isLeveraDocument requires frontmatter with levera_id", () => {
 
 test("export creates tree files once and skips unchanged files on re-export", async () => {
   const { files, fileSystem, uriFor } = createVault();
-  const documents = [
-    sampleDocument("goals", "goal_1", "goal", "first"),
-    sampleDocument("skills", "skill_1", "skill", "strength"),
-  ];
+  const goalDocument = sampleDocument("goals", "goal_1", "goal", "first");
+  const skillDocument = sampleDocument("skills", "skill_1", "skill", "strength");
+  const documents = [goalDocument, skillDocument];
   const first = await exportDocumentsToVault(fileSystem, directoryUri, documents);
   assert.deepEqual(first, { total: 2, created: 2, updated: 0, unchanged: 0 });
   assert.equal(files.size, 2);
-  assert.equal(files.get(uriFor("Levera/goals/goal_1-first.md")), documents[0].content);
-  assert.equal(files.get(uriFor("Levera/skills/skill_1-strength.md")), documents[1].content);
+  assert.equal(files.get(uriFor("Levera/goals/goal_1-first.md")), goalDocument.content);
+  assert.equal(files.get(uriFor("Levera/skills/skill_1-strength.md")), skillDocument.content);
 
   const second = await exportDocumentsToVault(fileSystem, directoryUri, documents);
   assert.deepEqual(second, { total: 2, created: 0, updated: 0, unchanged: 2 });
