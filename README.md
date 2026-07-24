@@ -8,15 +8,27 @@ The original family and child product remains documented as a future direction.
 
 [![Скачать APK для Android](https://img.shields.io/badge/📱_Телефон_(Android)-Скачать_Levera.apk-3DDC84?style=for-the-badge)](https://github.com/ae2kzznew-create/App_for_kids/releases/download/latest/Levera.apk)
 
-[![Скачать приложение для Windows](https://img.shields.io/badge/💻_Компьютер_(Windows)-Скачать_Levera.exe-2783DE?style=for-the-badge)](https://github.com/ae2kzznew-create/App_for_kids/releases/download/latest/Levera.exe)
+[![Скачать приложение для Windows](https://img.shields.io/badge/💻_Компьютер_(Windows)-Скачать_ZIP-2783DE?style=for-the-badge)](https://github.com/ae2kzznew-create/App_for_kids/releases/download/latest/Levera-Windows.zip)
 
 | Устройство | Файл | Как запустить |
 | --- | --- | --- |
 | 📱 Телефон (Android) | [`Levera.apk`](https://github.com/ae2kzznew-create/App_for_kids/releases/download/latest/Levera.apk) | Скачай с телефона и открой файл. Если Android спросит — разреши установку из неизвестных источников для браузера. |
-| 💻 Компьютер (Windows) | [`Levera.exe`](https://github.com/ae2kzznew-create/App_for_kids/releases/download/latest/Levera.exe) | Один файл, без установки: скачай и запусти. При первом запуске SmartScreen может предупредить — «Подробнее» → «Выполнить в любом случае». Папка vault выбирается один раз и дальше подключается автоматически. |
+| 💻 Компьютер (Windows) — рекомендуется | [`Levera-Windows.zip`](https://github.com/ae2kzznew-create/App_for_kids/releases/download/latest/Levera-Windows.zip) | Распакуй архив в любое место и запусти `Levera.exe` внутри папки. Антивирусы реагируют на этот формат значительно реже, чем на одиночный exe. Папка vault выбирается один раз и дальше подключается автоматически. |
+| 💻 Компьютер (Windows) — один файл | [`Levera.exe`](https://github.com/ae2kzznew-create/App_for_kids/releases/download/latest/Levera.exe) | Тот же вариант одним файлом, без установки. SmartScreen или антивирус может ошибочно ругаться — см. раздел ниже. |
 | 🌐 Запасной вариант (любая ОС) | [`Levera-Web.zip`](https://github.com/ae2kzznew-create/App_for_kids/releases/download/latest/Levera-Web.zip) | Распакуй и открой `index.html` в Chrome или Edge. |
 
 Сборки обновляются автоматически при каждом изменении приложения — ссылки всегда ведут на свежую версию. Все релизы: [Releases → latest](https://github.com/ae2kzznew-create/App_for_kids/releases/tag/latest).
+
+### ⚠️ Если Windows пишет «вирус» или удаляет файл
+
+Это ложное срабатывание: `Levera.exe` пока не подписан цифровой подписью, а неподписанные программы, скачанные из интернета, Windows встречает с подозрением — особенно самораспаковывающиеся. Файл безопасен, если скачан со страницы релизов этого репозитория.
+
+1. Лучший вариант — скачай `Levera-Windows.zip`: на обычный архив с папкой антивирус реагирует гораздо реже.
+2. Если браузер блокирует загрузку: в списке загрузок «⋯» → «Сохранить» («Keep»).
+3. Если появляется синее окно SmartScreen: «Подробнее» → «Выполнить в любом случае».
+4. Если Защитник Windows удалил файл: «Безопасность Windows» → «Защита от вирусов и угроз» → «Журнал защиты» → выбери запись про Levera → «Разрешить» / «Восстановить».
+
+Постоянное решение — подпись кода или публикация в Microsoft Store (магазин подписывает приложение сам) — запланировано в `docs/EXECUTION-PLAN.md`.
 
 ## Agent and contributor entry point
 
