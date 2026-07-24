@@ -1,10 +1,15 @@
 import type { MarkdownDocument } from "./markdownExport";
 
 export interface VaultFileSystem {
+  /** Lists Markdown file URIs in the folder, including files inside subfolders. */
   listFiles(directoryUri: string): Promise<string[]>;
   readFile(fileUri: string): Promise<string>;
   writeFile(fileUri: string, content: string): Promise<void>;
-  /** Creates a Markdown file; the platform appends the .md extension to baseName. */
+  /**
+   * Creates a Markdown file; baseName may contain "/" separators for
+   * subfolders (created on demand); the platform appends the .md extension to
+   * the final segment.
+   */
   createFile(directoryUri: string, baseName: string): Promise<string>;
 }
 
@@ -15,7 +20,16 @@ export interface VaultExportResult {
   unchanged: number;
 }
 
+/** Root subfolder inside the vault where Levera keeps its file tree. */
+export const VAULT_ROOT_FOLDER = "Levera";
+
+/** Relative path of a document inside the vault tree: Levera/goals/<id>-<slug>.md */
 export function vaultFileName(documentPath: string) {
+  return `${VAULT_ROOT_FOLDER}/${documentPath}`;
+}
+
+/** File name used by the legacy flat layout (goals__<id>-<slug>.md in the vault root). */
+export function legacyVaultFileName(documentPath: string) {
   return documentPath.replace(/\//g, "__");
 }
 
@@ -39,8 +53,8 @@ export async function exportDocumentsToVault(
   const byName = new Map(existing.map((uri) => [fileDisplayName(uri), uri] as const));
   const result: VaultExportResult = { total: documents.length, created: 0, updated: 0, unchanged: 0 };
   for (const document of documents) {
-    const fileName = vaultFileName(document.path);
-    const knownUri = byName.get(fileName);
+    const baseName = fileDisplayName(document.path);
+    const knownUri = byName.get(baseName) ?? byName.get(legacyVaultFileName(document.path));
     if (knownUri) {
       let currentContent: string | null = null;
       try {
@@ -55,9 +69,9 @@ export async function exportDocumentsToVault(
         result.updated += 1;
       }
     } else {
-      const createdUri = await files.createFile(directoryUri, fileName.replace(/\.md$/, ""));
+      const createdUri = await files.createFile(directoryUri, vaultFileName(document.path).replace(/\.md$/, ""));
       await files.writeFile(createdUri, document.content);
-      byName.set(fileName, createdUri);
+      byName.set(baseName, createdUri);
       result.created += 1;
     }
   }
