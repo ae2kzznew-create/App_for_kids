@@ -1,4 +1,4 @@
-const { app, BrowserWindow, dialog, ipcMain } = require("electron");
+const { app, BrowserWindow, dialog, ipcMain, net } = require("electron");
 const fs = require("fs/promises");
 const path = require("path");
 
@@ -19,9 +19,31 @@ async function writeConfig(config) {
 
 let vaultDir = null;
 
+const MAX_DEPTH = 4;
+
 function vaultFile(name) {
   if (!vaultDir) throw new Error("\u041f\u0430\u043f\u043a\u0430 \u043d\u0435 \u0432\u044b\u0431\u0440\u0430\u043d\u0430");
-  return path.join(vaultDir, path.basename(name));
+  const segments = String(name).replace(/\\/g, "/").split("/").filter(Boolean);
+  if (segments.length === 0 || segments.some((part) => part === "." || part === "..")) {
+    throw new Error("\u041d\u0435\u0434\u043e\u043f\u0443\u0441\u0442\u0438\u043c\u044b\u0439 \u043f\u0443\u0442\u044c: " + name);
+  }
+  return path.join(vaultDir, ...segments);
+}
+
+async function listMarkdown(dir, prefix, depth) {
+  const names = [];
+  const entries = await fs.readdir(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    if (entry.name.startsWith(".")) continue;
+    if (entry.isDirectory()) {
+      if (depth < MAX_DEPTH) {
+        names.push(...(await listMarkdown(path.join(dir, entry.name), prefix + entry.name + "/", depth + 1)));
+      }
+    } else if (entry.isFile() && entry.name.toLowerCase().endsWith(".md")) {
+      names.push(prefix + entry.name);
+    }
+  }
+  return names;
 }
 
 ipcMain.handle("vault:getFolder", () => vaultDir);
@@ -36,15 +58,28 @@ ipcMain.handle("vault:pickFolder", async () => {
 
 ipcMain.handle("vault:list", async () => {
   if (!vaultDir) return [];
-  const entries = await fs.readdir(vaultDir, { withFileTypes: true });
-  return entries
-    .filter((entry) => entry.isFile() && entry.name.toLowerCase().endsWith(".md"))
-    .map((entry) => entry.name);
+  return listMarkdown(vaultDir, "", 0);
 });
 
 ipcMain.handle("vault:read", (_event, name) => fs.readFile(vaultFile(name), "utf8"));
-ipcMain.handle("vault:write", (_event, name, content) => fs.writeFile(vaultFile(name), content, "utf8"));
+ipcMain.handle("vault:write", async (_event, name, content) => {
+  const target = vaultFile(name);
+  await fs.mkdir(path.dirname(target), { recursive: true });
+  await fs.writeFile(target, content, "utf8");
+});
 ipcMain.handle("vault:remove", (_event, name) => fs.unlink(vaultFile(name)));
+
+ipcMain.handle("ai:chat", async (_event, request) => {
+  const response = await net.fetch(String(request.url), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + String(request.apiKey || ""),
+    },
+    body: JSON.stringify(request.body || {}),
+  });
+  return { status: response.status, body: await response.text() };
+});
 
 app.whenReady().then(async () => {
   const config = await readConfig();
