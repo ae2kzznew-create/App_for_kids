@@ -29,27 +29,6 @@ test("replaces a same-week review that arrives with a different id", async () =>
   assert.equal(reviews.length, 1); assert.equal(reviews[0]?.id, "review_web_1"); assert.equal(reviews[0]?.decisions, "Web decision");
 });
 
-test("creates a completion with XP for a quest completed on the computer", async () => {
-  const repository = new MemoryPersonalRepository(); const options = { defaultProfileId: "pavel", displayName: "Pavel", importedAt: now };
-  await importMarkdownBundle(repository, bundle, options);
-  const webQuest = "---\nlevera_id: \"quest_web_done\"\nlevera_type: \"quest\"\nskill_ids: [\"skill_rn\"]\nstatus: \"completed\"\nsupport_level: 1\nxp_reward: 30\ncompleted_at: \"2026-07-16T18:00:00.000Z\"\n---\n\n# Web quest";
-  await importMarkdownBundle(repository, webQuest, options);
-  const completions = await repository.listCompletions("quest_web_done");
-  assert.equal(completions.length, 1); assert.equal(completions[0]?.xpGranted, 30); assert.equal(completions[0]?.completedAt, "2026-07-16T18:00:00.000Z");
-  const events = await repository.listProgressEvents("quest_web_done");
-  assert.equal(events[0]?.type, "quest_completed"); assert.equal(events[0]?.xpDelta, 30);
-  await importMarkdownBundle(repository, webQuest, options);
-  assert.equal((await repository.listCompletions("quest_web_done")).length, 1);
-});
-
-test("does not invent a completion when completed_at is missing", async () => {
-  const repository = new MemoryPersonalRepository(); const options = { defaultProfileId: "pavel", displayName: "Pavel", importedAt: now };
-  await importMarkdownBundle(repository, bundle, options);
-  const webQuest = "---\nlevera_id: \"quest_web_plain\"\nlevera_type: \"quest\"\nskill_ids: [\"skill_rn\"]\nstatus: \"completed\"\nxp_reward: 20\n---\n\n# Web quest without timestamp";
-  await importMarkdownBundle(repository, webQuest, options);
-  assert.equal((await repository.listCompletions("quest_web_plain")).length, 0);
-});
-
 test("rejects missing identity, broken relations and unsafe note URLs", async () => {
   assert.throws(() => parseMarkdownBundle("---\nlevera_type: \"goal\"\n---\n# Missing"), /levera_id/); const repository = new MemoryPersonalRepository(); const options = { defaultProfileId: "pavel", displayName: "Pavel", importedAt: now };
   await assert.rejects(() => importMarkdownBundle(repository, "---\nlevera_id: \"skill_orphan\"\nlevera_type: \"skill\"\ngoal_id: \"missing\"\n---\n# Orphan", options), /missing goal/);

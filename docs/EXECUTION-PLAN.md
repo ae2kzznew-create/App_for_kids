@@ -6,7 +6,7 @@ This is the live operating plan. Every agent must read it before working and upd
 
 - **Current stage:** P2–P4 device gates, P6 complete, P7 pending
 - **Current milestone:** Close remaining device-only gates for the personal alpha and prepare the four-week dogfooding run
-- **Last updated:** 2026-07-24
+- **Last updated:** 2026-07-22
 - **Application status:** goals, skills, quests, reviews and external-note links round-trip through Markdown, Settings can bind an Android sync folder and export/import Markdown files directly through it, the web companion and the new Windows application (`Levera.exe`, Electron shell over the shared UI) read and write the same vault folder on desktop with a remembered folder, and every `main` update publishes the APK, the Windows executable and the web bundle both to an immutable versioned release (`v0.1.0-build.N`) and to the rolling `latest` GitHub release (updated in place) linked from the README
 - **Primary user:** Pavel, acting as architect, performer and coach
 - **Active direction:** `docs/product/PERSONAL-FIRST-DIRECTION.md`
@@ -157,13 +157,6 @@ Deferred, not completed:
 - The APK is still signed with the debug keystore; a permanent release keystore in GitHub Secrets is needed before dogfooding installs so later updates install over existing builds without data loss.
 
 ## Changelog
-
-### 2026-07-24 — Quest completions from the computer
-
-- The desktop/web companion (`apps/web/index.html`) now stamps `completed_at` on a quest when it is completed and clears it when the quest is reopened; `completed_at` is a managed frontmatter field for quests.
-- Vault import (`apps/mobile/src/domain/markdownImport.ts`) now creates a deterministic completion and `quest_completed` progress event (with the quest's XP) for a quest that arrives completed with `completed_at` and has no completion yet, so XP from desktop completions is no longer lost on the phone; repeated imports stay duplicate-free.
-- `completeQuest` (`apps/mobile/src/domain/progress.ts`) now rejects quests that are already completed, preventing double XP from the UI.
-- Covered by new import and service tests.
 
 ### 2026-07-22 — Unified week boundary for weekly reviews
 
